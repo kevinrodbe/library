@@ -3,6 +3,6 @@ class SlidesController < ApplicationController
   end
 
   def todo
-    render :json => { description: 'Pick up milk', completed: false }
+    render :json => { description: 'Pick up milk', done: true }
   end
 end
