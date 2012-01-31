@@ -1,5 +1,5 @@
 BackboneSlides::Application.routes.draw do
-  match "todo" => "slides#todo"
+  match "todo" => "home#todo"
 
-  root to: 'slides#index'
+  root to: 'home#index'
 end

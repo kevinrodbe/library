@@ -15,3 +15,20 @@
 //= require backbone-rails
 //= require_self
 //= require_tree .
+
+
+window.challenges = {}
+
+$(function(){
+
+  var challenge_slot = location.hash.replace('#', '')
+  
+  var challenge = window.challenges[challenge_slot];
+
+  if(typeof(challenge) !== "undefined") {
+    challenge()
+  }else{
+    alert("Could not find challenge " + challenge_slot);
+  }
+
+})
