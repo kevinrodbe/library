@@ -19,6 +19,10 @@
 
 window.challenges = {}
 
+window.createChallenge = function(name, func) {
+  window.challenges[name] = func
+}
+
 $(function(){
 
   var challenge_slot = location.hash.replace('#', '')

@@ -1,4 +1,4 @@
-window.challenges['1-1'] = function() {
+createChallenge('intro', function() {
   
   $(function(){
     
@@ -20,4 +20,4 @@ window.challenges['1-1'] = function() {
     });
 
   });
-}
+})
