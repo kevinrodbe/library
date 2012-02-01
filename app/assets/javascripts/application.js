@@ -19,20 +19,38 @@
 
 window.challenges = {}
 
-window.createChallenge = function(name, func) {
-  window.challenges[name] = func
+window.createChallenge = function() {
+  var args = Array.prototype.slice.call(arguments, 0);
+  var name = args.shift();
+  var func = args.pop()
+
+  window.challenges[name] = {
+    func: func,
+    dependencies: args
+  }
 }
 
 $(function(){
 
-  var challenge_slot = location.hash.replace('#', '')
-  
-  var challenge = window.challenges[challenge_slot];
+  var loadChallenge = function(name) {
+    var challenge = window.challenges[name];
 
-  if(typeof(challenge) !== "undefined") {
-    challenge()
-  }else{
-    alert("Could not find challenge " + challenge_slot);
+    if(typeof(challenge) !== "undefined") {
+      if(challenge.dependencies.length > 0){
+        challenge.dependencies.forEach(function(c){
+          loadChallenge(c);
+        });
+      }
+
+      challenge.func()
+    }else{
+      alert("Could not find challenge " + name);
+    }
   }
+
+  
+  var challenge_slot = location.hash.replace('#', '')
+
+  loadChallenge(challenge_slot);
 
 })
