@@ -139,7 +139,17 @@ todoitem.on('change:status', function(){
 });
 
 // We will see the full power of events when we use both models and views together
-// in the next level.
+// in a later chapter.
 
+// ### toJSON()
+//
+// Sometimes in Backbone you'll want easier access to all a Model instance's
+// attributes without having to call `model.get()` each time.
 
+// Calling `.toJSON` on a model instance will return an object with it's attributes
+var attributes = todoItem.toJSON();
+console.log(attributes.description); // 'Pick up milk.'
+console.log(attributes.status); // 'incomplete'
+
+// We'll be using `toJSON()` later on in the course in Views template rendering.
 
