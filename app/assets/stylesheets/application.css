@@ -12,6 +12,6 @@
  *= require_tree .
 */
 
-.done {
+.complete {
   text-decoration: line-through;
 }
