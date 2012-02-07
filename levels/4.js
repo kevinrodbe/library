@@ -125,11 +125,12 @@ var TodoView = Backbone.View.extend({
   // Backbone will automatically call this `initialize` function
   // when you do `var todoView = new TodoView({model: todoItem})`
   initialize: function(){
-    // `bind` takes a third argument called the `context`
-    // argument.  TODO explain `this` and crap.
-    this.model.bind('change', this.render, this);
+    // `on` takes a third argument called the `context`
+    // argument.  For further explanation, check out [below](#section-25)
+    this.model.on('change', this.render, this);
   }
 });
+
 
 // So now, whenever the model changes, the views `render` function is called, and the HTML
 // is re-generated.  We also don't have to worry about inserting the view's `el` into the DOM
@@ -137,6 +138,27 @@ var TodoView = Backbone.View.extend({
 todoView.render();
 $('#app').append(todoView.el);
 
+// What about if we `destroy` the model, we should probably remove it from the DOM,
+// right?
+var TodoView = Backbone.View.extend({
+  initialize: function(){
+    // call the view's `this.remove` whenever this model is destroyed
+    this.model.on('destroy', this.remove, this);
+  },
+
+  remove: function(){
+    // use jQuery's [remove](http://api.jquery.com/remove/) to 
+    // remove this view's top-level element from the DOM
+    this.$el.remove();
+  }
+});
+
+// Calling `destroy` on the `todoItem` will remove it from the DOM:
+todoItem.destroy();
+
+// #### Brief Interlude on functions and `this`
+// 
+// TODO: write this section
 
 // Now we are really starting to see some of the power that using Backbone
 // gives us.  Anytime this model instance is changed, no matter from where in the
@@ -151,13 +173,18 @@ var TodoView = Backbone.View.extend({
   },
 
   initialize: function(){
-    this.model.bind('change', this.render, this);
+    this.model.on('change', this.render, this);
+    this.model.on('destroy', this.remove, this);
   },
 
   render: function(){
     this.$el.html(this.template(this.model.toJSON()));
     return this;
   },
+
+  remove: function(){
+    this.$el.remove();
+  }
 
   toggleStatus: function(){
     this.model.toggleStatus()

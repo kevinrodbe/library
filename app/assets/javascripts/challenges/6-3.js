@@ -1,4 +1,5 @@
-createChallenge('4-5', function(){
+createChallenge('6-3', '5-5', function(){
+
   window.TodoItem = Backbone.Model.extend({
     toggleStatus: function(){
       if(this.get('status') == 'incomplete'){
@@ -17,7 +18,7 @@ createChallenge('4-5', function(){
     },
 
     initialize: function(){
-      this.model.on('change', this.render, this);
+      this.model.bind('change', this.render, this);
     },
 
     render: function(){
@@ -30,9 +31,22 @@ createChallenge('4-5', function(){
     }
   });
 
-  window.todoItem = new TodoItem({description: 'Pick up milk.', status: 'incomplete'});
+  window.TodosView = Backbone.View.extend({
+    initialize: function(){
+      this.addOne = _.bind(this.addOne, this);
+    },
 
-  window.todoView = new TodoView({model: todoItem});
+    render: function(){
+      this.collection.forEach(this.addOne);
+      return this;
+    },
 
-  $('#app').append(todoView.render().el);
+    addOne: function(todoItem){
+      var todoView = new TodoView({model: todoItem});
+
+      console.log(this);
+      this.$el.append(todoView.render().el); 
+    }
+  });
+  window.todosView = new TodosView({collection: todoItems});
 });

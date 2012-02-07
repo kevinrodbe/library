@@ -1,4 +1,4 @@
-createChallenge('4-5', function(){
+createChallenge('4-6', function(){
   window.TodoItem = Backbone.Model.extend({
     toggleStatus: function(){
       if(this.get('status') == 'incomplete'){
@@ -18,11 +18,16 @@ createChallenge('4-5', function(){
 
     initialize: function(){
       this.model.on('change', this.render, this);
+      this.model.on('destroy', this.remove, this);
     },
 
     render: function(){
       this.$el.html(this.template(this.model.toJSON()));
       return this;
+    },
+
+    remove: function(){
+      this.$el.remove();
     },
 
     toggleStatus: function(){

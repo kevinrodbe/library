@@ -169,6 +169,15 @@ var todos = [
 ]
 todoItems.reset(todos);
 
+// The most common iterator you'll be using is `forEach`, which accepts
+// function as an argument and calls it with each model in the collection.
+
+// log the status of each model in the collection
+todoItems.forEach(function(todoItem){
+  console.log(todoItem.get('status'));
+}); // incomplete, complete, and incomplete
+
+
 // `map` will take a single `"iterator"` function as it's argument
 // which will be called exactly once per model instance.
 
