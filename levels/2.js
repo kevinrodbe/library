@@ -103,7 +103,7 @@ var todoItem = new TodoItem();
 todoItem.get('description') // 'Empty todo...'
 todoItem.get('status') // 'incomplete'
 
-// ### Events
+// ### Model Events
 // 
 // In Backbone, events play a big role in how applications are tied together.
 // For example, Views listen to changes in the Model and update the DOM based on those

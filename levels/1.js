@@ -8,11 +8,11 @@
 // As an example to work through, we are going to be building a simple todo app.
 // ### Using jQuery
 
-// Do an ajax request to `/todo`, and pass JSON to the callback
+// Do an ajax request to `/todos`, and pass JSON to the callback
 // Example JSON response:
 //
 //    `{ description: 'Pick up milk', status: 'incomplete' }`
-$.getJSON('/todo', function(data) {
+$.getJSON('/todos', function(data) {
   // Insert an h3 tag with a checkbox into the `#app` div already on the page
   $('#app').append('<h3><input type=checkbox /> ' + data.description + '</h3>')
 
