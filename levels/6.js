@@ -166,3 +166,97 @@ todoItems.add(newTodoItem); // automatically gets rendered and added to the DOM
 // use collection bulk populating methods to add many at the same time, like `fetch`
 // and `reset`
 
+// Let's also listen to the `reset` change event in our collection view, and 
+// whenever it is fired we should add all of the collection's models to the DOM
+var TodosView = Backbone.View.extend({
+  initialize: function(){
+    this.addOne = _.bind(this.addOne, this);
+    // We need to add a new method that is called
+    // whenever the `reset` event is fired.
+    this.addAll = _.bind(this.addAll, this);
+
+    this.collection.on('add', this.addOne);
+    // This will call `this.addAll` whenever the collection
+    // is fetched or reset
+    this.collection.on('reset', this.addAll);
+  },
+
+  render: function(){
+    // Use `this.addAll` in `render` instead of 
+    // repeating the `forEach` call.
+    this.addAll()
+    return this;
+  },
+
+  // All we did was move the code that used to
+  // be in `render` to here so it could be called
+  // on the `reset` event
+  addAll: function(){
+    this.collection.forEach(this.addOne);
+  },
+
+  addOne: function(todoItem){
+    var todoView = new TodoView({model: todoItem});
+    this.$el.append(todoView.render().el); 
+  }
+});
+
+// Now, because of how we've used event binding in
+// this view, it's possible to `render` this view
+// *before* the collection contains any models. 
+
+// Instantiate an empty collection instance
+var todoItems = new TodoItems();
+
+// Instantiate our collection view
+var todosView = new TodosView({collection: todoItems});
+// Since our collection is empty, this won't actually build any HTML
+todosView.render();
+// Insert the collection view's top-level element into the DOM
+$('#app').append(todosView.el);
+// Call `fetch` on the collection.  When finished, the `reset` event
+// will fire and the collection view's `addAll` will be called,
+// inserting each model into the DOM
+todoItems.fetch();
+
+// **show a screencast for this**
+
+// One quick refactor that we should do before concluding this Level
+// is in the collection view's `initialize` method.  See how we
+// are binding two functions, `this.addAll` and `this.addOne`?  We can
+// remove those `bind` calls and add `this` as the third argument to the
+// event listener calls.  
+//
+// Remember in [Level 4](file://localhost/Users/eric/CodePath/BackboneSlides/docs/4.html#section-23)
+// we did the same thing when listening to a model's `change` event.
+
+// Let's do it here on the collection's event listeners:
+initialize: function(){
+  this.collection.on('add', this.addOne, this);
+  this.collection.on('reset', this.addAll, this);
+}
+
+// Now, our final collection view looks like this:
+var TodosView = Backbone.View.extend({
+  initialize: function(){
+    this.collection.on('add', this.addOne, this);
+    this.collection.on('reset', this.addAll, this);
+  },
+
+  render: function(){
+    this.addAll()
+    return this;
+  },
+
+  addAll: function(){
+    this.collection.forEach(this.addOne);
+  },
+
+  addOne: function(todoItem){
+    var todoView = new TodoView({model: todoItem});
+    this.$el.append(todoView.render().el); 
+  }
+});
+
+
+
