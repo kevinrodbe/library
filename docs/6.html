@@ -142,6 +142,52 @@ we did the same thing when listening to a model's <code>change</code> event.</p>
     <span class="kd">var</span> <span class="nx">todoView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TodoView</span><span class="p">({</span><span class="nx">model</span><span class="o">:</span> <span class="nx">todoItem</span><span class="p">});</span>
     <span class="k">this</span><span class="p">.</span><span class="nx">$el</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="nx">todoView</span><span class="p">.</span><span class="nx">render</span><span class="p">().</span><span class="nx">el</span><span class="p">);</span> 
   <span class="p">}</span>
-<span class="p">});</span>
+<span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-46">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-46">&#182;</a>               </div>               <h4>Custom Events</h4>
+
+<p>So far we've made good use of the events provided 
+by backbone, such as the <code>reset</code> event on collections.</p>
+
+<p>But we can fire and listen to our own events too, and
+we call these "custom events".</p>
+
+<p>The only new thing we have to learn to use custom events
+is <code>trigger</code>.  <code>trigger</code> is the function used to fire 
+events.  So far, we've let backbone do all the "triggering"
+but we can also trigger events on things like models
+and collections.</p>
+
+<p>In fact, we are going to need custom events to help us
+finish out our collection view above.  You may have noticed
+in our collection view, we are listening to the collection's
+<code>reset</code> and <code>add</code> events, but what about the <code>remove</code> event?</p>
+
+<p>When a model instance is removed from a collection, it is not
+destroyed.  So in our setup above, when a <code>TodoItem</code> is removed
+from the <code>todoItems</code> collection, it won't be removed from the DOM.</p>
+
+<p>This is obviously not the desired behavior.  Currently, the only
+way to remove a model from the view is to destroy it.</p>
+
+<p>Using custom events, we can remove it from the view even when it is not
+destroyed.</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-47">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-47">&#182;</a>               </div>               <p>Let's open back up the <code>TodoView</code> class and listen to a new event on
+the model instance we'll call <code>hide</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">TodoView</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span></pre></div>             </td>           </tr>                               <tr id="section-48">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-48">&#182;</a>               </div>               <p>Now when we <code>trigger</code> the <code>'hide'</code> event
+on this model instance, the view's <code>remove</code> function
+will be called, much like we did 
+in <a href="file://localhost/Users/eric/CodePath/BackboneSlides/docs/4.html#section-26">Level 4</a></p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;hide&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">remove</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-49">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-49">&#182;</a>               </div>               <p>We will trigger the <code>'hide'</code> event when a model is removed
+from our <code>TodoItems</code> collection.  Let's implement that 
+in the <code>TodoItems</code> initialize function:</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">TodoItems</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(){</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;remove&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">hideModel</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+  <span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-50">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-50">&#182;</a>               </div>               <p>all we need to do is call <code>trigger</code>
+on the model and pass in the name
+of the event as a string</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">hideModel</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">){</span>
+    <span class="nx">model</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="s1">&#39;hide&#39;</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-51">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-51">&#182;</a>               </div>               <p>That's it.  In fact, we don't have to change our collection view
+at all for this to work, because we are handling it in the
+model view.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">todoItems</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">todoItem</span><span class="p">);</span> <span class="c1">// todoItem is removed from the DOM</span>
 
 </pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

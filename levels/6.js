@@ -259,4 +259,64 @@ var TodosView = Backbone.View.extend({
 });
 
 
+// #### Custom Events
+//
+// So far we've made good use of the events provided 
+// by backbone, such as the `reset` event on collections.
+//
+// But we can fire and listen to our own events too, and
+// we call these "custom events".
+//
+// The only new thing we have to learn to use custom events
+// is `trigger`.  `trigger` is the function used to fire 
+// events.  So far, we've let backbone do all the "triggering"
+// but we can also trigger events on things like models
+// and collections.
+//
+// In fact, we are going to need custom events to help us
+// finish out our collection view above.  You may have noticed
+// in our collection view, we are listening to the collection's
+// `reset` and `add` events, but what about the `remove` event?
+//
+// When a model instance is removed from a collection, it is not
+// destroyed.  So in our setup above, when a `TodoItem` is removed
+// from the `todoItems` collection, it won't be removed from the DOM.
+//
+// This is obviously not the desired behavior.  Currently, the only
+// way to remove a model from the view is to destroy it.
+//
+// Using custom events, we can remove it from the view even when it is not
+// destroyed.
 
+// Let's open back up the `TodoView` class and listen to a new event on
+// the model instance we'll call `hide`.
+var TodoView = Backbone.View.extend({
+  initialize: function(){
+    // Now when we `trigger` the `'hide'` event
+    // on this model instance, the view's `remove` function
+    // will be called, much like we did 
+    // in [Level 4](file://localhost/Users/eric/CodePath/BackboneSlides/docs/4.html#section-26)
+    this.model.on('hide', this.remove, this);
+  }
+});
+
+// We will trigger the `'hide'` event when a model is removed
+// from our `TodoItems` collection.  Let's implement that 
+// in the `TodoItems` initialize function:
+var TodoItems = Backbone.Collection.extend({
+  initialize: function(){
+    this.on('remove', this.hideModel, this);
+  },
+
+  // all we need to do is call `trigger`
+  // on the model and pass in the name
+  // of the event as a string
+  hideModel: function(model){
+    model.trigger('hide');
+  }
+});
+
+// That's it.  In fact, we don't have to change our collection view
+// at all for this to work, because we are handling it in the
+// model view.
+todoItems.remove(todoItem); // todoItem is removed from the DOM
