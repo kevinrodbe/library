@@ -51,6 +51,8 @@ $(function(){
   
   var challenge_slot = location.hash.replace('#', '')
 
+  if(challenge_slot == '') { challenge_slot = 'app' }
+
   loadChallenge(challenge_slot);
 
 })

@@ -68,6 +68,9 @@ var TodoItem = Backbone.Model.extend({
     }else{
       this.set({'status': 'incomplete'});
     }
+
+    // Save these changes to the server
+    this.save();
   }
 });
 
@@ -158,7 +161,7 @@ todoItem.destroy();
 
 // #### Brief Interlude on functions and `this`
 // 
-// TODO: write this section
+// TODO: write this section [reference this](http://documentcloud.github.com/backbone/#FAQ-this)
 
 // Now we are really starting to see some of the power that using Backbone
 // gives us.  Anytime this model instance is changed, no matter from where in the

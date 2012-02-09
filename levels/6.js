@@ -221,44 +221,6 @@ todoItems.fetch();
 
 // **show a screencast for this**
 
-// One quick refactor that we should do before concluding this Level
-// is in the collection view's `initialize` method.  See how we
-// are binding two functions, `this.addAll` and `this.addOne`?  We can
-// remove those `bind` calls and add `this` as the third argument to the
-// event listener calls.  
-//
-// Remember in [Level 4](file://localhost/Users/eric/CodePath/BackboneSlides/docs/4.html#section-23)
-// we did the same thing when listening to a model's `change` event.
-
-// Let's do it here on the collection's event listeners:
-initialize: function(){
-  this.collection.on('add', this.addOne, this);
-  this.collection.on('reset', this.addAll, this);
-}
-
-// Now, our final collection view looks like this:
-var TodosView = Backbone.View.extend({
-  initialize: function(){
-    this.collection.on('add', this.addOne, this);
-    this.collection.on('reset', this.addAll, this);
-  },
-
-  render: function(){
-    this.addAll()
-    return this;
-  },
-
-  addAll: function(){
-    this.collection.forEach(this.addOne);
-  },
-
-  addOne: function(todoItem){
-    var todoView = new TodoView({model: todoItem});
-    this.$el.append(todoView.render().el); 
-  }
-});
-
-
 // #### Custom Events
 //
 // So far we've made good use of the events provided 

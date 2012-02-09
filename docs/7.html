@@ -1,0 +1,142 @@
+<!DOCTYPE html>  <html> <head>   <title>7.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               7.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <h3>Level 7 - Router and History</h3>
+
+<p>So far our Todo application has been conspicously 
+free of links.  But this is a <em>web</em> application, so
+we can't completely skirt around the issue, can we?</p>
+
+<p>For example, let's say we want a link next to each
+todo item that takes us to a page that contains
+only that single todo item.</p>
+
+<p>Before, we'd build this functionality by creating a
+link with an <code>href</code> of something like <code>/todos/1</code>
+where <code>1</code> is the <code>id</code> of the <code>TodoItem</code>.  When clicked,
+our browser would make a request to our server, and
+our server would respond with a whole big block of HTML.</p>
+
+<p>If we wanted to save some request/response time, we
+might convert that link into an Ajax request, and the server
+would only have to respond with a little bit of data
+about that one todo.  We'd also only update just a subset
+of the DOM, instead of refreshing the entire thing. This made
+our web apps a lot more snappy, and things were good.</p>
+
+<p>Until they hit the back button, then everything was bad.  Instead of
+user returning to the list of todos, they'd go all the way back to
+the previous site. <em>Let's see this in action</em></p>
+
+<p><strong>show the screencast of the broken back button</strong></p>
+
+<p>The Router and History are the tools Backbone provides
+to solve this problem.</p>
+
+<p>The Router is where you define your application's URLs and
+map them to actions (much like the Rails router).</p>
+
+<p><code>Backbone.History</code> will make sure your browser history is
+updated when you navigate to application URLs.</p>
+
+<p>We'll see how these two pieces work together by building the functionality
+we described in the first paragraph for our budding Todo App.</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <h3>Creating a Router class.</h3>
+
+<p>Backbone applications can have more than 1 router, but for our example app
+we are only going to need one.</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Create a new Router class by extending <code>Backbone.Router</code></p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">TodoRouter</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Router</span><span class="p">.</span><span class="nx">extend</span><span class="p">({});</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>At this point, our router doesn't really do anything.  Let's change
+that by defining our first <code>route</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">TodoRouter</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Router</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">routes</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;todos/:id&quot;</span><span class="o">:</span> <span class="s2">&quot;show&quot;</span>
+  <span class="p">}</span>
+<span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Let's take a closer look at what that <code>"todos/:id": "show"</code> means.</p>
+
+<p>The left side of the route (<code>"todos/:id"</code>) defines
+the URL to match.  Note that URLs omit the leading <code>/</code>.  The <code>:id</code>
+section of the URL will match anything after the slash (unless it's another slash).</p>
+
+<p>So, for example, these URLs will match our route:</p>
+
+<ul>
+<li><code>todos/1</code></li>
+<li><code>todos/2</code></li>
+<li><code>todos/hello</code></li>
+<li><code>todos/1-hello</code></li>
+</ul>
+
+<p>But these won't:</p>
+
+<ul>
+<li><code>todos/</code></li>
+<li><code>todos/1/items</code></li>
+</ul>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>The right side of the route (<code>"show"</code>) is the name of the function
+that will be called when the route is matched.  Let's define <code>show</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">TodoRouter</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Router</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">routes</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;todos/:id&quot;</span><span class="o">:</span> <span class="s2">&quot;show&quot;</span>
+  <span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p><code>show</code> is passed an argument that will 
+be the value of the <code>:id</code> section matched in the url</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">show</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;in show with id &quot;</span> <span class="o">+</span> <span class="nx">id</span> <span class="o">+</span> <span class="s2">&quot; ...&quot;</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Our Router won't actually match any routes yet, we need to Instantiate it first</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">TodoApp</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TodoRouter</span><span class="p">();</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>We can test out our route by calling <code>TodoApp.navigate</code> which will
+update the browsers URL and trigger the route.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">TodoApp</span><span class="p">.</span><span class="nx">navigate</span><span class="p">(</span><span class="s2">&quot;todos/1&quot;</span><span class="p">,</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>pass <code>trigger</code> as true to trigger the route</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">trigger</span><span class="o">:</span> <span class="kc">true</span>
+<span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p><strong>Show screencast of the browser URL not updating</strong></p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p>Oops, something went wrong, our browser's URL didn't change
+and our route wasn't triggered. </p>
+
+<h3>Backbone History</h3>
+
+<p>Turns out there is one more step to perform, and that is
+activating <code>Backbone.history</code>.  </p>
+
+<p>Before we dive into the <em>how</em> of <code>history</code>, let's first
+take a look at the <em>why</em>.  </p>
+
+<p>Before a little over a year ago, to handle this history-preserving,
+back-button-fixing problem in the browser, developers made use of the
+hashmark <code>#</code> in URLs.  They could change the URL from <code>gmail.com/m</code>
+to <code>gmail.com/m#search</code> in javascript and change the page with Ajax,
+and then when the user hit the back button, the browser would return to
+<code>gmail.com/m</code>.</p>
+
+<p>It was a hack, and developers had to discover and implement that hack
+in many different ways, and not all of them compatible across browsers.</p>
+
+<p>HTML5 set out to solve this problem with new 
+<a href="https://developer.mozilla.org/en/DOM/Manipulating_the_browser_history#Adding_and_modifying_history_entries">history</a>
+APIs, specifically the <code>pushState</code> method, which allows
+developers to update the browser URL and the browser history, without
+the user of hashmarks.  So instead of a URL like <code>gmail.com/m#search</code>
+it could instead be <code>gmail.com/m/search</code>.</p>
+
+<p>Unfortunately, <a href="http://caniuse.com/history">browser support</a> 
+for the HTML5 history API is still not great (looking at you IE).</p>
+
+<p><code>Backbone.history</code> takes care of all of these messy issues for us and
+will work across browsers.  After we've instantiated all of our Routers 
+(which we did above) all we have to do is start <code>Backbone.history</code></p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <p>Only call this once</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">Backbone</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">start</span><span class="p">();</span></pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>If you only need to support modern browsers and want <code>history</code> to
+use the new HTML5 <code>pushState</code> api, start the <code>history</code> like this</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">Backbone</span><span class="p">.</span><span class="nx">history</span><span class="p">.</span><span class="nx">start</span><span class="p">({</span><span class="nx">pushState</span><span class="o">:</span> <span class="kc">true</span><span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Now, when we <code>navigate</code> to <code>todos/1</code>, the URL changes and our route
+is triggered.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">TodoApp</span><span class="p">.</span><span class="nx">navigate</span><span class="p">(</span><span class="s2">&quot;todos/1&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">trigger</span><span class="o">:</span> <span class="kc">true</span><span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p><strong>Show screencast with working router and history</strong></p>
+
+<h4>Implementing Show</h4>
+
+<p>Now that we have our router working, let's implement the show action, which
+should show the one <code>TodoItem</code> specified by the URL.</p>
+
+<p>To help with this action we've gone ahead and implemented
+a method on the <code>TodoItems</code> collection called <code>focusOnTodoItem</code>
+which looks like this:</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <p>The <code>TodoItems</code> collection class:</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">TodoItems</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">focusOnTodoItem</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <p>Find all models in the collection without the <code>id</code>
+passed in.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="kd">var</span> <span class="nx">modelsToRemove</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">todoItem</span><span class="p">){</span>
+      <span class="k">return</span> <span class="nx">todoItem</span><span class="p">.</span><span class="nx">id</span> <span class="o">!=</span> <span class="nx">id</span><span class="p">;</span>
+    <span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-19">&#182;</a>               </div>               <p>remove all models except for the one matching <code>id</code></p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">modelsToRemove</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <p>Remember that whenever we remove a model from our
+collection, the <code>TodosView</code> automatically updates.  </p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-21">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-21">&#182;</a>               </div>               <p>The next step is to call <code>focusOnTodoItem</code> from inside our
+<code>show</code> action.</p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-22">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-22">&#182;</a>               </div>               <p>Let's pass in our <code>todoItems</code> collection when we create our router:</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">TodoApp</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">TodoRouter</span><span class="p">({</span><span class="nx">todoItems</span><span class="o">:</span> <span class="nx">todoItems</span><span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-23">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-23">&#182;</a>               </div>               <p>Then we can define an <code>initialize</code> function on our Router class and
+set the <code>todoItems</code> property on the Router instance:</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">TodoRouter</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Router</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+  <span class="nx">routes</span><span class="o">:</span> <span class="p">{</span>
+    <span class="s2">&quot;todos/:id&quot;</span><span class="o">:</span> <span class="s2">&quot;show&quot;</span>
+  <span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-24">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-24">&#182;</a>               </div>               <p>anything passed in when doing <code>new TodoRouter</code>
+will be passed in here as <code>options</code></p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">){</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">todoItems</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">todoItems</span><span class="p">;</span>
+  <span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-25">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-25">&#182;</a>               </div>               <p>Now we can access our <code>todoItems</code> collection
+using <code>this.todoItems</code></p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">show</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">){</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">todoItems</span><span class="p">.</span><span class="nx">focusOnTodoItem</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-26">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-26">&#182;</a>               </div>               <p>Now, when we navigate to <code>todos/1</code>, all other
+todoItems will be removed from the DOM:</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nx">TodoApp</span><span class="p">.</span><span class="nx">navigate</span><span class="p">(</span><span class="s2">&quot;todos/1&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">trigger</span><span class="o">:</span> <span class="kc">true</span><span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-27">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-27">&#182;</a>               </div>               <p><strong>Go back to screencast to show this working</strong></p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

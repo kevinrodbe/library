@@ -1,6 +1,18 @@
-createChallenge('6-8', '6-2', function(){
+createChallenge('7-base', function(){
+  window.TodoItem = Backbone.Model.extend({
+    toggleStatus: function(){
+      if(this.get('status') == 'incomplete'){
+        this.set({'status': 'complete'});
+      }else{
+        this.set({'status': 'incomplete'});
+      }
+
+      this.save();
+    }
+  });
+
   window.TodoView = Backbone.View.extend({
-    template: _.template('<h3 class="<%= status %>"><input type=checkbox <%= status == "complete" ? "checked=checked" : "" %>/> <%= description %></h3>'),
+    template: _.template('<h3 class="<%= status %>"><input type=checkbox <%= status == "complete" ? "checked=checked" : "" %>/> <%= description %> <a href="/#todos/<%= id %>">☞</a></h3>'),
 
     events: {
       'change input': 'toggleStatus'
@@ -35,6 +47,14 @@ createChallenge('6-8', '6-2', function(){
 
     hideModel: function(model){
       model.trigger('hide');
+    },
+
+    focusOnTodoItem: function(id) {
+      var modelsToRemove = this.filter(function(todoItem){
+        return todoItem.id != id;
+      });
+
+      this.remove(modelsToRemove);
     }
   })
 
@@ -52,6 +72,7 @@ createChallenge('6-8', '6-2', function(){
     },
 
     addAll: function(){
+      this.$el.empty();
       this.collection.forEach(this.addOne);
     },
 
@@ -60,11 +81,4 @@ createChallenge('6-8', '6-2', function(){
       this.$el.append(todoView.render().el); 
     }
   });
-
-  window.todoItems = new TodoItems();
-  window.todosView = new TodosView({collection: todoItems});
-  todosView.render();
-  $('#app').append(todosView.el);
-
-  todoItems.fetch();
-})
+});
