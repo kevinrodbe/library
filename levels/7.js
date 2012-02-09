@@ -204,4 +204,95 @@ var TodoRouter = Backbone.Router.extend({
 // todoItems will be removed from the DOM:
 TodoApp.navigate("todos/1", {trigger: true});
 
-// **Go back to screencast to show this working**
+// **Go back to screencast to show this and the back button**
+//
+// Oops, our back button is updating the URL correctly, but
+// our Todo list still only shows that one todo item.
+//
+// We need to define another route to handle the root URL, let's do that now
+
+// Add a new route for the root path `""`
+var TodoRouter = Backbone.Router.extend({
+  routes: {
+    "": "index",
+    "todos/:id": "show"
+  },
+
+  // Show all todos by fetching them from the server
+  index: function(){
+    this.todoItems.fetch();
+  },
+
+  initialize: function(options){
+    this.todoItems = options.todoItems;
+  },
+
+  show: function(id){
+    this.todoItems.focusOnTodoItem(id);
+  }
+});
+
+// So now whenever the user goes back to the root URL,
+// the `index` action will be called and the todos
+// will be re-fetched and displayed.
+//
+// A side-effect of this change is that, when calling
+// `Backbone.history.start()`, our root route is going to
+// match, and the `index` action will be called.  So we 
+// only need to call `todoItems.fetch()` in one place,
+// the `index` action.
+
+// Instantiate our collection instance
+var todoItems = new TodoItems();
+// Instantiate our collection view
+var todosView = new TodosView({collection: todoItems});
+// Insert the todosView top-level element into the DOM
+$('#app').append(todosView.el);
+// This will trigger the `index` action, which will call
+// `todoItems.fetch()`
+Backbone.history.start();
+
+// #### Simple Organization
+//
+// The Router provides a nice place to organize some of the code
+// we've been writing.  With a little refactoring, we can clean up
+// some of this code.
+
+// Instead of assigning our Router class
+// into a variable, just immediately instantiate
+// an instance and store that in `TodoApp`.
+var TodoApp = new (Backbone.Router.extend({
+  routes: {
+    "": "index",
+    "todos/:id": "show"
+  },
+
+  // Put all the instantiation code here.
+  initialize: function(){
+    // Create our collection instance
+    this.todoItems = new TodoItems();
+    // Create our collection view
+    this.todosView = new TodosView({collection: this.todoItems});
+    // Insert the views top-level element into the DOM
+    $('#app').append(this.todosView.el);
+  },
+
+  index: function(){
+    this.todoItems.fetch();
+  },
+
+  // Call `Backbone.history.start()`
+  start: function(){
+    Backbone.history.start();
+  },
+
+  show: function(id){
+    this.todoItems.focusOnTodoItem(id);
+  }
+
+}));
+
+// Wrap `TodoApp.start()` in a jQuery ready
+// function, so our app won't start until
+// the entire DOM is loaded.
+$(function(){ TodoApp.start() });
