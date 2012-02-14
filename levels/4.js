@@ -1,13 +1,13 @@
 // ### Level 4 - Models and Views Together
-// 
+//
 // In this level, we are going to expand on the first level
 // to explore how Models and Views work together in Backbone to
 // provide clean separation between data and the DOM, which makes it easier
 // to create complex, modern web applications.
 //
 // In this level, we are going to start adding some functionality to our
-// Single Todo application.  At the end of this level, our app will 
-// allow the user to toggle the status of the TodoItem by checking a checkbox, 
+// Single Todo application.  At the end of this level, our app will
+// allow the user to toggle the status of the TodoItem by checking a checkbox,
 // and update the DOM to strikethrough the description if the status is `'complete'`
 
 // Lets first update our `TodoView` template and add a checkbox.
@@ -27,7 +27,7 @@ var TodoView = Backbone.View.extend({
 
   // We want to call a function on this View whenever the user
   // checks or unchecks the checkbox.
-  
+
   // Let's use the `events` declaration we learned about in Level 3
   // to trigger a function whenever the `change` event is fired on our
   // input element
@@ -38,6 +38,7 @@ var TodoView = Backbone.View.extend({
   // All that is left is to implement the `toggleStatus` function.
   // Let's start with just updating the model based on it's current status.
   toggleStatus: function(){
+    // TODO: use `===` instead of `==`
     if(this.model.get('status') == 'incomplete'){
       this.model.set({'status': 'complete'});
     }else{
@@ -120,7 +121,7 @@ toggleStatus: function(){
 // Well, you might remember that back in Level 2, we were able to listen
 // to `change` events on a model instance, and call a function when that
 // event fired.  And it would make sense that our view would be interested in
-// changes made to it's model, right?  
+// changes made to it's model, right?
 
 // So, when we initialize our View, let's have the view tell the model to call
 // the view's `render` function whenever the model changes.
@@ -150,7 +151,7 @@ var TodoView = Backbone.View.extend({
   },
 
   remove: function(){
-    // use jQuery's [remove](http://api.jquery.com/remove/) to 
+    // use jQuery's [remove](http://api.jquery.com/remove/) to
     // remove this view's top-level element from the DOM
     this.$el.remove();
   }
@@ -160,7 +161,7 @@ var TodoView = Backbone.View.extend({
 todoItem.destroy();
 
 // #### Brief Interlude on functions and `this`
-// 
+//
 // TODO: write this section [reference this](http://documentcloud.github.com/backbone/#FAQ-this)
 
 // Now we are really starting to see some of the power that using Backbone
