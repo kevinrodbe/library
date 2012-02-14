@@ -14,7 +14,7 @@
 // to call these collection views "headless" because they don't render any
 // of the UI themselves.
 
-// Let's create our first collection view for the collection of `todoItems` we 
+// Let's create our first collection view for the collection of `todoItems` we
 // worked with last level
 var TodosView = Backbone.View.extend({});
 
@@ -22,7 +22,7 @@ var TodosView = Backbone.View.extend({});
 // to make it clear that this view would be managing a set of todos, not just one.
 
 // Now when we create an instance of the `TodosView`, instead of passing in a model instance
-// like we did in Level 4, we instead pass in the collection instance 
+// like we did in Level 4, we instead pass in the collection instance
 // (in this case `todoitems`)
 var todosView = new TodosView({collection: todoItems});
 
@@ -50,8 +50,8 @@ var TodosView = Backbone.View.extend({
 // Remember when we covered [function binding](file://localhost/Users/eric/CodePath/BackboneSlides/docs/4.html#section-25)
 // in level 4 we talked about how the value of `this` can change.
 //
-// In our `render` function above, when we call `this.$el`, the `this` isn't set 
-// to the view instance, instead it's the global `window` object. 
+// In our `render` function above, when we call `this.$el`, the `this` isn't set
+// to the view instance, instead it's the global `window` object.
 
 // Here is a rewritten `render` that first binds the callback function to the view instance
 var TodosView = Backbone.View.extend({
@@ -64,7 +64,7 @@ var TodosView = Backbone.View.extend({
       this.$el.append(todoView.el)
     }
 
-    // the underscore `_` library provides a 
+    // the underscore `_` library provides a
     // [`bind`](http://documentcloud.github.com/underscore/#bind) function.
     _.bind(addOne, this);
 
@@ -74,6 +74,9 @@ var TodosView = Backbone.View.extend({
 });
 
 // This is a pretty common pattern in Backbone, especially in collection views.
+
+// TODO: remove usage of _.bind, and instead just explicitly set the context of `this`.
+// Example: `this.collection.forEach(addOne, this);`
 
 // But now `render` is a little cluttered, so let's clean it up.
 var TodosView = Backbone.View.extend({
@@ -88,7 +91,7 @@ var TodosView = Backbone.View.extend({
   // define `this.addOne` on the view
   addOne: function(todoItem){
     var todoView = new TodoView({model: todoItem});
-    this.$el.append(todoView.render().el); 
+    this.$el.append(todoView.render().el);
   },
 
   render: function(){
@@ -99,7 +102,7 @@ var TodosView = Backbone.View.extend({
 
 });
 
-// So now we are ready to render the collection view and 
+// So now we are ready to render the collection view and
 // insert it into the DOM
 todosView = new TodosView({collection: todoItems});
 todosView.render();
@@ -107,14 +110,14 @@ $('#app').append(todosView.el);
 
 
 // #### Collection events
-// 
+//
 // In the previous example, our collection view
 // would only work when we first initialized our app,
 // but would not be able to respond to changes in the collection
 // such as `reset`, `add`, and `remove`.
 //
 // Just like we did with our model views, our collection views
-// need to update the DOM to reflect an accurate state of 
+// need to update the DOM to reflect an accurate state of
 // the collection, so we will want to listen to each of
 // these events and update the DOM accordingly.
 //
@@ -123,7 +126,7 @@ $('#app').append(todosView.el);
 
 // Just like we did in [level 4](file://localhost/Users/eric/CodePath/BackboneSlides/docs/4.html#section-23)
 // we need to tell our collection to call a function whenever
-// something is added to it's collection.  
+// something is added to it's collection.
 
 
 // Let's get back into that collection view's `initialize` function:
@@ -135,12 +138,13 @@ var TodosView = Backbone.View.extend({
     // Since we already have defined a function
     // for adding a single todoItem to the DOM
     // we can just reuse it.
+    // TODO: remove `_.bind` and replace the event listener with `this.collection.on('add', this.addOne, this);`
     this.collection.on('add', this.addOne);
   },
 
   addOne: function(todoItem){
     var todoView = new TodoView({model: todoItem});
-    this.$el.append(todoView.render().el); 
+    this.$el.append(todoView.render().el);
   },
 
   render: function(){
@@ -166,7 +170,7 @@ todoItems.add(newTodoItem); // automatically gets rendered and added to the DOM
 // use collection bulk populating methods to add many at the same time, like `fetch`
 // and `reset`
 
-// Let's also listen to the `reset` change event in our collection view, and 
+// Let's also listen to the `reset` change event in our collection view, and
 // whenever it is fired we should add all of the collection's models to the DOM
 var TodosView = Backbone.View.extend({
   initialize: function(){
@@ -182,7 +186,7 @@ var TodosView = Backbone.View.extend({
   },
 
   render: function(){
-    // Use `this.addAll` in `render` instead of 
+    // Use `this.addAll` in `render` instead of
     // repeating the `forEach` call.
     this.addAll()
     return this;
@@ -197,13 +201,13 @@ var TodosView = Backbone.View.extend({
 
   addOne: function(todoItem){
     var todoView = new TodoView({model: todoItem});
-    this.$el.append(todoView.render().el); 
+    this.$el.append(todoView.render().el);
   }
 });
 
 // Now, because of how we've used event binding in
 // this view, it's possible to `render` this view
-// *before* the collection contains any models. 
+// *before* the collection contains any models.
 
 // Instantiate an empty collection instance
 var todoItems = new TodoItems();
@@ -223,14 +227,14 @@ todoItems.fetch();
 
 // #### Custom Events
 //
-// So far we've made good use of the events provided 
+// So far we've made good use of the events provided
 // by backbone, such as the `reset` event on collections.
 //
 // But we can fire and listen to our own events too, and
 // we call these "custom events".
 //
 // The only new thing we have to learn to use custom events
-// is `trigger`.  `trigger` is the function used to fire 
+// is `trigger`.  `trigger` is the function used to fire
 // events.  So far, we've let backbone do all the "triggering"
 // but we can also trigger events on things like models
 // and collections.
@@ -256,14 +260,14 @@ var TodoView = Backbone.View.extend({
   initialize: function(){
     // Now when we `trigger` the `'hide'` event
     // on this model instance, the view's `remove` function
-    // will be called, much like we did 
+    // will be called, much like we did
     // in [Level 4](file://localhost/Users/eric/CodePath/BackboneSlides/docs/4.html#section-26)
     this.model.on('hide', this.remove, this);
   }
 });
 
 // We will trigger the `'hide'` event when a model is removed
-// from our `TodoItems` collection.  Let's implement that 
+// from our `TodoItems` collection.  Let's implement that
 // in the `TodoItems` initialize function:
 var TodoItems = Backbone.Collection.extend({
   initialize: function(){
