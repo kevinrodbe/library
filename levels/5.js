@@ -10,6 +10,20 @@
 // restless and have taken to twitter and started the #morethanonetodo
 // hashtag so, unless we want to start losing users, we have to support
 // multiple todos.
+
+// On first thought, it would make sense to use an Array to store a set
+// of TodoItems.
+var todoItem1 = new TodoItem();
+var todoItem2 = new TodoItem();
+var todoItems = [todoitem1, todoItem2];
+
+// But since this is such a common pattern in client apps, 
+// backbone provides `Collection`, which are ordered set
+// of models instances, that, like models, make it
+// easy to represent a list of things in your UI, and deal
+// with changes.
+
+
 //
 // Backbone provides the Collection class, which is on the same level of 
 // View and Model, to handle this exact problem.  Collections are just an

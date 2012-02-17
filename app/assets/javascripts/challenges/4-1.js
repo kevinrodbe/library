@@ -3,7 +3,7 @@ createChallenge('4-1', function(){
   window.TodoItem = Backbone.Model.extend({});
 
   window.TodoView = Backbone.View.extend({
-    template: _.template('<h3><input type=checkbox <%= status == "complete" ? "checked=checked" : "" %>/> <%= description %></h3>'),
+    template: _.template('<h3><input type=checkbox <% if(status === "complete") print("checked") %>/> <%= description %></h3>'),
 
     render: function(){
       this.$el.html(this.template(this.model.toJSON()));
