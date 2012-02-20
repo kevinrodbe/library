@@ -97,7 +97,7 @@ var TodosView = Backbone.View.extend({
   render: function(){
     // call the view's `this.addOne` function
     // for each model in the collection
-    this.collection.forEach(this.addOne);
+    this.collection.forEach(this.addOne, this);
   }
 
 });

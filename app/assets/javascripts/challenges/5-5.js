@@ -6,5 +6,5 @@ createChallenge('5-5', '5-2', function(){
   ]
 
   todoItems.reset(todos);
-  console.log(todoItems.length);
+  // console.log(todoItems.length);
 });

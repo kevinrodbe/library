@@ -41,6 +41,6 @@ createChallenge('6-5', '6-2', function(){
   todosView.render();
   $('#app').append(todosView.el);
 
-  window.newTodoItem = new TodoItem({description: 'Learn js', status: 'complete'})
-  todoItems.add(newTodoItem);
+  window.newTodoItem = new TodoItem({description: 'Learn Rails', status: 'incomplete'})
+  // todoItems.add(newTodoItem);
 })

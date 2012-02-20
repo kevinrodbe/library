@@ -56,8 +56,8 @@ createChallenge('6-7', '6-2', function(){
 
   window.todoItems = new TodoItems();
   window.todosView = new TodosView({collection: todoItems});
-  todosView.render();
-  $('#app').append(todosView.el);
+  // todosView.render();
+  // $('#app').append(todosView.el);
 
-  todoItems.fetch();
+  // todoItems.fetch();
 })

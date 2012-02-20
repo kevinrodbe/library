@@ -124,7 +124,7 @@ TodoApp.navigate("todos/1", {
 // [history](https://developer.mozilla.org/en/DOM/Manipulating_the_browser_history#Adding_and_modifying_history_entries)
 // APIs, specifically the `pushState` method, which allows
 // developers to update the browser URL and the browser history, without
-// the user of hashmarks.  So instead of a URL like `gmail.com/m#search`
+// the use of hashmarks.  So instead of a URL like `gmail.com/m#search`
 // it could instead be `gmail.com/m/search`.
 //
 // Unfortunately, [browser support](http://caniuse.com/history) 

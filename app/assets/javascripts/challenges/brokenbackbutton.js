@@ -1,5 +1,4 @@
-createChallenge('app', function(){
-
+createChallenge('broken', function(){
   window.TodoItem = Backbone.Model.extend({
     toggleStatus: function(){
       if(this.get('status') == 'incomplete'){
@@ -13,10 +12,11 @@ createChallenge('app', function(){
   });
 
   window.TodoView = Backbone.View.extend({
-    template: _.template('<h3 class="<%= status %>"><input type=checkbox <%= status == "complete" ? "checked=checked" : "" %>/> <%= description %> <a href="/#todos/<%= id %>">☞</a></h3>'),
+    template: _.template('<h3 class="<%= status %>"><input type=checkbox <%= status == "complete" ? "checked=checked" : "" %>/> <%= description %> <a href="#">☞</a></h3>'),
 
     events: {
-      'change input': 'toggleStatus'
+      'change input': 'toggleStatus',
+      'click a': 'focus'
     },
 
     initialize: function(){
@@ -35,6 +35,11 @@ createChallenge('app', function(){
 
     toggleStatus: function(){
       this.model.toggleStatus()
+    },
+
+    focus: function(e){
+      e.preventDefault();
+      this.model.trigger('focus', {id: this.model.id});
     }
   });
 
@@ -44,10 +49,15 @@ createChallenge('app', function(){
 
     initialize: function(){
       this.on('remove', this.hideModel, this);
+      this.on('focus', this.focusModel, this);
     },
 
     hideModel: function(model){
       model.trigger('hide');
+    },
+
+    focusModel: function(options) {
+      this.focusOnTodoItem(options.id);
     },
 
     focusOnTodoItem: function(id) {
@@ -83,32 +93,38 @@ createChallenge('app', function(){
     }
   });
 
-  window.TodoApp = new (Backbone.Router.extend({
-    routes: {
-      "": "index",
-      "todos/:id": "show"
-    },
+  // window.TodoApp = new (Backbone.Router.extend({
+  //   routes: {
+  //     "": "index",
+  //     "todos/:id": "show"
+  //   },
 
-    initialize: function(){
-      this.todoItems = new TodoItems();
-      this.todosView = new TodosView({collection: this.todoItems});
-      this.todosView.render();
-      $('#app').append(this.todosView.el);
-    },
+  //   initialize: function(){
+  //     this.todoItems = new TodoItems();
+  //     this.todosView = new TodosView({collection: this.todoItems});
+  //     this.todosView.render();
+  //     $('#app').append(this.todosView.el);
+  //   },
 
-    index: function(){
-      this.todoItems.fetch();
-    },
+  //   index: function(){
+  //     this.todoItems.fetch();
+  //   },
 
-    start: function(){
-      Backbone.history.start();
-    },
+  //   start: function(){
+  //     Backbone.history.start();
+  //   },
 
-    show: function(id){
-      this.todoItems.focusOnTodoItem(id);
-    }
+  //   show: function(id){
+  //     this.todoItems.focusOnTodoItem(id);
+  //   }
 
-  }));
+  // }));
 
-  $(function(){ TodoApp.start() });
+  // $(function(){ TodoApp.start() });
+  this.todoItems = new TodoItems();
+  this.todosView = new TodosView({collection: this.todoItems});
+  this.todosView.render();
+  $('#app').append(this.todosView.el);
+  this.todoItems.fetch();
 });
+
