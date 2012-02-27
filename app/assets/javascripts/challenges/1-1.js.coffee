@@ -1,5 +1,7 @@
 app.createChallenge '1-1', ->
 
+  # Model Class
+  #
   # instructions:
   #
   # Welcome to the Anatomy of Backbone.js challenges!  We're going
