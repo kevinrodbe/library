@@ -1,4 +1,4 @@
-createChallenge('intro', function() {
+createSlide('intro', function() {
   
   $(function(){
     

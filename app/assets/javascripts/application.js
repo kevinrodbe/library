@@ -17,14 +17,14 @@
 //= require_tree .
 
 
-window.challenges = {}
+window.slides = {}
 
-window.createChallenge = function() {
+window.createSlide = function() {
   var args = Array.prototype.slice.call(arguments, 0);
   var name = args.shift();
   var func = args.pop()
 
-  window.challenges[name] = {
+  window.slides[name] = {
     func: func,
     dependencies: args
   }
@@ -32,13 +32,13 @@ window.createChallenge = function() {
 
 $(function(){
 
-  var loadChallenge = function(name) {
-    var challenge = window.challenges[name];
+  var loadSlide = function(name) {
+    var challenge = window.slides[name];
 
     if(typeof(challenge) !== "undefined") {
       if(challenge.dependencies.length > 0){
         challenge.dependencies.forEach(function(c){
-          loadChallenge(c);
+          loadSlide(c);
         });
       }
 
@@ -53,6 +53,6 @@ $(function(){
 
   if(challenge_slot == '') { challenge_slot = 'app' }
 
-  loadChallenge(challenge_slot);
+  loadSlide(challenge_slot);
 
 })

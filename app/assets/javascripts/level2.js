@@ -1,4 +1,4 @@
-createChallenge('level2', function(){
+createSlide('level2', function(){
 
   var Todo = Backbone.Model.extend({});
   var TodoView = Backbone.View.extend({
