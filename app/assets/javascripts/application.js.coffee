@@ -5,35 +5,45 @@
 #= require_tree .
 
 
-window.slides = {}
+window.app = {}
+
+app.slides = {}
+app.challenges = {}
+
+app.collection = app.challenges
+
+app.loader = (name) ->
+  challenge = app.collection[name]
+
+  if challenge?
+    if challenge.dependencies?.length > 0
+      challenge.dependencies.forEach (c) ->
+        loader c
+
+    challenge.func.apply window
+  else
+    alert "Could not find " + name
 
 window.createSlide = ->
   args = Array.prototype.slice.call(arguments, 0);
   name = args.shift()
   func = args.pop()
 
-  window.slides[name] =
+  app.slides[name] =
     func: func
     dependencies: args
 
+app.createChallenge = ->
+  args = Array.prototype.slice.call(arguments, 0);
+  name = args.shift()
+  func = args.pop()
+
+  app.challenges[name] = func: func
+
 $ ->
-
-  loadSlide = (name) ->
-    challenge = window.slides[name]
-
-    if challenge?
-      if challenge.dependencies.length > 0
-        challenge.dependencies.forEach (c) ->
-          loadSlide c
-
-      challenge.func()
-    else
-      alert "Could not find challenge " + name
-
-  
   challenge_slot = location.hash.replace('#', '')
 
   if challenge_slot == ''
     challenge_slot = 'app'
 
-  loadSlide challenge_slot
+  app.loader challenge_slot
