@@ -1,37 +1,16 @@
-app.createChallenge '4-4', ->
+app.createChallenge '4-5', ->
 
-  # Re-render on Change
+  # Removing the View
   #
   # Instructions:
   # 
-  # Dr. Goodparts pulled a late nighter and decided to make some
-  # changes to the app while you slept.  He added the `cancelled` class
-  # to the `<span>` tag when the appointment is cancelled, and then, knowing just
-  # enough to be dangerous, called `this.render()` in `cancel` to re-render the view.
+  # Sometimes Dr. Goodparts just all cowboy and starts
+  # destroying appointments right there in the console.  
   #
-  # Without gloating too much, update this code to use Model events to
-  # always re-render the view whenever the model changes.
-  #
-  # Make sure when `render` is called that the context (`this`) is the view instance
-  # using the third argument to `on`
+  # Make sure that when an appointment is destroyed, it's 
+  # corresponding view is removed from the DOM.
   #
   # Initial Code:
-  `var AppointmentView = Backbone.View.extend({
-    template: _.template('<span class="<%= if(cancelled) print("cancelled") %>">' +
-                          '<%= title %></span>' +
-                          '<a href="#">x</a>'),
-
-    events:  { "click a": "cancel" },
-    cancel: function(){
-      this.model.cancel();
-      this.render();
-    },
-    render: function(){
-      this.$el.html(this.template(this.model.toJSON()));
-    }
-  });`
-
-  # Answer:
   `var AppointmentView = Backbone.View.extend({
     template: _.template('<span class="<%= if(cancelled) print("cancelled") %>">' +
                           '<%= title %></span>' +
@@ -50,7 +29,31 @@ app.createChallenge '4-4', ->
     }
   });`
 
+  # Answer:
+  `var AppointmentView = Backbone.View.extend({
+    template: _.template('<span class="<%= if(cancelled) print("cancelled") %>">' +
+                          '<%= title %></span>' +
+                          '<a href="#">x</a>'),
+    
+    initialize: function(){
+      this.model.on('change', this.render, this);
+      this.model.on('destroy', this.remove, this);
+    }
+
+    events:  { "click a": "cancel" },
+    cancel: function(){
+      this.model.cancel();
+    },
+    render: function(){
+      this.$el.html(this.template(this.model.toJSON()));
+    },
+    remove: function(){
+      this.$el.remove();
+    }
+  });`
+
   # need this or coffeescript will produce a js syntax error
   this
+
 
 
