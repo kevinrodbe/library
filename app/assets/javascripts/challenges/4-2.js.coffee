@@ -52,13 +52,3 @@ app.createChallenge '4-2', ->
 
   # need this or coffeescript will produce a js syntax error
   this
-
-
-
-
-
-
-
-
-
-
