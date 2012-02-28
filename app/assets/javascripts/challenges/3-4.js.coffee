@@ -16,13 +16,13 @@ app.createChallenge '3-4', ->
   # Initial Code:
   `var AppointmentView = Backbone.View.extend({
     render: function(){
-      this.$el.html('<li>' + this.model.get('title') + '</li>');
+      this.$el.html('<span>' + this.model.get('title') + '</span>');
     }
   });`
 
   # Answer:
   `var AppointmentView = Backbone.View.extend({
-    template: _.template('<li><%= title %></li>'),
+    template: _.template('<span><%= title %></span>'),
 
     render: function(){
       this.$el.html(this.template(this.model.toJSON()));
