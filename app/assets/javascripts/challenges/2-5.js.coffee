@@ -1,30 +1,27 @@
 app.createChallenge '2-5', ->
 
-  # Getting back our attributes
+  # Less Listening
   #
   # Instructions:
   #
-  # We've already seen how we can use `get` to access
-  # attributes on a model instance, but what if we wanted
-  # them all at once?
+  # Dr. Goodparts browser crashed because of too many alerts.
   #
-  # Use console.log to log the attributes of the `appointment` instance.
-  # If you don't remember what function to call, consult the 
-  # [Backbone Model docs](http://documentcloud.github.com/backbone/#Model)
-  #
+  # Instead of listening for all attribute changes, just listen
+  # and alert when changes are made to the `cancelled` attribute.
   #
   # Initial Code:
-  `var appointment = new Appointment({id: 1})`
+  `appointment.on('change', function(){
+    alert("Hey Dr. Goodparts, your appointment has changed!");
+  });`
 
   # Answer:
-  `
-  var appointment = new Appointment({id: 1})
-  console.log(appointment.toJSON());
+  `appointment.on('change:cancelled', function(){
+    alert("Hey Dr. Goodparts, your appointment has changed!");
+  });`
   `
 
   # need this or coffeescript will produce a js syntax error
   this
-
 
 
 
