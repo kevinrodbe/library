@@ -13,7 +13,8 @@ app.createChallenge '4-4', ->
   # always re-render the view whenever the model changes.
   #
   # Make sure when `render` is called that the context (`this`) is the view instance
-  # using the third argument to `on`
+  # using the third argument to `on` (if you don't remember what this is referring to
+  # check out the API docs over in the references)
   #
   # Initial Code:
   `var AppointmentView = Backbone.View.extend({
