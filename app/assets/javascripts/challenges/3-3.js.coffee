@@ -4,20 +4,22 @@ app.createChallenge '3-3', ->
   #
   # Instructions:
   # 
-  # Refactor the code below to use the view instance's
+  # Refactor the `render` function below to use the view instance's
   # cached jQuery top-level element.
   #
   # Initial Code:
-  `
-  var appointmentView = new AppointmentView();
-  $(appointmentView.el).html();
-  `
+  `var AppointmentView = Backbone.View.extend({
+    render: function(){
+      $(this.el).html('<li>' + this.model.get('title') + '</li>');
+    }
+  });`
 
   # Answer:
-  `
-  var appointmentView = new AppointmentView();
-  appointmentView.$el.html();
-  `
+  `var AppointmentView = Backbone.View.extend({
+    render: function(){
+      this.$el.html('<li>' + this.model.get('title') + '</li>');
+    }
+  });`
 
   # need this or coffeescript will produce a js syntax error
   this
