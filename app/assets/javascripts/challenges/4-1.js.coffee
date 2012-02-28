@@ -23,8 +23,8 @@ app.createChallenge '4-1', ->
   # Answer:
   `var AppointmentView = Backbone.View.extend({
     template: _.template('<span><%= title %></span> <a href="#">x</a>'),
-    events:  { "click a": "cancelEvent" },
-    cancelEvent: function(){
+    events:  { "click a": "cancel" },
+    cancel: function(){
       this.model.set({cancelled: true});
     },
     render: function(){
