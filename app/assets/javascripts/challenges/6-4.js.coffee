@@ -26,7 +26,7 @@ app.createChallenge '6-4', ->
     },
     addOne: function(model){
       var appointmentView = new AppointmentView({model: model});
-      appointmentView.render()
+      appointmentView.render();
       this.$el.append(appointmentView.el);
     }
   });`
@@ -41,7 +41,7 @@ app.createChallenge '6-4', ->
     },
     addOne: function(model){
       var appointmentView = new AppointmentView({model: model});
-      appointmentView.render()
+      appointmentView.render();
       this.$el.append(appointmentView.el);
     }
   });`
