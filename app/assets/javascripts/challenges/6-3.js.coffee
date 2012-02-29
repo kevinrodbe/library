@@ -22,7 +22,3 @@ app.createChallenge '6-3', ->
 
   # need this or coffeescript will produce a js syntax error
   this
-
-
-
-
