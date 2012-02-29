@@ -10,7 +10,7 @@ app.createChallenge '7-6', ->
   #
   # First, add the root route and point it to the `index` action.
   #
-  # As you can see we are passing in a `appointment` list collection
+  # As you can see we are passing in a `appointmentList` list collection
   # in the router's `initialize` function.  Finish out the `index` action
   # by replace the content of `#app` with the `appointmentsView`.  Make sure
   # you fetch new data for the `appointmentList` from the server.
