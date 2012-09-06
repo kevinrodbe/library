@@ -6,6 +6,8 @@
 //  Copyright (c) 2012 Eric Allam. All rights reserved.
 //
 
+#define ARC4RANDOM_MAX      0x100000000
+
 #import "ViewController.h"
 
 @interface ViewController ()
@@ -20,6 +22,13 @@
 	// Do any additional setup after loading the view, typically from a nib.
     self.view = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.view.backgroundColor = [UIColor darkGrayColor];
+}
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    NSLog(@"Touch events %@", event);
+    double alpha = ((double)arc4random() / ARC4RANDOM_MAX);
+    self.view.backgroundColor = [self.view.backgroundColor colorWithAlphaComponent:alpha];
 }
 
 - (void)didReceiveMemoryWarning

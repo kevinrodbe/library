@@ -10,6 +10,8 @@
 
 #import "AppDelegate.h"
 
+#define ARC4RANDOM_MAX      0x100000000
+
 int main(int argc, char *argv[])
 {
     @autoreleasepool {
