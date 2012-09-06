@@ -22,9 +22,7 @@
     
     CGRect viewRect = [[UIScreen mainScreen] bounds];
     self.window = [[UIWindow alloc] initWithFrame:viewRect];
-    self.viewController = [[UIViewController alloc] init];
-    self.viewController.view = [[UIView alloc] initWithFrame:viewRect];
-    self.viewController.view.backgroundColor = [UIColor darkGrayColor];
+    self.viewController = [[ViewController alloc] init];
     self.window.rootViewController = self.viewController;
     [self.window makeKeyAndVisible];
     
