@@ -19,8 +19,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
-    self.view = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    
     self.view.backgroundColor = [UIColor darkGrayColor];
 }
 
