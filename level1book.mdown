@@ -30,6 +30,8 @@ But, to get going, we are going to introduce the course by creating a (very) sim
 iPhone application, and we are going to have Xcode generate the project for us (you almost
 never want to do this by hand).  We're using Xcode 4.5.
 
+#### Video 1
+
 Open Xcode and Create a new Project and you will see the New Project screen.  Select "Single View Application":
 
 ![single view](http://f.cl.ly/items/171p3U0F0i0K3L1b1T2T/Screen%20Shot%202012-09-10%20at%203.55.39%20PM.png)
@@ -57,17 +59,28 @@ Every iPhone application has an AppDelegate, but this one is yours.  One method 
 `application:didFinishLaunchingWithOptions:` method, that will get called by the OS whenever your application is launched.  But how will we know when it is called?  We
 can use NSLog inside the method definition, and build and run the application in the iOS simulator and we can see that the string was logged.
 
+#### Challenge 1
+
+- AppDelegate.h
+- AppDelegate.m
+
+In the application:didFinishLaunchingWithOptions: method in the app delegate, use NSLog to output a string to the console, so you can see when this method is called.
+
 ```objc
+# AppDelegate.m
+
 #import "AppDelegate.h"
 
 @implementation AppDelegate
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    NSLog(@"Application Did Finish Launching");
+    NSLog(@"Application Did Finish Launching"); 
     return YES;
 }
 @end
 ```
+
+-----
 
 
 Congratulations on running your first iPhone application!  But just logging to the console is not going to get you too high up the App Store best-sellers list.
@@ -120,6 +133,35 @@ Notice how we are creating a new variable named `window` when we do assign the n
 @end
 ```
 
+#### Challenge 2
+
+- AppDelegate.h
+- AppDelegate.m
+
+In the application:didFinishLaunchingWithOptions: method in the app delegate, instantiate a UIWindow the size of the bounds of the screen
+
+```objc
+# AppDelegate.m
+
+@implementation AppDelegate
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+    CGRect viewRect = [[UIScreen mainScreen] bounds];
+    self.window = [[UIWindow alloc] initWithFrame:viewRect];
+    
+    NSLog(@"Application Did Finish Launching");
+    return YES;
+}
+@end
+```
+
+----
+
+##### Challenge 3
+
+- AppDelegate.h
+- AppDelegate.m
+
 Next up is we have to tell the UIWindow that it's the key window, and that it should be visible to the user.  We do that using sending it the `makeKeyAndVisible` message:
 
 ```objc
@@ -144,6 +186,11 @@ controls what is put on the screen, and that object is a `UIViewController` inst
 
 - **Note** View Controller's are also responsible for interacting with "Models" too, but we've got a couple of levels to go before we touch on that.
 
+#### Challenge 4
+
+- AppDelegate.h
+- AppDelegate.m
+
 Since `window.rootViewController` expects an instance of UIViewController, let's alloc/init
 one and assign it:
 
@@ -162,11 +209,16 @@ one and assign it:
 }
 ```
 
-Great!  But wait, now what?  We keep doing these things, and yet the user sits there, board.  Don't worry, we are very close.  
+Great!  But wait, now what?  We keep doing these things, and yet the user sits there, bored.  Don't worry, we are very close.  
 
 ### Views
 
 We just created the frame, grabbed our favorite paintbrush, and finally it's time to put some paint on the canvas that is our app.  For this, we need a View!  Eventually, your app will have many view objects (everything you see in an iPhone app is a view, even from the smallest text label).  Each view represents something on the screen.  It is, quite literally, the paint.  
+
+#### Challenge 5
+
+- AppDelegate.h
+- AppDelegate.m
 
 Since we already have created our `rootViewController` instance, we can create an instance of `UIView` and set the `rootViewController.view` property, like so:
 
@@ -222,6 +274,8 @@ And after hitting 'Build and Run', we get this beauty:
 
 ### Touch
 
+#### Video 2
+
 It's called Cocoa **Touch** for a reason.  Allowing for a user to *touch* the screen,
 and make something happen based on that touch, is the bedrock of every app.  This is where
 our painting analogy falls flat on its face.  A painting, once done, doesn't ever have
@@ -263,7 +317,9 @@ So now in our implementation file, `ViewController.m`, we can override the
 @end
 ```
 
-This method is defined in `UIResponder`.  To find other methods defined in `UIResponder`, take a look at the [Class Reference](http://developer.apple.com/library/ios/#documentation/uikit/reference/UIResponder_Class/Reference/Reference.html).
+This method is defined in `UIResponder`.  To find other methods defined in `UIResponder`, take a look at the [Class Reference](http://developer.apple.com/library/ios/#documentation/uikit/reference/UIResponder_Class/Reference/Reference.html).  In the following diagram, you'll see how `UIViewController` isn't the only subclass of `UIResponder`:
+
+![UIResponder Hierarchy](http://f.cl.ly/items/1v0K0S443D0X3506073p/UIKit-high-level.png)
 
 - **Note** Above, we handled touch events in the controller, but UIViews are also subclasses of `UIResponder`.  Most of the time, you'll want to define touch handling methods in View subclasses, but because we already had a `UIViewController` subclass created for us by Xcode, it was easier just to do it here.
 
@@ -293,7 +349,14 @@ This question, *where does this code go?*, is a very important one in iOS develo
 
 To answer that question, you must ask yourself another question: *what if I wanted to create another `ViewController` instance somewhere else?*  Currently, the answer to this last question would involve duplicating the `UIView` creation and setting.  Duplicated code is a "code smell".  It means something stinks, and we need to do some cleanup.
 
+#### Challenge 6
+
 What we really want is that everytime an instance of `ViewController` is created, an instance of `UIView` is created and set as the `view` property.  We can do this by overriding the `loadView` method in our `ViewController` class, like so:
+
+- AppDelegate.h
+- AppDelegate.m
+- ViewController.m
+- ViewController.h
 
 ```objc
 @implementation ViewController
@@ -306,6 +369,14 @@ What we really want is that everytime an instance of `ViewController` is created
 
 @end
 ```
+
+
+#### Challenge 7
+
+- AppDelegate.h
+- AppDelegate.m
+- ViewController.m
+- ViewController.h
 
 The `loadView` method is called when this View Controller's `view` property is first accessed, which is taken care of by the Cocoa Touch framework your app is written on.  It's usually good practice, when creating Views in code (there are other ways to create views, which we'll get to in a bit), to do so in a `loadView` method on a subclass of `UIViewController`.  It's also good practice to move the View customization code into a method called `viewDidLoad`, like so:
 
@@ -328,7 +399,14 @@ The `loadView` method is called when this View Controller's `view` property is f
 @end
 ```
 
-- **Note** You must include `[super viewDidLoad]` to make sure the `UIViewController` class's `viewDidLoad` method is also called.
+- **Note** You must include `[super viewDidLoad]` to make sure the `UIViewController` class's `viewDidLoad` method is also called. Just make sure you don't call `[super loadView]` in the `loadView` method definition.
+
+#### Challenge 8
+
+- AppDelegate.h
+- AppDelegate.m
+- ViewController.m
+- ViewController.h
 
 Now let's finish up by filling in some code in the `touchesEnded:withEvent:` method definition that will set the alpha transparency of the view to a random value between `0.0` and `1.0`.  We'll leave it as an exercise for the reader to figure out how this works:
 
@@ -346,6 +424,8 @@ But almost no app consists of just one simple view, most have hundreds or thousa
 
 ## Interface Builder
 
+#### Video 3
+
 Interface Builder is an incredibly powerful tool for creating the User Interface of your app, and it is highly recommended by Apple that you use Interface Builder instead of creating the interface by writing code.
 
 Interface Builder creates "xib" files.  But we won't really need to worry about what is in those files.  You may have noticed when we generated our AlphaTouch project, Xcode created a "ViewController.xib" file.  If you click on it, you will see this:
@@ -353,6 +433,14 @@ Interface Builder creates "xib" files.  But we won't really need to worry about 
 ![ViewController.xib](http://f.cl.ly/items/3u152q1R2U021z2C2S0E/Resized%20Screen%202012-09-11%20at%202.00.44%20PM.png)
 
 As you can see in the "Objects" section, there is already one View in this xib.  This View is just an instance of UIView, exactly like the one we created in our `ViewController` `loadView` method earlier.  We can replace our manual View creation code by telling our `ViewController` instance to be created with this Interface Builder file as it's View.  We can do that during initialization, back in our `AppDelegate`, like so:
+
+
+#### Challenge 9
+
+- AppDelegate.h
+- AppDelegate.m
+- ViewController.m
+- ViewController.h
 
 ```objc
 @implementation AppDelegate
@@ -372,6 +460,13 @@ As you can see in the "Objects" section, there is already one View in this xib. 
 Instead of just calling `init`, we called `initWithNibName:bundle:` and passed in the name of the "xib".
 
 - **Note** A nib and xib file are basically the same thing: both are products of the Interface Builder tool.  The only difference is that nib files are more compact, machine readable versions of xib files.
+
+#### Challenge 10
+
+- AppDelegate.h
+- AppDelegate.m
+- ViewController.m
+- ViewController.h
 
 Since we are no longer creating views in code, we can completely remove the `loadView` method from `ViewController`, making it look like this:
 
@@ -399,6 +494,5 @@ You might be wondering how our `ViewController` instance's `view` property was s
 Build and Run your app and see it all still work.  
 
 You've now learned that you don't always have to create your User Interface in code, and how to tell a View Controller to load it's `view` from an Interface Builder file.  In the next Level, we are going to work more with Interface Builder, and introduce View Hierarchies.
-
 
 [learnobjc]: http://cocoadevcentral.com/d/learn_objectivec/ "Learn Objective-C"
