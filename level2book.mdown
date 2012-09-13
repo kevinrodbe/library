@@ -1,0 +1,13 @@
+## Level 2 Book
+
+#### Autolayout
+
+Auto layout is a constraint based, descriptive layout system.  Hardcoded layout is like CGRect.
+
+Button is centered horizontally in it's superview, a fixed distance from the bottom.
+
+Constraints are equations:
+
+Button.centerX = Superview.centerX
+Button.bottom = Superview.bottom - padding
+
