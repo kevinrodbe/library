@@ -66,7 +66,7 @@ can use NSLog inside the method definition, and build and run the application in
 
 In the application:didFinishLaunchingWithOptions: method in the app delegate, use NSLog to output a string to the console, so you can see when this method is called.
 
-```objc
+```
 # AppDelegate.m
 
 #import "AppDelegate.h"
@@ -78,6 +78,7 @@ In the application:didFinishLaunchingWithOptions: method in the app delegate, us
     return YES;
 }
 @end
+
 ```
 
 -----
@@ -97,14 +98,14 @@ with the "frame" exactly the same size as that of the screen.  This will make su
 
 To get the full "frame" of the screen, we can use the UIScreen class to get the bounds, like so:
 
-```objc
+```
 CGRect viewRect = [[UIScreen mainScreen] bounds];
 ```
     
 Now `viewRect` is a CGRect object that defines the "bounds"
  of the screen.  When we initialize our UIWindow object, we will pass in this object, like so:
  
-```objc
+```
 @implementation AppDelegate
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -120,7 +121,7 @@ Now `viewRect` is a CGRect object that defines the "bounds"
 Notice how we are creating a new variable named `window` when we do assign the newly created
 `UIWindow` instance.  There is a problem here, though. When the `application:didFinishLaunchingWithOptions:` method is executed and returns, that `window` variable will go away, and we won't be able to get to it again, and so bad things could happen.  There is an easy fix.  Our AppDelegate header file was generated with a `UIWindow` property named `window`.  So let's use property syntax to assign the UIWindow to `self.window`, like so:
 
-```objc
+```
 @implementation AppDelegate
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -140,7 +141,7 @@ Notice how we are creating a new variable named `window` when we do assign the n
 
 In the application:didFinishLaunchingWithOptions: method in the app delegate, instantiate a UIWindow the size of the bounds of the screen
 
-```objc
+```
 # AppDelegate.m
 
 @implementation AppDelegate
@@ -164,7 +165,7 @@ In the application:didFinishLaunchingWithOptions: method in the app delegate, in
 
 Next up is we have to tell the UIWindow that it's the key window, and that it should be visible to the user.  We do that using sending it the `makeKeyAndVisible` message:
 
-```objc
+```
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     
@@ -222,7 +223,7 @@ We just created the frame, grabbed our favorite paintbrush, and finally it's tim
 
 Since we already have created our `rootViewController` instance, we can create an instance of `UIView` and set the `rootViewController.view` property, like so:
 
-```objc
+```
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     
@@ -247,7 +248,7 @@ As you can see, when we created our view with `initWithFrame`, we passed in the 
 Before we hit the `Build and Run` button, let's give our new View a background color so
 when we run our app, we'll finally see something other than a black void:
 
-```objc
+```
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     
@@ -285,7 +286,7 @@ signal, or a phone call, or a thousand other events.
 But for now, let's just talk about *touch* events (others will be covered later in the course).  In iOS, Apple created a class called `UIResponder` for *responding* to user events, like
 touch and motion.  How do you use this class?  Should we just create a `UIResponder` object, and then call some methods on it, something like this:
 
-```objc
+```
 UIResponder *responder = [[UIResponder alloc] init];
 [responder respondToTouches];
 ```
@@ -296,7 +297,7 @@ The answer to *where do I put this code?* in iOS programming is, very often, **i
 
 Luckily, `UIViewController` is already a subclass of `UIResponder`, so we can just create a *subclass* of `UIViewController` in our app, and implement a method defined in `UIResponder` to respond to a user touch event.  In fact, when Xcode first generated our app earlier in the level, it went ahead and created a subclass of `UIViewController` for you, in `ViewController.h` and `ViewController.m`.  In `ViewController.h`, you can see that our newly created `ViewController` class is a *subclass* of `UIViewController`:
 
-```objc
+```
 #import <UIKit/UIKit.h>
 
 @interface ViewController : UIViewController
@@ -307,7 +308,7 @@ Luckily, `UIViewController` is already a subclass of `UIResponder`, so we can ju
 So now in our implementation file, `ViewController.m`, we can override the 
 `touchesEnded:withEvent:` method to do something when a touch happens:
 
-```objc
+```
 @implementation ViewController
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
@@ -325,7 +326,7 @@ This method is defined in `UIResponder`.  To find other methods defined in `UIRe
 
 Before we can see the `@"touchesEnded"` string in the console, we'll need to switch out our use of `UIViewController` for `ViewController` in our `AppDelegate`, like so:
 
-```objc
+```
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     
@@ -358,7 +359,7 @@ What we really want is that everytime an instance of `ViewController` is created
 - ViewController.m
 - ViewController.h
 
-```objc
+```
 @implementation ViewController
 
 - (void)loadView
@@ -380,7 +381,7 @@ What we really want is that everytime an instance of `ViewController` is created
 
 The `loadView` method is called when this View Controller's `view` property is first accessed, which is taken care of by the Cocoa Touch framework your app is written on.  It's usually good practice, when creating Views in code (there are other ways to create views, which we'll get to in a bit), to do so in a `loadView` method on a subclass of `UIViewController`.  It's also good practice to move the View customization code into a method called `viewDidLoad`, like so:
 
-```objc
+```
 @implementation ViewController
 
 - (void)loadView
@@ -410,7 +411,7 @@ The `loadView` method is called when this View Controller's `view` property is f
 
 Now let's finish up by filling in some code in the `touchesEnded:withEvent:` method definition that will set the alpha transparency of the view to a random value between `0.0` and `1.0`.  We'll leave it as an exercise for the reader to figure out how this works:
 
-```objc
+```
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
     self.view.alpha = ((double)arc4random() / 0x100000000);
@@ -442,7 +443,7 @@ As you can see in the "Objects" section, there is already one View in this xib. 
 - ViewController.m
 - ViewController.h
 
-```objc
+```
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -470,7 +471,7 @@ Instead of just calling `init`, we called `initWithNibName:bundle:` and passed i
 
 Since we are no longer creating views in code, we can completely remove the `loadView` method from `ViewController`, making it look like this:
 
-```objc
+```
 @implementation ViewController
 
 - (void)viewDidLoad

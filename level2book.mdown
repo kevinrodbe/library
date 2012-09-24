@@ -11,3 +11,10 @@ Constraints are equations:
 Button.centerX = Superview.centerX
 Button.bottom = Superview.bottom - padding
 
+UILayoutPriority required level is 1000, anything less than that will be minimized.
+
+Auto Layout will call -intrinsicContentSize to generate the size of the UIView, for example a button has a size based on it's text label and system defined padding.
+
+Visual Format Language:
+
+
