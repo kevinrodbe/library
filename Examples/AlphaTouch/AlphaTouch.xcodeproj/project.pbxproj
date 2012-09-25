@@ -15,7 +15,6 @@
 		07356DF615FE388C0018144A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 07356DF515FE388C0018144A /* AppDelegate.m */; };
 		07356DF915FE388C0018144A /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 07356DF815FE388C0018144A /* ViewController.m */; };
 		07356DFC15FE388C0018144A /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 07356DFA15FE388C0018144A /* ViewController.xib */; };
-		079AECBF16022BFB005A6837 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 079AECBE16022BFA005A6837 /* Default-568h@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,7 +31,6 @@
 		07356DF715FE388C0018144A /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		07356DF815FE388C0018144A /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		07356DFB15FE388C0018144A /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/ViewController.xib; sourceTree = "<group>"; };
-		079AECBE16022BFA005A6837 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,7 +50,6 @@
 		07356DD615FE388C0018144A = {
 			isa = PBXGroup;
 			children = (
-				079AECBE16022BFA005A6837 /* Default-568h@2x.png */,
 				07356DEB15FE388C0018144A /* AlphaTouch */,
 				07356DE415FE388C0018144A /* Frameworks */,
 				07356DE215FE388C0018144A /* Products */,
@@ -154,7 +151,6 @@
 			files = (
 				07356DF015FE388C0018144A /* InfoPlist.strings in Resources */,
 				07356DFC15FE388C0018144A /* ViewController.xib in Resources */,
-				079AECBF16022BFB005A6837 /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,7 +277,6 @@
 				07356E0115FE388C0018144A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
