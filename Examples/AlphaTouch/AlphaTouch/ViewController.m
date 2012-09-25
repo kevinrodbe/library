@@ -14,24 +14,28 @@
 
 @implementation ViewController
 
-//- (void)loadView
-//{
-//    self.view = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-//    
-//}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    self.view.backgroundColor = [UIColor darkGrayColor];
+    UIButton *firstButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    firstButton.frame = CGRectMake(100, 100, 100, 44);
+    [firstButton setTitle:@"Click me!" forState:UIControlStateNormal];
+    [firstButton addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:firstButton];
+    
+    UILabel *firstLabel = [[UILabel alloc] initWithFrame:CGRectMake(100, 200, 200, 44)];
+    firstLabel.text = @"Hello I am a UILabel";
+    [self.view addSubview:firstLabel];
 }
 
 #define ARC4RANDOM_MAX      0x100000000
 
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+- (void)buttonPressed:(UIButton *)sender
 {
+    NSLog(@"Button pressed, sender: %@", sender);
     self.view.alpha = ((double)arc4random() / 0x100000000);
+    [sender removeFromSuperview];
 }
 
 - (void)didReceiveMemoryWarning

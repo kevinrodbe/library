@@ -1,0 +1,210 @@
+## Notes
+
+### Concepts covered
+
+* Creating properties (and how to do it specifically for interface items)
+    * The ViewController's view retains the subviews (thus the weak reference)
+* Creating a UIButton in code
+    * CGRectMake / UIView frame
+    * HIG (how big to make the button)
+* Adding a view as a subview using addSubview
+    * relative frames
+* Setting a UIButtons action when tapped using @selector
+* selectors, messages, and method definitions
+* NSString stringWithFormat
+* Adding views using IB
+* Connecting views in IB to controller properties using IBOutlet and IBAction
+    
+### Challenge Applications:
+
+Instead of a button, use a slider that sets the opacity of an image view that is already a subview of the controller's view, AND updates a label to show the opacity value.
+
+### Steps
+
+* Create a UIButton that does the same thing as before with the changing of the alpha of the view.  This allows us to explain in the video about adding the button as a subview of the top level view.
+    * Create the UIButton property in the ViewController.h 
+* Explain the selector versus method definition versus a message.
+* Add another subview (label), and use an outlet on the ViewController to update the value of the label after the button is clicked.
+    * Create the UIButton property in the ViewController.h
+* Explain NSString for setting the label with a dynamic value.
+* Subviews get properties from their parent views, so animation of all subviews and happen by updating the property and animating it on the parent view.
+* Refactor to IB step:
+    * Create the subviews in IB
+    
+
+## Content
+
+### Video 1
+
+We left off in Level 1 with an App that had the ability to change the opacity of it's view whenever you touched anywhere on the screen.  It did this through communicating with it's `ViewController`, our custom class for controlling the view's of our application.  In this Level, we are going to add some more UI to our app, some actual UI "controls" and then display information about our app to the user.  It's not going to be too complicated but it will introduce some of the core concepts behind your app's User Interface.
+
+Right now, it's really hard for our users to figure out what to do with our app by just looking at it.  Nothing on it looks clickable, it's just a blank screen, and they won't figure out what is going on until they happen to tap on it. This is bad design.  What we need is a way to let the user know they can tap something.  A good way to do this would be with a button.  Everyone knows how a button works.  You "push" a button, and some action occurs.
+
+![image](http://blog.hostgator.com/images/big_red_button.jpg)
+
+We *could* build our own button using just `UIView` and some drawing code, as well as implementing the correct "touches" methods.  But Cocoa Touch ships with many common controls that we can use in our apps, like `UIButton` or `UISlider`, which inherit from `UIView` and supply ways to perform some method when the user interacts with the control (taps as in the case of `UIButton` or slides as in `UISlider`).
+
+Let's add a UIButton to our UI that when pressed, will change the opacity of the `ViewController`'s to a random value.
+
+Here is how we'd create a new `UIButton` in code:
+
+```
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    self.view.backgroundColor = [UIColor blueColor];
+    
+    UIButton *firstButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    firstButton.frame = CGRectMake(100, 100, 100, 44);
+    [firstButton setTitle:@"Click me!" forState:UIControlStateNormal];
+    [self.view addSubview:firstButton];
+}
+```
+
+That's a lot of code, so let's go through it piece by piece and see how it works.  First off, we notice that we are back in the `ViewController.m` file, in the `viewDidLoad` method.  If you remember from Level 1, we are loading the `ViewController`'s "main" UIView in an Interface Builder file.  By the time `viewDidLoad` is called, `self.view` has been set and is an instance of UIView, filling the entire screen of the app.  This gives us a good place to hook in and update the user interface.
+
+We start by creating an instance of `UIButton` and just assigning it to a local variable named `firstButton`.
+
+```
+UIButton *firstButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+```
+
+We're using the `buttonWithType` method on `UIButton` and passing in an option called `UIButtonTypeRoundedRect`.  This option controls how the `UIButton` will look when it is drawn on the screen.  Here are the other values you could use for this option:
+
+```
+typedef enum {
+   UIButtonTypeCustom = 0,
+   UIButtonTypeRoundedRect,
+   UIButtonTypeDetailDisclosure,
+   UIButtonTypeInfoLight,
+   UIButtonTypeInfoDark,
+   UIButtonTypeContactAdd,
+} UIButtonType;
+```
+
+**Note** Talk about enums?
+
+After we've created our instance, we give it a `frame`.  Back in Level 1, when we created our first view, we assigned it a frame the full width and height of the screen, and positioned it at the very top left corner (point 0,0), thus ensuring the view filled the entire screen.  Well, we don't want our `firstButton` to fill the entire screen, so we have to create a `frame` that is smaller than the entire window.  We do this with `CGRectMake`:
+
+```
+firstButton.frame = CGRectMake(100, 100, 100, 44);
+```
+
+`CGRectMake` is a convienent function for creating `CGRect` objects that define the four values needed to create the `frame` of a view: 
+
+* Number of points from the left of the view's container
+* Number of points from the top of the view's container
+* Number of points wide
+* Number of points tall
+
+**Note** points vs pixels?
+
+So, using the `CGRectMake` function above, it means we want our `firstButtom` to be `100` points wide, `44` points high, and `100` points from both the top and left of the screen.  We didn't pick the `44` points number out of thin air, but instead we followed the [Apple Human Interface Guidelines for iOS](http://developer.apple.com/library/ios/#DOCUMENTATION/UserExperience/Conceptual/MobileHIG/Introduction/Introduction.html) (or HIG as commonly refered to) for the recommended size of clickable targets:
+
+    The screen size of iOS-based devices might vary, but the average size of a fingertip does not. Regardless of the device your app runs on, following these guidelines ensures that people can comfortably use your app.
+
+    Give tappable elements in your app a target area of about 44 x 44 points. The iPhone Calculator app is a good example of fingertip-size controls.
+    
+Next up, we set the title of the button, like so:
+
+```
+[firstButton setTitle:@"Click me!" forState:UIControlStateNormal];
+```
+
+You can pass in different options in the `forState` parameter to set the title based on the buttons state. For example, if you wanted the button's title to be "You're clicking me!" when the user's finger is touching the button, you would do:
+
+```
+[firstButton setTitle:@"Click me!" forState:UIControlStateNormal];
+[firstButton setTitle:@"You're clicking me!" forState: UIControlStateHighlighted];
+```
+
+Okay, we are ready to build our app and run it in the simulator to see our nice new beautiful button!  Oops, where is it?  Well, we forgot one crucial step.  Just creating the `UIButton` instance and setting it's `frame` was not enough.  We actually need to add that `UIButton` instance as a `subview` of another view that is already on the screen.  Luckily, we already have a view, our `ViewController`'s `view` property holds a `UIView` that fills the screen, so if we had our `firstButton` as a subview, it will be displayed:
+
+```
+[self.view addSubview:firstButton];
+```
+
+Before we explain more about how this works, let's build and run our app (build and run and show it in simulator).
+
+This is actually how the entire UI for an app is built:  by creating a "hierarchy" of views, they are position and shown above or below other views, depending on where they are in that hierarchy.  This is known as the "View Hierarchy".  Each view has one "superview" or "parent view", for example, our `firstButton`'s `superview` is the `self.view`.  Each view also has a list of `subviews`.  In our example, when we call `[self.view addSubview:firstButton]` we are adding `firstButton` to the end of `self.view`'s list of subviews, which in this case would consist of only 1 view, `firstButton`.
+
+![image](http://yuml.me/bf7c4167)
+
+If we were to add another subview to `self.view`, this time a `UILabel`, like so:
+
+```
+UILabel *firstLabel = [[UILabel alloc] initWithFrame:CGRectMake(100, 200, 200, 44)];
+firstLabel.text = @"Hello I am a UILabel";
+[self.view addSubview:firstLabel];
+```
+
+Then our diagram would look like this:
+
+![image](http://yuml.me/ad879ca8)
+
+
+
+### Challenge 1
+
+A `UILabel` is another `UIView` subclass that does a specific task: displays read-only text.  In `viewDidLoad`, Create an instance of `UILabel`.  Make it 200 points wide and 44 points high.  Offset it 100 points from the left of the screen and 200 points from the top.  Set it's `text` property to `@"Hello I am a UILabel"`.  Then display it on screen by adding it to the `ViewController`'s root view list of subviews using `addSubview`.
+
+### Video 2
+
+We've now successfully added a UIButton to our view, but it's not doing anything! We need to tell the button what to do when it is tapped.  If you remember from Level 1, we responded to the user tapping on our view by implementing the `-touchesEnded:withEvent:` method on our `ViewController`.  We could, if we wanted to, create a custom subclass of `UIButton` and implement `-touchesEnded:withEvent:` to run some code whenever the button is pressed, but that is overkill.  `UIButton`s are made to be pressed, so they have an API for handling presses.
+
+Here is how you'd call a method named `buttonPressed:` on the `ViewController` whenever the `firstButton` is tapped:
+
+```
+[firstButton addTarget:self action:@selector(buttonPressed:) forControlEvents:UIControlEventTouchUpInside];
+```
+
+The method `addTarget:action:forControlEvents:` is defined on the `UIControl` class, which `UIButton` and other controls inherit from.  What we are doing above is telling the button to call the `buttonPressed:` method (that's the action part) on the target `self` (the `ViewController` instance), whenever the control event `UIControlEventTouchUpInside` occurs.
+
+Now, in `ViewController`, we have to define the `buttonPressed:` method:
+
+```
+- (void)buttonPressed:(id)sender
+{
+    NSLog(@"Button pressed, sender: %@", sender);
+    self.view.alpha = ((double)arc4random() / 0x100000000);
+}
+```
+
+**Note:** Cover @selector()?
+
+Now, whenever the user taps the `firstButton` view, the `buttonPressed:` method will be called with one argument, the `UIControl` that caused the method to be called, in this case, the `UIButton` instance.  The method gets the `sender` as an argument because we could have a situation where multiple `UIControl`s pointed at the same method and we could use the `sender` parameter to tell which one fired the action.
+
+We can use `NSLog` to see exactly what the `sender` argument is, by using the `%@` formatter.  `%@` is a placeholder like `%d` (which would display an int type), but for objects.
+
+```
+Button pressed, sender: <UIRoundedRectButton: 0x717c8a0; frame = (100 100; 100 44); opaque = NO; layer = <CALayer: 0x717bc30>>
+```
+
+Using this `sender` argument, we could do things like removing the button from the view after it is tapped, thus only allowing it to be tapped once.  We do this by calling the `removeFromSuperview` on the `sender`, like so:
+
+```
+- (void)buttonPressed:(UIButton *)sender
+{
+    NSLog(@"Button pressed, sender: %@", sender);
+    self.view.alpha = ((double)arc4random() / 0x100000000);
+    [sender removeFromSuperview];
+}
+```
+
+We didn't know it before, but when we added `firstButton` to the list of `self.view`'s subviews, the button got a reference back to `self.view` as the buttons "superview".  The diagram would look like this:
+
+![image](http://yuml.me/ea829d65)
+
+That allows us to be able to remove a view (the `UIButton`) from it's superview by just calling `removeFromSuperview`.
+
+**Build and Run**
+
+
+### Challenge 2
+
+
+
+
+
+
