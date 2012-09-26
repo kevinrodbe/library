@@ -12,4 +12,8 @@
 
 - (IBAction)buttonPressed:(id)sender;
 
+@property (weak, nonatomic) IBOutlet UIButton *fiftyPercentButton;
+//@property (weak, nonatomic) UIButton *makeYellowButton;
+//@property (weak, nonatomic) UIButton *makeBrownButton;
+
 @end
