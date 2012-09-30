@@ -23,6 +23,8 @@ Go to any bookstore and open up the first iOS development book you see and inevi
 chapter will be all about Xcode.  Xcode is the IDE (Integrated Development Environment) from Apple used
 to build iOS and Mac applications.  In this course we're going to encourage you to STAY away from XCode, don't even think about it.  That is because this course, as all other Code School courses, rests on the princicle of Learning by Doing.  And so we've built a completely browser based system for challenging you on what you are learning.  Don't worry though, as we go along we will be sure to point out Xcode resources that you can use to learn the IDE.
 
+I suspect learning to build iPhone apps could feel a lot like learning to drive a submarine… you're going to look at some code or lets say.. interfaces, and there's going to be a ton of knobs and instruments.  If we sit down in the navigator's seat and attempt to explain what every single button does, you're never going to be able to set sail.  Our goal is to get you sailing as soon as possible, which means we're going to be ignoring some knobs or well.. methods and code along the way.  You're going to be seeing a lot of foreign looking instrumentation as we learn.. don't let it intimidate you.  Stay focused on what's in front of you.. try not to get too distracted.. and you'll be diving to the bottom of the ocean in no time.
+
 #### Video 1
 
 Together in this level we're going to build an application with a Single View that has a background color, and when we tap anywhere on the screen, the alpha transparency of the view will change.  Not terribly complex or interesting, but you have to start somewhere. 
@@ -80,6 +82,7 @@ CGRect viewRect = [[UIScreen mainScreen] bounds];
 Apple maintains great developer documentation on these common classes, so if you ever want to learn about the properties on such an object just head over there and search for UIScreen or CGRect to learn about these classes and how they can be used.  All these methods are linked below the video.
 
 [UIScreen Class Reference](http://developer.apple.com/library/ios/#documentation/uikit/reference/UIScreen_Class/Reference/UIScreen.html)
+
 [UIWindow Class Reference](http://developer.apple.com/library/ios/#documentation/UIKit/Reference/UIWindow_Class/UIWindowClassReference/UIWindowClassReference.html)
 
 Now `viewRect` is a CGRect object that defines the "bounds" of the screen.  We can verify this works properly by changing our Log to do something like:
@@ -258,7 +261,7 @@ when we run our app, we'll finally see something other than a black void:
     
     view.backgroundColor = [UIColor purpleColor];
     viewController.view = view;
-    self.window.rootReviewController = viewController;
+    self.window.rootViewController = viewController;
 
     
     [self.window makeKeyAndVisible];
@@ -274,25 +277,11 @@ And after hitting 'Build and Run', we get this beauty:
 
 ![Our first View](http://f.cl.ly/items/3S270E2T2z0F1S403e0O/Resized%20Screen%202012-09-10%20at%2010.06.11%20PM.png)
 
+### Cleaning Things Up
 
-### Touch
+Before we move on to the exciting things like allowing the user to touch the screen, we have some cleanup to do.  When we generated our project it created for us a ViewController.m and ViewController.h, but we haven't been using it, we created our own UIViewController from scratch.  
 
-#### Video 2
-
-It's called Cocoa **Touch** for a reason.  Allowing for a user to *touch* the screen, and make something happen based on that touch, is the bedrock of every app.  This is where our painting analogy falls flat on its face.  A painting, once done, doesn't ever have to worry about the outside world again (there are [exceptions](http://a0.twimg.com/profile_images/2534918647/zj1kewotf1vgvwq8ya11.jpeg), of course).  But your app will have to worry about outside *events*, like touches, or the phone rotating, or a location signal, or a phone call, or a thousand other events.
-
-For now, let's just talk about *touch* events (others will be covered later in the course).  In iOS, Apple created a class called `UIResponder` for *responding* to user events, like touch and motion.  How do you use this class?  Should we just create a `UIResponder` object, and then call some methods on it, something like this:
-
-```
-UIResponder *responder = [[UIResponder alloc] init];
-[responder respondToTouches];
-```
-
-But what would that code actually **do**?  We can't just tell the responder to respond to touches.  No, we want to run some code to **do something** when there is a touch.  For example, let's say we want to change the alpha transparency of the backgroundColor of our `View` whenever the user touches the screen.  So the question arises (as it often does in programming), *where do I put this code?*
-
-The answer to *where do I put this code?* in iOS programming is, very often, **in a subclass**.  We create a own application specific *subclass* and implement methods defined in the parent class (or *superclass*).
-
-Luckily, `UIViewController` is already a subclass of `UIResponder`, so we can just create a *subclass* of `UIViewController` in our app, and implement a method defined in `UIResponder` to respond to a user touch event.  In fact, when Xcode first generated our app earlier in the level, it went ahead and created a subclass of `UIViewController` for you, in `ViewController.h` and `ViewController.m`.  In `ViewController.h`, you can see that our newly created `ViewController` class is a *subclass* of `UIViewController`:
+If we open up ViewController.h here's what we'll see:
 
 ```
 #import <UIKit/UIKit.h>
@@ -302,75 +291,141 @@ Luckily, `UIViewController` is already a subclass of `UIResponder`, so we can ju
 @end
 ```
 
-So now in our implementation file, `ViewController.m`, we can override the 
-`touchesEnded:withEvent:` method to do something when a touch happens:
+So this is saying that the ViewController class is a subclass of UIView Controller.  The answer to *where do I put this code?* in iOS programming is, very often, **in a subclass**.  We create a own application specific *subclass* and implement methods defined in the parent class (or *superclass*).
 
-```
-@implementation ViewController
-
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    NSLog(@"touchesEnded");
-}
-@end
-```
-
-This method is defined in `UIResponder`.  To find other methods defined in `UIResponder`, take a look at the [Class Reference](http://developer.apple.com/library/ios/#documentation/uikit/reference/UIResponder_Class/Reference/Reference.html).  In the following diagram, you'll see how `UIViewController` isn't the only subclass of `UIResponder`:
-
-![UIResponder Hierarchy](http://f.cl.ly/items/1v0K0S443D0X3506073p/UIKit-high-level.png)
-
-- **Note** Above, we handled touch events in the controller, but UIViews are also subclasses of `UIResponder`.  Most of the time, you'll want to define touch handling methods in View subclasses, but because we already had a `UIViewController` subclass created for us by Xcode, it was easier just to do it here.
-
-Before we can see the `@"touchesEnded"` string in the console, we'll need to switch out our use of `UIViewController` for `ViewController` in our `AppDelegate`, like so: (it's a small change).
+So, lets modify our AppDelegate code to use this ViewController (do a magic move in the slides)
 
 ```
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    
     CGRect viewRect = [[UIScreen mainScreen] bounds];
     self.window = [[UIWindow alloc] initWithFrame:viewRect];
-
-    ViewController *viewController = [[ViewController alloc] init];
-
+    self.viewController = [[ViewController alloc] init];  // Added self.
     UIView *view = [[UIView alloc] initWithFrame:viewRect];
-    view.backgroundColor = [UIColor darkGrayColor];
-    viewController.view = view;
-    self.window.rootReviewController = viewController;
+    
+    view.backgroundColor = [UIColor purpleColor];
+    self.viewController.view = view; // Added self.
+    self.window.rootViewController = self.viewController; // Added self.
+    
     [self.window makeKeyAndVisible];
     
     NSLog(@"Application Did Finish Launching");
+    
     return YES;
 }
-```
-
-Now when we run this code when we click we get the appropriate log message.  Sweet!
-
-This question, *where does this code go?*, is a very important one in iOS development.  Half of learning how to build apps is answering this question.  A derivative of this question is: *is this the correct place for this code to go?*  For example, in the `AppDelegate` method above, we are initializing a `UIView` and setting it as the `view` property on the `ViewController` instance.  Is this the correct place to do that?  
-
-To answer that question, you must ask yourself another question: *what if I wanted to create another `ViewController` instance somewhere else?*  Currently, the answer to this last question would involve duplicating the `UIView` creation and setting.  Duplicated code is a "code smell".  It means something stinks, and we need to do some cleanup.
-
-#### Challenge 6
-
-What we really want is that every time an instance of `ViewController` is created, an instance of `UIView` is created and set as the `view` property.  We can do this by overriding the `loadView` method in our `ViewController` class, like so:
-
-- AppDelegate.h
-- AppDelegate.m
-- ViewController.m
-- ViewController.h
 
 ```
+
+Notice how we have to add self. to all references of viewController, and if we run the code we can see that it still works properly.. woohoo!  
+
+There's one more thing we're going to want to do to clean up.  As we mentioned above, it's our View Controller which is in charge of the views and the data, so we need to move the View we created here in our AppDelegate into the view.  This might be a good time to take a look inside our ViewController.m file
+
+```
+#import "ViewController.h"
+
+@interface ViewController ()
+
+@end
+
 @implementation ViewController
 
-- (void)loadView
+- (void)viewDidLoad
 {
-    self.view = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    self.view.backgroundColor = [UIColor darkGrayColor];
+    [super viewDidLoad];
+	// Do any additional setup after loading the view, typically from a nib.
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
 }
 
 @end
 ```
 
-TODO: No idea how this is a challenge
+We can see inside this file that it includes it's header file, then provides a place for us to ______ (unsure why it has another @interface line in here).  Then in the ViewController it has a viewDidLoad method.  This will get called in our application when _______ which makes it a great place to create the view we created earlier in our AppDelegate.  You'll notice the first thing it does is call `super viewDidLoad`, which is just calling the parent class's viewDidLoad function (obviously UIViewController).  
+
+When we subclass methods in iOS it's always a good practice to remember to call the super class's method first.  This is because ________.
+
+Remember these lines over in our AppDelegate:
+
+```
+    CGRect viewRect = [[UIScreen mainScreen] bounds];
+    UIView *view = [[UIView alloc] initWithFrame:viewRect];
+    view.backgroundColor = [UIColor purpleColor];
+    self.ViewController.view = view;
+```
+
+Lets move them over into our viewDidLoad function. (Show both method definitions on the same slide and do a Magic Move so we can see the before and after for each method.. if it works.)
+
+```
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+	// Do any additional setup after loading the view, typically from a nib.
+    CGRect viewRect = [[UIScreen mainScreen] bounds];
+    UIView *view = [[UIView alloc] initWithFrame:viewRect];
+    view.backgroundColor = [UIColor purpleColor];
+    self.view = view;  // <--- This line changed slightly
+}
+```
+
+Great, and as you can see the code works still!  (this might be a good time for a diagram showing responsibilities… i.e. AppDelegate vs ViewController vs View.. maybe talk about rootViewController in it… just review)
+
+Now, I have a confession to make.  Three of these lines aren't even needed and the code will still work.  By default if we don't create a view for our ViewController, it will automatically create one for us and also set it to the bounds of our window (help, not sure if the second part here is true).  Yeah, pretty cool huh?  That means the only line we need here is:
+
+```
+self.view.backgroundColor = [UIColor purpleColor];
+```
+
+Notice we had to add the `self.` here to reference the view that's created for us by default.
+
+### Touch
+
+#### Video 2
+
+We need some way of specifying what happens when a touch occurs on our device. More specifically we need to be able to specify what code to execute when a touch event occurs.  To get started lets figure out how to print out a log message every time someone starts touching the screen. 
+
+```
+NSLog(@"Started touching the Screen");
+```
+
+Obviously your application is going to have different views (interfaces) and each of these views may be associated with one or more ViewController. You might want to listen for touch events at the ViewController level or more commonly at the View level.  For now lets listen for touches on our ViewController.
+
+Our ViewController has a parent class of UIViewController and the UIViewController has a parent class of UIResponder (show visual).  The UIResponder class defines an interface for objects that respond to and handle events. So to start listening for events in our ViewController we just have to implement specific methods that get called when touch events occur.  
+
+If you take a look in [the documentation for UIResponder](http://developer.apple.com/library/ios/#documentation/uikit/reference/UIResponder_Class/Reference/Reference.html), you'll find all sorts of methods which allow you to listen for touches and even motion, so when you shake your phone you can make your app do something. (show a list)
+
+The one we're interested in (highlight is) touchesBegan:withEvent:, lets define this inside our ViewController so we can log out when a finger begins touching the screen.
+
+So now in our implementation file, `ViewController.m`, we can override the 
+`touchesBegan:withEvent:` method to do something when a touch happens:
+
+```
+@implementation ViewController
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    NSLog(@"Started touching the Screen");
+}
+@end
+```
+
+Now when we run this code when we click we get the appropriate log message.  Sweet!
+
+#### Challenge 6 
+
+- ViewController.m
+
+Listen for the touchesEnded event log when we stop touching the screen.
+
+```
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    NSLog(@"Stopped touching the screen");
+}
+```
 
 #### Challenge 7
 
@@ -379,37 +434,7 @@ TODO: No idea how this is a challenge
 - ViewController.m
 - ViewController.h
 
-The `loadView` method is called when this View Controller's `view` property is first accessed, which is taken care of by the Cocoa Touch framework your app is written on.  It's usually good practice, when creating Views in code (there are other ways to create views, which we'll get to in a bit), to do so in a `loadView` method on a subclass of `UIViewController`.  It's also good practice to move the View customization code into a method called `viewDidLoad`, like so:
-
-```
-@implementation ViewController
-
-- (void)loadView
-{
-    self.view = [[UIView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    
-}
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-
-    self.view.backgroundColor = [UIColor darkGrayColor];
-}
-
-@end
-```
-
-- **Note** You must include `[super viewDidLoad]` to make sure the `UIViewController` class's `viewDidLoad` method is also called. Just make sure you don't call `[super loadView]` in the `loadView` method definition.
-
-#### Challenge 8
-
-- AppDelegate.h
-- AppDelegate.m
-- ViewController.m
-- ViewController.h
-
-Now let's finish up by filling in some code in the `touchesEnded:withEvent:` method definition that will set the alpha transparency of the view to a random value between `0.0` and `1.0`.  We'll leave it as an exercise for the reader to figure out how this works:
+Now let's finish up by filling in some code in the `touchesEnded:withEvent:` method definition that will set the alpha transparency of the view to a random value between `0.0` and `1.0`.  Because the default background color is black, this should change the brightness of our background color.
 
 ```
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
@@ -417,85 +442,3 @@ Now let's finish up by filling in some code in the `touchesEnded:withEvent:` met
     self.view.alpha = ((double)arc4random() / 0x100000000);
 }
 ```
-
-Hopefully, you are starting to get a real feel how iPhone apps are built.  There is the
-window with it's root View Controller, and a subclassed View Controller with it's root View.  The View Controller can handle events from the user and update it's View to react to those events.  Subclassing is an easy way to change the behavior for your app.  There is usually a right and wrong place to put certain code, and putting code in the right place is half the battle of building an iOS app.
-
-But almost no app consists of just one simple view, most have hundreds or thousands.  And creating all those views in code can be clunky, and not the right thing to do.  Luckily, Xcode includes a handy tool to graphicly create and layout views, called Interface Builder.
-
-## Interface Builder
-
-#### Video 3
-
-Interface Builder is an incredibly powerful tool for creating the User Interface of your app, and it is highly recommended by Apple that you use Interface Builder instead of creating the interface by writing code.
-
-Interface Builder creates "xib" files.  But we won't really need to worry about what is in those files.  You may have noticed when we generated our AlphaTouch project, Xcode created a "ViewController.xib" file.  If you click on it, you will see this:
-
-![ViewController.xib](http://f.cl.ly/items/3u152q1R2U021z2C2S0E/Resized%20Screen%202012-09-11%20at%202.00.44%20PM.png)
-
-TODO: I didn't see the "Objects" section.  
-
-As you can see in the "Objects" section, there is already one View in this xib.  This View is just an instance of UIView, exactly like the one we created in our `ViewController` `loadView` method earlier.  We can replace our manual View creation code by telling our `ViewController` instance to be created with this Interface Builder file as it's View.  We can do that during initialization, back in our `AppDelegate`, like so:
-
-
-#### Challenge 9
-
-- AppDelegate.h
-- AppDelegate.m
-- ViewController.m
-- ViewController.h
-
-```
-@implementation AppDelegate
-
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-
-    self.viewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
-    self.window.rootViewController = self.viewController;
-    [self.window makeKeyAndVisible];
-    return YES;
-}
-@end
-```
-
-Instead of just calling `init`, we called `initWithNibName:bundle:` and passed in the name of the "xib".
-
-- **Note** A nib and xib file are basically the same thing: both are products of the Interface Builder tool.  The only difference is that nib files are more compact, machine readable versions of xib files.
-
-#### Challenge 10
-
-- AppDelegate.h
-- AppDelegate.m
-- ViewController.m
-- ViewController.h
-
-Since we are no longer creating views in code, we can completely remove the `loadView` method from `ViewController`, making it look like this:
-
-```
-@implementation ViewController
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    
-    self.view.backgroundColor = [UIColor darkGrayColor];
-}
-
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    self.view.alpha = ((double)arc4random() / 0x100000000);
-}
-
-@end
-
-```
-
-You might be wondering how our `ViewController` instance's `view` property was set.  Well, View Controllers that are initialized with Interface Builder files know how to hook up the root view in the Interface Builder file to it's own `view` property.  You don't have to do any of that yourself, you just need to know that you can still use `self.view` to get at the root view of the View Controller.
-
-Build and Run your app and see it all still work.  
-
-You've now learned that you don't always have to create your User Interface in code, and how to tell a View Controller to load it's `view` from an Interface Builder file.  In the next Level, we are going to work more with Interface Builder, and introduce View Hierarchies.
-
-[learnobjc]: http://cocoadevcentral.com/d/learn_objectivec/ "Learn Objective-C"
