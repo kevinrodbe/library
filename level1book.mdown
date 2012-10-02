@@ -27,7 +27,7 @@ I suspect learning to build iPhone apps could feel a lot like learning to drive 
 
 #### Video 1
 
-Together in this level we're going to build an application with a Single View that has a background color, and when we tap anywhere on the screen, the alpha transparency of the view will change.  Not terribly complex or interesting, but you have to start somewhere. 
+Together in this level we're going to build a Single View application. A view is simply an area of the screen that a user can interact with. The view we create will have a background color, and when we tap anywhere on the screen, the alpha transparency of the view will change.  Not terribly complex or interesting, but you have to start somewhere. 
 
 ![project files](http://cl.ly/image/0n0z1Z1Y0Y35/Screen%20Shot%202012-09-10%20at%204.05.24%20PM.png)
 
@@ -38,7 +38,7 @@ When we start a new Xcode project, we usually start out with a bunch of generate
 The AppDelegate class defines methods that will be called at different points in the Application Lifecycle (we will cover more about the lifecycle in a future level). Every iPhone application has an AppDelegate, but this one is yours.  One method that you will commonly want to implement is the
 `application:didFinishLaunchingWithOptions:` method, that will get called by the OS whenever your application is launched.  But how will we know when it is called?  We can use NSLog inside the method definition, and build and run the application in the iOS simulator and we can see that the string was logged. In case you're not familiar, here is an example of how to use NSLog:
 
-```objc
+```
 NSLog(@"Hello World");
 ```
 
@@ -75,7 +75,7 @@ Congratulations on running your first iPhone application!  But just logging to t
 
 First steps first, we need to figure out how big our iPhone screen is.  To do this we can tell the UIScreen class to send us the mainScreen for our app, and then send the bounds message into the UIScreen instance we received to get back a CGRect instance, like so:
 
-```objc
+```
 CGRect viewRect = [[UIScreen mainScreen] bounds];
 ```
 
@@ -87,8 +87,9 @@ Apple maintains great developer documentation on these common classes, so if you
 
 Now `viewRect` is a CGRect object that defines the "bounds" of the screen.  We can verify this works properly by changing our Log to do something like:
 
-```objc
+```
 CGRect viewRect = [[UIScreen mainScreen] bounds];
+NSLog(@"Screen is %f tall and %f wide", viewRect.size.height, viewRect.size.width);
 ```
 
 When we run this code, you can see that it prints: 
@@ -97,7 +98,7 @@ When we run this code, you can see that it prints:
 
 Now that we have the bounds, we can start drawing on it right?  Well not quite, just like a painter needs a canvas to start drawing on we need a canvas or "Window" in our case.
 
-In iOS, the `UIWindow` objects provide an area of an application to display it's views. iPhone applications only have 1 main UIWindow, and usually you will only create the UIWindow object once in the `application:didFinishLaunchingWithOptions:` method and then forget about it. Lets do this now and pass in our CGRect so it knows how big of a window to draw.
+In iOS, the `UIWindow` objects provide an area of an application to display it's views. iOS apps generally only have one UIWindow unless views need to be displayed on multiple screens. Often, the UIWindow is created in the `application:didFinishLaunchingWithOptions:` method and then left alone (there isn't much you need it for after that). Let's instantiate our `UIWindow` now and give it a `CGRect` so it knows how big to draw itself:
  
 ```
 @implementation AppDelegate
@@ -114,9 +115,9 @@ In iOS, the `UIWindow` objects provide an area of an application to display it's
 
 Here we are creating a new UIWindow instance called window.  To do this we are "alloc"ating memory for a new UIWindow, then calling initWithFrame on this new object, sending it the viewRect we created.
 
-There is a problem here, though. When the `application:didFinishLaunchingWithOptions:` method is executed and returns, that `window` variable will go away, and we won't be able to get to it again, and so bad things could happen.  There is an easy fix.  Our AppDelegate header file was generated with a `UIWindow` property named `window`.  If we open it up we can see it right here:
+There is a problem here, though. When the `application:didFinishLaunchingWithOptions:` method is executed and returns, that `window` variable will go away, and we won't be able to get to it again in case we need it. However, there is an easy fix:  Our AppDelegate header file was generated with a `UIWindow` property named `window`.  If we open it up we can see it right here:
 
-```objc
+```
 @property (strong, nonatomic) UIWindow *window;
 ```
 
@@ -142,7 +143,7 @@ TODO: Not a fan of this challenge, come back.
 - AppDelegate.h
 - AppDelegate.m
 
-In the application:didFinishLaunchingWithOptions: method in the app delegate, instantiate a UIWindow the size of the bounds of the screen
+In the application:didFinishLaunchingWithOptions: method in the app delegate, instantiate a `UIWindow` the size of the bounds of the screen.
 
 ```
 # AppDelegate.m
@@ -195,10 +196,9 @@ If the `window` is the canvas, than you can think of a View Controller as the pa
 Since `window.rootViewController` expects an instance of UIViewController, let's alloc/init
 one and assign it:
 
-```objc
+```
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    
     CGRect viewRect = [[UIScreen mainScreen] bounds];
     self.window = [[UIWindow alloc] initWithFrame:viewRect];
     UIViewController *viewController = [[UIViewController alloc] init];
@@ -226,15 +226,13 @@ Since we already have created our `rootViewController` instance, we can create a
 ```
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    
     CGRect viewRect = [[UIScreen mainScreen] bounds];
     self.window = [[UIWindow alloc] initWithFrame:viewRect];
     UIViewController *viewController = [[UIViewController alloc] init];
     UIView *view = [[UIView alloc] initWithFrame:viewRect];
     viewController.view = view;
     self.window.rootReviewController = viewController;
-
-    
+   
     [self.window makeKeyAndVisible];
     
     NSLog(@"Screen is %f tall and %f wide", viewRect.size.height, viewRect.size.width);
@@ -263,7 +261,6 @@ when we run our app, we'll finally see something other than a black void:
     viewController.view = view;
     self.window.rootViewController = viewController;
 
-    
     [self.window makeKeyAndVisible];
     
     NSLog(@"Application Did Finish Launching");
@@ -291,7 +288,7 @@ If we open up ViewController.h here's what we'll see:
 @end
 ```
 
-So this is saying that the ViewController class is a subclass of UIView Controller.  The answer to *where do I put this code?* in iOS programming is, very often, **in a subclass**.  We create a own application specific *subclass* and implement methods defined in the parent class (or *superclass*).
+So this is saying that the ViewController class is a subclass of `UIViewController`.  The answer to *where do I put this code?* in iOS development is, very often, **in a subclass**.  We create a own application specific *subclass* and implement methods defined in the parent class (or *superclass*).
 
 So, lets modify our AppDelegate code to use this ViewController (do a magic move in the slides)
 
@@ -383,7 +380,7 @@ Notice we had to add the `self.` here to reference the view that's created for u
 
 ### Touch
 
-#### Video 2
+#### Video
 
 We need some way of specifying what happens when a touch occurs on our device. More specifically we need to be able to specify what code to execute when a touch event occurs.  To get started lets figure out how to print out a log message every time someone starts touching the screen. 
 
@@ -434,7 +431,7 @@ Listen for the touchesEnded event log when we stop touching the screen.
 - ViewController.m
 - ViewController.h
 
-Now let's finish up by filling in some code in the `touchesEnded:withEvent:` method definition that will set the alpha transparency of the view to a random value between `0.0` and `1.0`.  Because the default background color is black, this should change the brightness of our background color.
+Now let's finish up by filling in some code in the `touchesEnded:withEvent:` method definition that will set the alpha transparency of the view to a random value between `0.0` and `1.0`. This should change the brightness of the background color you set.
 
 ```
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
