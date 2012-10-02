@@ -1,0 +1,309 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		072169891614B960009E17CD /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 072169881614B960009E17CD /* UIKit.framework */; };
+		0721698B1614B960009E17CD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0721698A1614B960009E17CD /* Foundation.framework */; };
+		0721698D1614B960009E17CD /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0721698C1614B960009E17CD /* CoreGraphics.framework */; };
+		072169931614B960009E17CD /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 072169911614B960009E17CD /* InfoPlist.strings */; };
+		072169951614B960009E17CD /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 072169941614B960009E17CD /* main.m */; };
+		072169991614B960009E17CD /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 072169981614B960009E17CD /* AppDelegate.m */; };
+		0721699B1614B960009E17CD /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 0721699A1614B960009E17CD /* Default.png */; };
+		0721699D1614B960009E17CD /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0721699C1614B960009E17CD /* Default@2x.png */; };
+		0721699F1614B960009E17CD /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 0721699E1614B960009E17CD /* Default-568h@2x.png */; };
+		072169A21614B960009E17CD /* FirstViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 072169A11614B960009E17CD /* FirstViewController.m */; };
+		072169A41614B960009E17CD /* first.png in Resources */ = {isa = PBXBuildFile; fileRef = 072169A31614B960009E17CD /* first.png */; };
+		072169A61614B960009E17CD /* first@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 072169A51614B960009E17CD /* first@2x.png */; };
+		072169A91614B960009E17CD /* SecondViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 072169A81614B960009E17CD /* SecondViewController.m */; };
+		072169AB1614B960009E17CD /* second.png in Resources */ = {isa = PBXBuildFile; fileRef = 072169AA1614B960009E17CD /* second.png */; };
+		072169AD1614B960009E17CD /* second@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 072169AC1614B960009E17CD /* second@2x.png */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		072169841614B960009E17CD /* InstaPhotoLevel3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InstaPhotoLevel3.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		072169881614B960009E17CD /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		0721698A1614B960009E17CD /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		0721698C1614B960009E17CD /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		072169901614B960009E17CD /* InstaPhotoLevel3-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "InstaPhotoLevel3-Info.plist"; sourceTree = "<group>"; };
+		072169921614B960009E17CD /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		072169941614B960009E17CD /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		072169961614B960009E17CD /* InstaPhotoLevel3-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "InstaPhotoLevel3-Prefix.pch"; sourceTree = "<group>"; };
+		072169971614B960009E17CD /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		072169981614B960009E17CD /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		0721699A1614B960009E17CD /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+		0721699C1614B960009E17CD /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
+		0721699E1614B960009E17CD /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		072169A01614B960009E17CD /* FirstViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FirstViewController.h; sourceTree = "<group>"; };
+		072169A11614B960009E17CD /* FirstViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FirstViewController.m; sourceTree = "<group>"; };
+		072169A31614B960009E17CD /* first.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = first.png; sourceTree = "<group>"; };
+		072169A51614B960009E17CD /* first@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "first@2x.png"; sourceTree = "<group>"; };
+		072169A71614B960009E17CD /* SecondViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecondViewController.h; sourceTree = "<group>"; };
+		072169A81614B960009E17CD /* SecondViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SecondViewController.m; sourceTree = "<group>"; };
+		072169AA1614B960009E17CD /* second.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = second.png; sourceTree = "<group>"; };
+		072169AC1614B960009E17CD /* second@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "second@2x.png"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		072169811614B960009E17CD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				072169891614B960009E17CD /* UIKit.framework in Frameworks */,
+				0721698B1614B960009E17CD /* Foundation.framework in Frameworks */,
+				0721698D1614B960009E17CD /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		072169791614B960009E17CD = {
+			isa = PBXGroup;
+			children = (
+				0721698E1614B960009E17CD /* InstaPhotoLevel3 */,
+				072169871614B960009E17CD /* Frameworks */,
+				072169851614B960009E17CD /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		072169851614B960009E17CD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				072169841614B960009E17CD /* InstaPhotoLevel3.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		072169871614B960009E17CD /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				072169881614B960009E17CD /* UIKit.framework */,
+				0721698A1614B960009E17CD /* Foundation.framework */,
+				0721698C1614B960009E17CD /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		0721698E1614B960009E17CD /* InstaPhotoLevel3 */ = {
+			isa = PBXGroup;
+			children = (
+				072169971614B960009E17CD /* AppDelegate.h */,
+				072169981614B960009E17CD /* AppDelegate.m */,
+				072169A01614B960009E17CD /* FirstViewController.h */,
+				072169A11614B960009E17CD /* FirstViewController.m */,
+				072169A31614B960009E17CD /* first.png */,
+				072169A51614B960009E17CD /* first@2x.png */,
+				072169A71614B960009E17CD /* SecondViewController.h */,
+				072169A81614B960009E17CD /* SecondViewController.m */,
+				072169AA1614B960009E17CD /* second.png */,
+				072169AC1614B960009E17CD /* second@2x.png */,
+				0721698F1614B960009E17CD /* Supporting Files */,
+			);
+			path = InstaPhotoLevel3;
+			sourceTree = "<group>";
+		};
+		0721698F1614B960009E17CD /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				072169901614B960009E17CD /* InstaPhotoLevel3-Info.plist */,
+				072169911614B960009E17CD /* InfoPlist.strings */,
+				072169941614B960009E17CD /* main.m */,
+				072169961614B960009E17CD /* InstaPhotoLevel3-Prefix.pch */,
+				0721699A1614B960009E17CD /* Default.png */,
+				0721699C1614B960009E17CD /* Default@2x.png */,
+				0721699E1614B960009E17CD /* Default-568h@2x.png */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		072169831614B960009E17CD /* InstaPhotoLevel3 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 072169B61614B960009E17CD /* Build configuration list for PBXNativeTarget "InstaPhotoLevel3" */;
+			buildPhases = (
+				072169801614B960009E17CD /* Sources */,
+				072169811614B960009E17CD /* Frameworks */,
+				072169821614B960009E17CD /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = InstaPhotoLevel3;
+			productName = InstaPhotoLevel3;
+			productReference = 072169841614B960009E17CD /* InstaPhotoLevel3.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0721697B1614B960009E17CD /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0450;
+				ORGANIZATIONNAME = "Eric Allam";
+			};
+			buildConfigurationList = 0721697E1614B960009E17CD /* Build configuration list for PBXProject "InstaPhotoLevel3" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 072169791614B960009E17CD;
+			productRefGroup = 072169851614B960009E17CD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				072169831614B960009E17CD /* InstaPhotoLevel3 */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		072169821614B960009E17CD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				072169931614B960009E17CD /* InfoPlist.strings in Resources */,
+				0721699B1614B960009E17CD /* Default.png in Resources */,
+				0721699D1614B960009E17CD /* Default@2x.png in Resources */,
+				0721699F1614B960009E17CD /* Default-568h@2x.png in Resources */,
+				072169A41614B960009E17CD /* first.png in Resources */,
+				072169A61614B960009E17CD /* first@2x.png in Resources */,
+				072169AB1614B960009E17CD /* second.png in Resources */,
+				072169AD1614B960009E17CD /* second@2x.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		072169801614B960009E17CD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				072169951614B960009E17CD /* main.m in Sources */,
+				072169991614B960009E17CD /* AppDelegate.m in Sources */,
+				072169A21614B960009E17CD /* FirstViewController.m in Sources */,
+				072169A91614B960009E17CD /* SecondViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		072169911614B960009E17CD /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				072169921614B960009E17CD /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		072169B41614B960009E17CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		072169B51614B960009E17CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		072169B71614B960009E17CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "InstaPhotoLevel3/InstaPhotoLevel3-Prefix.pch";
+				INFOPLIST_FILE = "InstaPhotoLevel3/InstaPhotoLevel3-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		072169B81614B960009E17CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "InstaPhotoLevel3/InstaPhotoLevel3-Prefix.pch";
+				INFOPLIST_FILE = "InstaPhotoLevel3/InstaPhotoLevel3-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0721697E1614B960009E17CD /* Build configuration list for PBXProject "InstaPhotoLevel3" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				072169B41614B960009E17CD /* Debug */,
+				072169B51614B960009E17CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		072169B61614B960009E17CD /* Build configuration list for PBXNativeTarget "InstaPhotoLevel3" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				072169B71614B960009E17CD /* Debug */,
+				072169B81614B960009E17CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0721697B1614B960009E17CD /* Project object */;
+}
