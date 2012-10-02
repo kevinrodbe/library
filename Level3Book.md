@@ -20,7 +20,11 @@ So far in the first two levels we've had a single "canvas" to paint on.  One vie
 
 It has 4 different "functions": World Clock, Alarm, Stopwatch, and Timer.  Each of these options  bring up completely different views, they completely repaint the "canvas" to have the best interface for the task at hand.
 
-This is a very common pattern in iOS applications.  In just Apple's built in apps, it is used in  Clock, Music, App Store, iTunes, Photos, Phone, Podcast.  Since it is a very common pattern, Apple wanted a way for 3rd party developers (that's you!) to implement the same pattern, and to make it easy. So they created a subclass of `UIViewController` called `UITabBarController` to do just that.  Just like `UILabel` is a specialized subclass of `UIView`, so is `UITabBarController` a specialized subclass of `UIViewController`.  There are other subclasses of `UIViewController` that Apple provides, which we will be covering a bit later, but let's start with learning how to use `UITabBarController`.
+This is a very common pattern in iOS apps. Just within the default Apple apps, we see this used in Clock, Music, App Store, iTunes, Photos, Phone, and Podcast. Since it is a very common pattern, Apple wanted a way for 3rd party developers (that's you!) to implement the same pattern, and to make it easy. So they created a subclass of `UIViewController` called `UITabBarController` to do just that. Just like `UILabel` is a specialized subclass of `UIView`, so is `UITabBarController` a specialized subclass of `UIViewController`.
+
+`UIViewControllers` that hold or contain other `UIViewControllers` are called "Container View Controllers". This is common terminology that you should know.
+
+There are other subclasses of `UIViewController` that Apple provides, which we will be covering a bit later, but let's start with learning how to use `UITabBarController`.
 
 `UITabBarController`'s are designed to work *as-is* which means you shouldn't create a custom subclass.  Just use `alloc/init` to create an instance in your `AppDelegate`:
 
@@ -39,7 +43,7 @@ This is a very common pattern in iOS applications.  In just Apple's built in app
 }
 ```
 
-As you can see, instead of setting the `rootViewController` of our window to a `UIViewController`, we set it to our newly created `UITabBarController` instance, `tabBarController`.  A `UITabBarController` usually has two or more tab bar items along the bottom tab bar.  Each tab bar item points to a custom `UIViewController`, which is responsible for the UI displayed when it's corresponding tab bar item is selected.
+As you can see, instead of setting the `rootViewController` of our window to a `UIViewController`, we set it to our newly created `UITabBarController` instance, `tabBarController`.  A `UITabBarController` usually has two or more tab bar items along the bottom tab bar. Each tab bar item points to a custom `UIViewController`, which is responsible for the UI displayed when it's corresponding tab bar item is selected.
 
 To see this in action, we are going to create two custom `UIViewController`s, `FirstViewController` and `SecondViewController`.  Here are the header files:
 
