@@ -1,12 +1,39 @@
 # Try-iOS Level Outlines
 
+### Level 0
+
+Optional Objective-C Primer.
+
 ### Level 1
+
+Creating a simple touch-responsive app.
+
+* App Delegate
+* Handling basic touches.
 
 ### Level 2
 
+Creating a simple app with buttons.
+
+* Introduction to Interface Builder
+* Creating and using UIButtons.
+* Using UIColors.
+
 ### Level 3
 
+Laying the foundation for InstaPhoto: Container View Controllers.
+
+* Introduction to UITabBarController.
+	* Refactoring practice.
+ 	* Reviewing the view lifecycle.
+* Brief introduction to UINavigationController.
+* Using UIImage and UIImageView.
+
 ### Level 4
+
+Creating the InstaPhoto feed.
+
+* Introduction to UITableView.
 
 ### Level 5
 
@@ -39,7 +66,9 @@ Adding a "Slideshow" feature to the image feed.
 * How to use the `prepareForSegue:sender:` of `UIStoryboard` to pass data.
 * NSTimer and alternatives.
 	
-### Level 10
+### Level 10 
+
+(Tentative - Gregg says TOO MUCH! Probably right.)
 
 Using the singleton pattern correctly with Facebook.
 
