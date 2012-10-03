@@ -7,7 +7,7 @@
 	* User will create the three InstaPhoto tabs: "Feed", "Favorites", and "Profile".
 * Introduction to UINavigationController.
 	* User will create a navigation controller in the profile tab that lets the user see a bigger version of their profile picture.
-* Learn a little about UIImage.
+* Learn a little about UIImage and UIImageView.
 
 ### User Knowledge Assumptions
 
