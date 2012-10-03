@@ -77,13 +77,9 @@ Next, we see some instance variables:
 @property (strong, nonatomic) ViewController *viewController;
 ```
 
-<<<<<<< HEAD
-There's a few ways to define variables but what we see being used here is "properties". Properties are nice shortcuts. Here's what the first property above does for us:
-=======
 There's a few ways to define variables but what we see being used here is "properties". Properties are denoted by using the `@property` keyword. Next, they're given a couple other atributes: `strong` has to do with how memory is handled and `nonatomic` has to do with threading. Just declare everything like that for now, you'll learn more about it later. 
 
 Properties help us write less code. Here's what the first property above is doing:
->>>>>>> Fixed typos and added some more detail to level 0.
 
 1. Creates a private instance variable called `_window` (notice the underscore).
 2. Creates a public instance method called `window`.
