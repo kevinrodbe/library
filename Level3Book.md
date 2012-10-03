@@ -1,179 +1,132 @@
 ## Level 3
 
-![image](http://developer.apple.com/library/ios/DOCUMENTATION/WindowsViews/Conceptual/ViewControllerCatalog/Art/NavigationViews.png)
+### Goals
 
-Create tab view controller in code with three tabs, "Feed", "Favorites", and "Profile".  
+* Learn how to work with more than one view controller.
+* Introduction to UITabBarController.
+	* User will create the three InstaPhoto tabs: "Feed", "Favorites", and "Profile".
+* Introduction to UINavigationController.
+	* User will create a navigation controller in the profile tab that lets the user see a bigger version of their profile picture.
+* Learn a little about UIImage.
+* See an example of a category used well.
 
-Navigation Controller:
+### User Knowledge Assumptions
 
-Have a profile a screen that shows information, and when tapping on the image view it will transition to the next screen with a full image.
+* Basic Objective-C knowledge.
+* Understands how to use NSArrays.
+* Understands UIViews and UIViewControllers.
+* Understands the role of the App Delegate.
+* Understands the difference between the `loadView` and `viewDidLoad` methods.
 
-Talk about Categories (UIImageView+initWithImageName)
+### Video
 
-## Content
 
-### Video 1
 
-So far in the first two levels we've had a single "canvas" to paint on.  One view controller, and one view.  In iOS, a single view should only really have one main purpose.  But what if we wanted to have an application with more than 1 view?  Take for example the "Clock" application made by Apple:
+## Challenege 1
 
-![image](file:///Users/eric/Library/Developer/Shared/Documentation/DocSets/com.apple.adc.documentation.AppleiOS6.0.iOSLibrary.docset/Contents/Resources/Documents/documentation/UIKit/Reference/UITabBarController_Class/Art/tabbar_compare.jpg)
+### Video
 
-It has 4 different "functions": World Clock, Alarm, Stopwatch, and Timer.  Each of these options  bring up completely different views, they completely repaint the "canvas" to have the best interface for the task at hand.
+So far in the first two levels we've had a single "canvas" to paint on.  One view controller, and one view.  In iOS, a single view controller should only really have one main purpose. But what if we wanted to create an app with multiple views that perform different tasks? We wouldn't want one view controller controlling all of them! Take for example the "Clock" application made by Apple:
 
-This is a very common pattern in iOS apps. Just within the default Apple apps, we see this used in Clock, Music, App Store, iTunes, Photos, Phone, and Podcast. Since it is a very common pattern, Apple wanted a way for 3rd party developers (that's you!) to implement the same pattern, and to make it easy. So they created a subclass of `UIViewController` called `UITabBarController` to do just that. Just like `UILabel` is a specialized subclass of `UIView`, so is `UITabBarController` a specialized subclass of `UIViewController`.
+![image](http://developer.apple.com/library/ios/Documentation/UIKit/Reference/UITabBarController_Class/Art/tabbar_compare.jpg)
 
-`UIViewControllers` that hold or contain other `UIViewControllers` are called "Container View Controllers". This is common terminology that you should know.
+The Clock app has 4 different "functions": World Clock, Alarm, Stopwatch, and Timer. Each of these options brings up very different views. They completely repaint the "canvas" to have the best interface for the task at hand.
+
+This is a very common pattern in iOS apps. Just within the default Apple apps, we see this used in Clock, Music, App Store, iTunes, Photos, Phone, and Podcast. Since it is a very common pattern, Apple wanted a way for 3rd party developers (that's you!) to easily implement the same pattern. Thus, they created a subclass of `UIViewController` called `UITabBarController` to do just that.
+
+`UIViewControllers` that hold or contain other `UIViewControllers` are called "Container View Controllers". This is common terminology that you should remember.
 
 There are other subclasses of `UIViewController` that Apple provides, which we will be covering a bit later, but let's start with learning how to use `UITabBarController`.
 
-`UITabBarController`'s are designed to work *as-is* which means you shouldn't create a custom subclass.  Just use `alloc/init` to create an instance in your `AppDelegate`:
+`UITabBarController`'s are designed to work *as-is* which means you shouldn't create a custom subclass. In the latest version of iOS, Apple provides some options for customization. Just use `alloc` and `init` to create an instance of a `UITabBarController`:
 
 ```
-@implementation AppDelegate
+UITabBarController *tabBarController = [[UITabBarController alloc] init];
+```
 
+Once you've created a `UITabBarController` you'll need to give it the `UIViewControllers` you want it to manage and display. You can do this by calling the `setViewControllers:` method:
+
+```
+[tabBarController setViewControllers:@[viewController1, viewController2, viewController3]];
+```
+
+You'll notice that we are using Objective-C's *literal array syntax*. `@[]` is just a short-hand way of saying "make an array with the objects inside the brackets". We could have written this equivalently:
+
+```
+[tabBarController setViewControllers:[[NSArray alloc] initWithObjects:viewController1, viewController2, viewController3, nil]];
+```
+
+Note that the `UITabBarController` will arrange the view controllers in the tab bar just like they are arranged in the array you pass in.
+
+If we were to simply create some view controllers and give them to the UITabBarController we would see something like this:
+
+![empty tabs](https://dl.dropbox.com/s/xsqjh7ogmkx257l/tabbar_blank_tabs.png)
+
+That's not helpful. To get a title to show we'll modify a `@property` of `UIViewController` called `title`. This is used for a few things, one of them being setting the tab bar title. We can set the property like this:
+
+```
+viewController1.title = @"view 1";
+```
+
+Pretty simple. With this knowledge you're ready to write some code!
+
+### Challenge Instruction
+
+In the App Delegate's `application:didFinishLaunchingWithOptions:` method create a UITabBarController and give it at least two generic UIViewControllers to display. Make sure to give the view controllers titles.
+
+**Bonus:** If you want to get fancy try changing each view controllers `view`'s background color using what you learned in the previous levels. Hint: use `setBackgroundColor:` and `[UIColor <colorName>]`.
+
+### Answer
+
+```
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-
-    UITabBarController *tabBarController = [[UITabBarController alloc] init];
+    // Override point for customization after application launch.
     
+    UIViewController *viewController1 = [[UIViewController alloc] init];
+    viewController1.title = @"view 1";
+    UIViewController *viewController2 = [[UIViewController alloc] init];
+    viewController2.title = @"view 2";
+    UIViewController *viewController3 = [[UIViewController alloc] init];
+    viewController3.title = @"view 3";
+    
+    viewController1.view.backgroundColor = [UIColor purpleColor]; // This is optional
+    viewController2.view.backgroundColor = [UIColor redColor]; // This is optional
+    viewController3.view.backgroundColor = [UIColor lightGrayColor]; // This is optional
+    
+    UITabBarController *tabBarController = [[UITabBarController alloc] init];
+    [tabBarController setViewControllers:@[viewController1, viewController2, viewController3]];
+        
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.rootViewController = tabBarController;
     [self.window makeKeyAndVisible];
-    return YES;
-}
-```
-
-As you can see, instead of setting the `rootViewController` of our window to a `UIViewController`, we set it to our newly created `UITabBarController` instance, `tabBarController`.  A `UITabBarController` usually has two or more tab bar items along the bottom tab bar. Each tab bar item points to a custom `UIViewController`, which is responsible for the UI displayed when it's corresponding tab bar item is selected.
-
-To see this in action, we are going to create two custom `UIViewController`s, `FirstViewController` and `SecondViewController`.  Here are the header files:
-
-```
-// FirstViewController.h
-
-@interface FirstViewController : UIViewController
-
-@end
-```
-
-```
-// SecondViewController.h
-
-@interface SecondViewController : UIViewController
-
-@end
-```
-
-And the implementation files:
-
-```
-// FirstViewController.m
-
-#import "FirstViewController.h"
-
-@implementation FirstViewController
-							
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-}
-
-@end
-```
-
-```
-// SecondViewController.m
-
-#import "SecondViewController.h"
-
-@implementation SecondViewController
-							
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-}
-
-@end
-```
-
-Now all we have to do is create isntances of our two view controllers tell our tab bar controller that these two controllers should be used:
-
-```
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    self.tabBarController = [[UITabBarController alloc] init];
     
-    UIViewController *viewController1 = [[FirstViewController alloc] init];
-    viewController1.title = @"First";
-    UIViewController *viewController2 = [[SecondViewController alloc] init];
-    viewController1.title = @"Second";
-    self.tabBarController.viewControllers = @[viewController1, viewController2];
-    
-    self.window.rootViewController = self.tabBarController;
-    [self.window makeKeyAndVisible];
     return YES;
 }
 ```
 
-**Note** We are using the new Objectice-C Array literal when setting the `viewControllers` property of our `tabBarController`.  `@[viewController1, viewcontroller2]` will create an NSArray with our 2 view controller instances as items.  This is much simpler (and less error prone) than what we'd previously have to do:  `[NSArray arrayWithObjects: viewController1, viewController2, nil];`
+## Challenge 2
 
-**Build and Run**
+### Video
 
-### Challenge 1
+Great job! Now that you've got the basics down, it's time for me to introduce the app you'll be building throughout the remainder of this course…
 
-Create three ViewControllers for our InstaPhoto app (that will correspond to the three items we want in the tab bar), "FeedViewController", "FavoritesViewController", and "ProfileViewController".
+Presenting: InstaPhoto.
 
-#### Answer
+InstaPhoto is an app that lets users easily browse photos uploaded to the InstaPhoto service, save favorites, and manage their profile. There's a ton of work that goes into making an app like this (far beyond the scope of this course). Our goal is not to have you complete the course with an app-store ready app but to help you overcome the hurdles you will face when writing an app that *you* actually want to write. InstaPhoto is a great app to walk through because along the way you'll be able to use many native controls, get experience writing networking code, use and optimize table views, container views, store data, and much more.
 
-```
-// FeedViewController.h
-#import <UIKit/UIKit.h>
+InstaPhoto will feature three main sections: a Feed view, a Favorites view, and a Profile view. These will be represented by the following view controllers, respectively: "FeedViewController", "FavoritesViewController", and "ProfileViewController".
 
-@interface FeedViewController : UIViewController
+Let's go ahead and setup our initial `UIViewControllers` now. We'll create the classes for you. Make sure you give them a look  in the project navigator though.
 
-@end
+### Challenege Instruction
 
-// FeedViewController.m
-#import "FeedViewController.h"
+Instantiate the new InstaPhoto view controllers (FeedViewController, FavoritesViewController, ProfileViewController) using `alloc` and `init` and add them to the tab bar. Give them the following titles, respectively: "Feed", "Favorites", and "Profile".
 
-@implementation FeedViewController
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-}
-
-@end
-
-//etc.
-```
-
-### Challenge 2:
-
-In the AppDelegate below, create a new instance of UITabBarController and set it as the UIWindow's rootViewController:
-
-#### Answer
-
-```
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    self.tabBarController = [[UITabBarController alloc] init];
-    self.window.rootViewController = self.tabBarController;
-    [self.window makeKeyAndVisible];
-    return YES;
-}
-```
-
-### Challenge 3:
-
-In the AppDelegate, create an instance of each of the view controller's and set their titles to `@"Feed"`, `@"Favorites"`, and `@"Profile"` respectively.  Then go ahead and make them the `UITabBarController's` tabs, in that order.
-
-#### Answer
+### Answer
 
 ```
 #import "AppDelegate.h"
-
 #import "FeedViewController.h"
 #import "FavoritesViewController.h"
 #import "ProfileViewController.h"
@@ -182,9 +135,7 @@ In the AppDelegate, create an instance of each of the view controller's and set 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
-    self.tabBarController = [[UITabBarController alloc] init];
     
     FeedViewController *feedViewController = [[FeedViewController alloc] init];
     feedViewController.title = @"Feed";
@@ -196,26 +147,26 @@ In the AppDelegate, create an instance of each of the view controller's and set 
     profileViewController.title = @"Profile";
     
     self.tabBarController.viewControllers = @[feedViewController, favoritesViewController, profileViewController];
-    
-    self.window.rootViewController = self.tabBarController;
+        
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window.rootViewController = tabBarController;
     [self.window makeKeyAndVisible];
+    
     return YES;
 }
-
-@end
 ```
 
-### Video 2
+## Challenge 3
 
-Right now our Tab Bars are a little boring and are just showing the titles of their corresponding View Controller.  As you probably already know, in most applications each Tab Bar Item has a little icon to represent what the function of that tab is.  To set the image associated with the tab, we have to access the `tabBarItem` property on our View Controllers.
+### Video
 
-If we go into our `AppDelegate.m` and use `NSLog` to inspect the `tabBarItem` of our `viewController1`, we can see that `tabBarItem` is an instance of `UITabBarItem`:
+Right now our tab bar is a little boring. We are just showing the titles of their corresponding View Controllers. Most apps place a little icon in the tab to represent what the function of that tab is. To set the image associated with the tab, we have to access the `tabBarItem` `@property` on our view controllers.
 
-`NSLog(@"viewController1 tabBarItem: %@", viewController1.tabBarItem);`
+Normally in Xcode, if we wanted to discover more about a particular `@property` or class, we could hold the `option`/`alt` key and left click on the item and documentation would appear:
 
-`viewController2 tabBarItem: <UITabBarItem: 0xb0657c0>`
+![image](https://dl.dropbox.com/s/f1wmbquayyako8v/xcode_documentation_help.png)
 
-We can then head over to the [UITabBarItem Class Reference](http://developer.apple.com/library/ios/#DOCUMENTATION/UIKit/Reference/UITabBarItem_Class/Reference/Reference.html) and look up the properties that we can set to customize the tab bar item, and we can see that there are no properties for setting the image.  But if you look at the top of that file, you can see `UITabBarItem` inherits from `UIBarItem`:
+We see that it's a UITabBarItem and even have nice little links right to the documentation! Since you don't have this we'll give you the link: If you check out [UITabBarItem Class Reference](http://developer.apple.com/library/ios/#DOCUMENTATION/UIKit/Reference/UITabBarItem_Class/Reference/Reference.html) you'll notice there isn't a property or method for setting the tab bar image! Before posting on StackOverflow you should do some more investigation. At the top of the page you'll see that `UITabBarItem` inherits from `UIBarItem`:
 
 ![image](http://f.cl.ly/items/222X0r320r1Q3T3p232U/Screen%20Shot%202012-10-02%20at%209.46.34%20AM.png)
 
@@ -223,104 +174,159 @@ If we click on that link, we are taken to the [UIBarItem Class Reference](http:/
 
 > This image can be used to create other images to represent this item on the bar—for example, a selected and unselected image may be derived from this image. You should set this property before adding the item to a bar. The default value is nil.
 
-So now we know how to set `tabBarItem` image on our view controllers:
+That's just what we need. Before we get to the code, here's a quick run-down of `UIImage`:
+
+* `UIImage`'s represent a PNG or JPG.
+* You can create a `UIImage` by calling `[UIImage imageNamed:@"image-name"]`. Notice you don't need to specify the type of image, just the name of the image in your project navigator. Also you don't need to `alloc` or `init`.
+
+Let's try setting the images now. We'll add some images for you to the project navigator.
+
+### Challenge Instruction
+
+Using the `image` `@property` of `tabBarItem` set the following images for the view controllers:
+
+* FeedViewController: "tab_icon_feed"
+* FavoritesViewController: "tab_icon_favorites"
+* ProfileViewController: "tab_icon_profile"
+
+### Answer
 
 ```
-@implementation AppDelegate
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
- 
-    UIViewController *viewController1 = [[FirstViewController alloc] init];
-    viewController1.title = @"First";
-    UIViewController *viewController2 = [[SecondViewController alloc] init];
-    viewController2.title = @"Second";
-
-    viewController1.tabBarItem.image = [UIImage imageNamed:@"first"];
-    viewController2.tabBarItem.image = [UIImage imageNamed:@"second"];
+    // Override point for customization after application launch.
     
-    self.tabBarController = [[UITabBarController alloc] init];
-    self.tabBarController.viewControllers = @[viewController1, viewController2];
-    self.window.rootViewController = self.tabBarController;
+    FeedViewController *feedViewController = [[FeedViewController alloc] init];
+    feedViewController.title = @"Feed";
+    feedViewController.tabBarItem.image = [UIImage imageNamed:@"tab_icon_feed"];
+    
+    FavoritesViewController *favoritesViewController = [[FavoritesViewController alloc] init];
+    favoritesViewController.title = @"Favorites";
+    favoritesViewController.tabBarItem.image = [UIImage imageNamed:@"tab_icon_favorites"];
+    
+    ProfileViewController *profileViewController = [[ProfileViewController alloc] init];
+    profileViewController.title = @"Profile";
+    profileViewController.tabBarItem.image = [UIImage imageNamed:@"tab_icon_profile"];
+    
+    UITabBarController *tabBarController = [[UITabBarController alloc] init];
+    tabBarController.viewControllers = @[feedViewController, favoritesViewController, profileViewController];
+    
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window.rootViewController = tabBarController;
     [self.window makeKeyAndVisible];
+    
     return YES;
 }
 ```
 
-`[UIImage imageNamed:@"first"]` will return an instance of `UIImage`, and `@"first"` is the name of an image we have added to our project (with it's 2x variant for retina screens):
+## Challenge 4
 
-![image](http://f.cl.ly/items/1Q302a1V2z2s3H3H1o0R/Screen%20Shot%202012-10-02%20at%209.50.14%20AM.png)
+### Video
 
-So far so good!  But at this point, our code could use a little refactoring.  We shouldn't be setting the title and tabBarItem's for these view controllers in the AppDelegate, but instead we should set them in the View Controller's themselves.  So where should we move the title and image setting code to in the controller's?  We could try and use `loadView`, since that is called whenever the view controller's view is loaded, that should work, right?
+So far so good!  But at this point, our code could use a little refactoring. We shouldn't be setting our view controller's title and tabBarItem's in the App Delegate. Instead, we should set them in the view controller's themselves.  So where should we move the title and image setting code to in the controllers? We could try and use `loadView`, since that is called whenever the view controller's view is loaded - that should work, right?
+
+> FeedViewController.m
 
 ```
 - (void)loadView
 {
-    self.title = @"First";
-    self.tabBarItem.image = [UIImage imageNamed:@"first"];
-}
-```
-
-But then when we build and run, we can see that something isn't working:
-
-![image](http://f.cl.ly/items/2Q180T1G330K02301m14/Resized%20Screen%202012-10-02%20at%2010.13.35%20AM.png)
-
-Only when we tap on the second tab bar does it load it's title and image:
-
-![image](http://f.cl.ly/items/1U0a1V3Y0p2W0C3e0T0v/Resized%20Screen%202012-10-02%20at%2010.13.48%20AM.png)
-
-This is because `loadView` is only called once the `view` property is accessed on the View Controller, and the `SecondViewController`'s view doesn't need to be loaded until it is accessed.  We need to set the title and image when the view controller instance is first created.  To do this, we can override the `initWithNibName:bundle:nibBundleOrNil` method on the view controller, like this:
-
-```
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    
-    self.title = @"First";
-    self.tabBarItem.image = [UIImage imageNamed:@"first"];
-    
-    return self;
-}
-```
-
-This method is called internally whenever a `UIViewController` instance is created.  So when we call `[[FirstViewController alloc] init];` in our AppDelegate, the `initWithNibName:bundle:nibBundleOrNil` method is called.  We have to call the `super` method first, which will return an instance of `FirstViewController` and we assign that to `self`.  This works even though we don't have a nib file for this view controller.  So now when we build and run, you can see that both tabs are filled out on first load:
-
-![image](http://f.cl.ly/items/132T093z1U1A3y220k06/Resized%20Screen%202012-10-02%20at%2010.22.42%20AM.png)
-
-### Challenge 4
-
-We've created and added 3 images for use in the tab bars, "feed", "favorites", and "profile".  In each of the view controllers below, set the title and the tabBarItem.image in the `initWithNibName:bundle:nibBundleOrNil` method.
-
-#### Answer:
-
-**FeedViewController.m**
-
-```
-#import "FeedViewController.h"
-
-@implementation FeedViewController
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    
     self.title = @"Feed";
-    self.tabBarItem.image = [UIImage imageNamed:@"feed"];
-    
-    return self;
+    self.tabBarItem.image = [UIImage imageNamed:@"tab_icon_feed"];
 }
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-}
-
-@end
 ```
 
-etc.
+> FavoritesViewController.m
 
-### Video 3
+```
+- (void)loadView
+{
+    self.title = @"Favorites";
+    self.tabBarItem.image = [UIImage imageNamed:@"tab_icon_favorites"];
+}
+```
 
+> ProfileViewController.m
 
+```
+- (void)loadView
+{
+    self.title = @"Profile";
+    self.tabBarItem.image = [UIImage imageNamed:@"tab_icon_profile"];
+}
+```
+
+Let's see what we get:
+
+TODO: display image of tabs missing the title and images.
+
+Well that's not right. We find that the image and title only appear after we've tapped on the tab:
+
+TODO: display image of tabs missing the title and images.
+
+Remember that `loadView` is called once when the `view` `@property` is accessed and needs to be created. Tab bars are efficient as they only load a tab when it's needed. This is another example of [lazy loading](http://en.wikipedia.org/wiki/Lazy_loading). Therefore, the title and image are only set when the `view` is accessed which only happens when the tab is pressed.
+
+Next, let's try moving the code to the `initWithNibName:bundle:` method. Try doing this and see what happens.
+
+### Challenge Instruction
+
+Move the initialization code from the `loadView` methods to the `initWithNibName:bundle:` of the view controllers.
+
+### Answer
+
+> FeedViewController.m
+
+```
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        self.title = @"Feed";
+        self.tabBarItem.image = [UIImage imageNamed:@"tab_icon_feed"];
+    }
+    return self;
+}
+```
+
+> FavoritesViewController.m
+
+```
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        self.title = @"Favorites";
+        self.tabBarItem.image = [UIImage imageNamed:@"tab_icon_favorites"];
+    }
+    return self;
+}
+```
+
+> ProfileViewController.m
+
+```
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        self.title = @"Profile";
+        self.tabBarItem.image = [UIImage imageNamed:@"tab_icon_profile"];
+    }
+    return self;
+}
+```
+
+## Challenge 5
+
+### Video
+
+That did it! All the tab titles and images appear correctly now. You may have noticed that we placed that initialization code in the `initWithNibName:bundle:` method but the method we actually called to created the object was the `init` method! That's because `init` will call `initWithNibName:bundle:` and pass in a `nil` NIB name (Remember, NIBs are files for creating interfaces). Good to know.
+
+Now that you've gotten the basics of the `UITabBarController` we're going to introduce to you a view controller you'll be using even more: the `UINavigationController`. The `UINavigationController` is used when you want the user to progress through a heirarchy of views. The heirarchy could be completely linear or the user could make choices along the way and decide where to go. Check out the default Settings app for an example:
+
+![image](http://developer.apple.com/library/ios/documentation/uikit/reference/UINavigationController_Class/Art/navigation_interface.jpg)
+
+The vast majority of the time, the `UINavigationController` is paired with a `UITableViewController` to present the user with navigation options. You'll learn more about the `UITableViewController` in the next level.
+
+Let's talk a little about how the `UINavigationController` works.
+
+![image](http://developer.apple.com/library/ios/DOCUMENTATION/WindowsViews/Conceptual/ViewControllerCatalog/Art/NavigationViews.png)
