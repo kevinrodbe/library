@@ -16,8 +16,9 @@
 
 In order to write iPhone and iPad applications you're going to need to know a little Objective C.  If you're not comfortable with Objective C please go do one of the following:
 
+* Complete **Level 0: An Objective-C Primer**.
 * Watch this [CodeTV Screencast](http://www.codeschool.com) on the subject.
-* Read through [Learn Objective C](http://cocoadevcentral.com/d/learn_objectivec/)
+* ~~Read through [Learn Objective C](http://cocoadevcentral.com/d/learn_objectivec/)~~ (There are a lot of good things here but there is too much out-of-date and unnecessary information. I just realized this after reading through this last week - Chris)
 
 Go to any bookstore and open up the first iOS development book you see and inevitably, the first
 chapter will be all about Xcode.  Xcode is the IDE (Integrated Development Environment) from Apple used
