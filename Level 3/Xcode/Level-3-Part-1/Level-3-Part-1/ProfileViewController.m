@@ -27,12 +27,39 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.view.backgroundColor = [UIColor whiteColor];
+    
+    // Add the profile picture
+    UIButton *profilePicture = [UIButton buttonWithType:UIButtonTypeCustom];
+    [profilePicture addTarget:self action:@selector(profilePicturePressed:) forControlEvents:UIControlEventTouchUpInside];
+    [profilePicture setImage:[UIImage imageNamed:@"profile_picture"] forState:UIControlStateNormal];
+    [profilePicture setImage:[UIImage imageNamed:@"profile_picture"] forState:UIControlStateHighlighted];
+    [profilePicture setFrame:CGRectMake(15, 15, 52, 60)];
+    
+    [self.view addSubview:profilePicture];
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)profilePicturePressed:(id)sender
+{
+    // Create new view controller
+    UIViewController *profileImageViewController = [[UIViewController alloc] init];
+    profileImageViewController.view.frame = self.view.frame;
+    
+    // Create and add image view
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"profile_picture_large"]];
+    [imageView setContentMode:UIViewContentModeScaleAspectFit];
+    imageView.frame = profileImageViewController.view.frame;
+    [profileImageViewController.view addSubview:imageView];
+    
+    // Push new view controller
+    [self.navigationController pushViewController:profileImageViewController animated:YES];
 }
 
 @end

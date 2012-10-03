@@ -16,6 +16,7 @@
 * Understands UIViews and UIViewControllers.
 * Understands the role of the App Delegate.
 * Understands the difference between the `loadView` and `viewDidLoad` methods.
+* Understands how to attach an action to a `UIButton` (covered in Level 2).
 
 ### Video
 
@@ -257,11 +258,11 @@ So far so good! At this point, our code could use a little refactoring. We shoul
 
 Let's see what we get:
 
-TODO: display image of tabs missing the title and images.
+![image](https://dl.dropbox.com/s/5uf0o7rt1de5wxl/tab_bar_missing_01.png)
 
 Well that's not right. We find that the image and title only appear after we've tapped on the tab:
 
-TODO: display image of tabs missing the title and images.
+![image](https://dl.dropbox.com/s/hzhvrl3geogljh8/tab_bar_missing_02.png)
 
 Remember that `loadView` is called once when the `view` `@property` is accessed and needs to be created. Tab bars are efficient as they only load a tab when it's needed. This is another example of [lazy loading](http://en.wikipedia.org/wiki/Lazy_loading). Therefore, the title and image are only set when the `view` is accessed which only happens when the tab is pressed.
 
@@ -396,6 +397,8 @@ Place each of our main view controllers inside a `UINavigationControler`. Then, 
 
 ## Challenge 6
 
+### Video
+
 Did you notice that the `UINavigationController` knew the names of our view controllers? That's because we set the `title` `@property` of our view controllers. It's used for numerous things.
 
 Now, let's add a profile picture to the `ProfileViewController`. There is a special `UIView` that is used to display images called `UIImageView` but since we want our profile picture to be tappable (can you really "click" a touch screen?) we're going to use a `UIButton`. You should already know how to use these from the last level but just in case, here's a quick refresher:
@@ -403,32 +406,136 @@ Now, let's add a profile picture to the `ProfileViewController`. There is a spec
 * `UIButton`s are initialized like this: `[UIButton buttonWithType:<UIButtonType>]`.
 * `UIButton`s are given actions to perform like this: `[myButton addTarget:<target> action:@selector(<selector-name>) forControlEvents:<UIControlEvent>];`
 
-TODO: Talk about adding image to custom button.
+A new `UIButton` method you'll need to know about is `- (void)setImage:(UIImage *)image forState:(UIControlState)state`. This sets an image to the button for a particular state. The only two states you need to know about right now are `UIControlStateNormal` and `UIControlStateHighlighted` which correspond to when a button is resting and when the button is being pressed, respectively.
+
+Let's add the profile picture to the `ProfileViewController`. Once we've added it, we're going to make it so when the user taps the picture, a larger profile picture is *pushed* onto the screen.
 
 ### Challenge Instruction
 
-TODO: Create custom button on Profile screen.
+In the `ProfileViewController`'s `viewDidLoad` method, create a new `UIButton` called `profilePicture` of the type `UIButtonTypeCustom`. Give it a frame of `CGRectMake(15, 15, 52, 60)` and have it display the image named "profile_picture" for both the `UIControlStateNormal` and `UIControlStateHighlighted` states. Finally, add the new button to the view controller's `view`.
+
+(You may also want to change the `self.view`'s background color to make the image more visible)
 
 ### Answer
+
+```
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    self.view.backgroundColor = [UIColor whiteColor];
+    
+    // Add the profile picture
+    UIButton *profilePicture = [UIButton buttonWithType:UIButtonTypeCustom];
+    [profilePicture setImage:[UIImage imageNamed:@"profile_picture"] forState:UIControlStateNormal];
+    [profilePicture setImage:[UIImage imageNamed:@"profile_picture"] forState:UIControlStateHighlighted];
+    [profilePicture setFrame:CGRectMake(15, 15, 52, 60)];
+    
+    [self.view addSubview:profilePicture];
+}
+```
 
 ## Challenge 7
 
-TODO: Introduce UIImageView.
-
 ### Challenge Instruction
 
-TODO: Push new view controller w/ UIImageView.
+Nice!
+
+![image](https://dl.dropbox.com/s/577m7dduxxzqr4k/profile_pic_view.png)
+
+Now add a target and action to the button for when a `UIControlEventTouchUpInside` event happens. Make the `target` equal to `self` and the `action` equal to `profilePicturePressed:`. Lastly, add the `profilePicturePressed:` method to the `ProfileViewController`.
+
+Hint: Remember, the method you'll want to use to add an action to a `UIButton` is `- (void)addTarget:(id)target action:(SEL)action forControlEvents:(UIControlEvents)controlEvents`.
+
+Hint: Also remember that action methods look like this: `- (void)actionMethodName:(id)sender.`
 
 ### Answer
 
-## Challenge 8
+```
+- (void)viewDidLoad
+{    
+    ...
+    [profilePicture addTarget:self action:@selector(profilePicturePressed:) forControlEvents:UIControlEventTouchUpInside];
+    ...
+}
+
+- (void)profilePicturePressed:(id)sender
+{
+
+}
+```
+
+## Challenge 9
 
 ### Video
 
-What if you tried to push an instance of the same type of view controller the navigation controller is currently on onto the stack? What if you tried to push, literally, the same view controller that is being shown onto the stack?
+We're almost ready to push our first view controller. The last step is creating the view controller to push and adding the large image to it. To add the image we'll be adding a `UIImageView` to the new view controller. `UIImageView`s are easy to create - simply call the `initWithImage:` method after you `alloc` the `UIImageView`. Here's an example where we create an image view with the image `myImage`:
+
+```
+UIImageView *imageView = [[UIImageView alloc] initWithImage:myImage];
+```
+
+One last thing to note is that by default an `UIImageView` will stretch an image to fit the image view's frame. Many times, this is not what we want. We can tell the `UIImageView` to fit the image as closely as possible while maintaining the aspect ratio by calling `[myImageView setContentMode:UIViewContentModeScaleAspectFit]`.
+
+### Challenge Instruction
+
+Now, let's fill in that action and *push* a new view controller. This is the grand finale. There's a lot of steps but it's all things you've done before. 
+
+Here's what you'll need to do:
+
+* In the `- (void)profilePicturePressed:(id)sender` action method, create a new `UIViewController`.
+* Set the new view controllers view's frame to equal `self.view.frame`.
+* Create a new `UIImageView` with a `UIImage` whose image is named "profile_picture_large".
+* Set the *content mode* of the `UIImageView` to `UIViewContentModeScaleAspectFit`.
+* Set the `frame` of the `UIImageView` to equal `self.view.frame`.
+* Add the image view to the new view controller using `addSubview:`.
+* Push the new view controller using the `self.navigationController`'s `pushViewController:animated:` method.
+
+### Answer
+
+```
+- (void)profilePicturePressed:(id)sender
+{
+    // Create new view controller
+    UIViewController *profileImageViewController = [[UIViewController alloc] init];
+    profileImageViewController.view.frame = self.view.frame;
+    
+    // Create and add image view
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"profile_picture_large"]];
+    [imageView setContentMode:UIViewContentModeScaleAspectFit];
+    imageView.frame = profileImageViewController.view.frame;
+    [profileImageViewController.view addSubview:imageView];
+    
+    // Push new view controller
+    [self.navigationController pushViewController:profileImageViewController animated:YES];
+}
+```
+
+## Challenge 10
+
+### Video
+
+Congrats! You've done a great thing.
+
+<table>
+  <tr>
+  	<td><img src="https://dl.dropbox.com/s/577m7dduxxzqr4k/profile_pic_view.png"/></td>
+    <td><img src="https://dl.dropbox.com/s/wzpiszk1yl0sznl/profile_pic_view_large.png"/></td>
+  </tr>
+</table>
+
+As you noticed, the `UINavigationController` made a back button appear for you automatically. It even named it using the `title` of the previous view controller.
+
+For this final challenge, take some time to experiment with all you've learned so far. In the next level, we'll introduce `UITableViewControllers` so you'll need to make sure you are comfortable with what we've learned here.
+
+Have fun!
 
 ### Challenge Instruction
 
 Experiment with the `UINavigationController`.
 
+What if you tried to push an instance of the same type of view controller the navigation controller is currently on onto the stack? What if you tried to push, literally, the same view controller that is being shown onto the stack?
+
 ### Answer
+
+N/A
