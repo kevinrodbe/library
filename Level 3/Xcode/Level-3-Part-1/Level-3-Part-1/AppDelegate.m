@@ -17,12 +17,17 @@
 {
     // Override point for customization after application launch.
     
-    FeedViewController *feedViewController = [[FeedViewController alloc] init];    
-    FavoritesViewController *favoritesViewController = [[FavoritesViewController alloc] init];    
-    ProfileViewController *profileViewController = [[ProfileViewController alloc] init];
+    FeedViewController *feedViewController = [[FeedViewController alloc] init];
+    UINavigationController *feedNavController = [[UINavigationController alloc] initWithRootViewController:feedViewController];
     
+    FavoritesViewController *favoritesViewController = [[FavoritesViewController alloc] init];
+    UINavigationController *favoritesNavController = [[UINavigationController alloc] initWithRootViewController:favoritesViewController];
+    
+    ProfileViewController *profileViewController = [[ProfileViewController alloc] init];
+    UINavigationController *profileNavController = [[UINavigationController alloc] initWithRootViewController:profileViewController];
+
     UITabBarController *tabBarController = [[UITabBarController alloc] init];
-    tabBarController.viewControllers = @[feedViewController, favoritesViewController, profileViewController];
+    tabBarController.viewControllers = @[feedNavController, favoritesNavController, profileNavController];
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.rootViewController = tabBarController;

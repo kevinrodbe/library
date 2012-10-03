@@ -8,7 +8,6 @@
 * Introduction to UINavigationController.
 	* User will create a navigation controller in the profile tab that lets the user see a bigger version of their profile picture.
 * Learn a little about UIImage.
-* See an example of a category used well.
 
 ### User Knowledge Assumptions
 
@@ -109,7 +108,7 @@ In the App Delegate's `application:didFinishLaunchingWithOptions:` method create
 
 ### Video
 
-Great job! Now that you've got the basics down, it's time for me to introduce the app you'll be building throughout the remainder of this course…
+Great job! Now that you're comfortable with using the `UITabBarController`, it's time to introduce the app you'll be building throughout the remainder of this course…
 
 Presenting: InstaPhoto.
 
@@ -119,7 +118,7 @@ InstaPhoto will feature three main sections: a Feed view, a Favorites view, and 
 
 Let's go ahead and setup our initial `UIViewControllers` now. We'll create the classes for you. Make sure you give them a look  in the project navigator though.
 
-### Challenege Instruction
+### Challenge Instruction
 
 Instantiate the new InstaPhoto view controllers (FeedViewController, FavoritesViewController, ProfileViewController) using `alloc` and `init` and add them to the tab bar. Give them the following titles, respectively: "Feed", "Favorites", and "Profile".
 
@@ -162,7 +161,7 @@ Instantiate the new InstaPhoto view controllers (FeedViewController, FavoritesVi
 
 Right now our tab bar is a little boring. We are just showing the titles of their corresponding View Controllers. Most apps place a little icon in the tab to represent what the function of that tab is. To set the image associated with the tab, we have to access the `tabBarItem` `@property` on our view controllers.
 
-Normally in Xcode, if we wanted to discover more about a particular `@property` or class, we could hold the `option`/`alt` key and left click on the item and documentation would appear:
+In Xcode, if we wanted to discover more about a particular `@property` or class, we could hold the `option`/`alt` key and left click on the item and documentation would appear:
 
 ![image](https://dl.dropbox.com/s/f1wmbquayyako8v/xcode_documentation_help.png)
 
@@ -174,12 +173,13 @@ If we click on that link, we are taken to the [UIBarItem Class Reference](http:/
 
 > This image can be used to create other images to represent this item on the bar—for example, a selected and unselected image may be derived from this image. You should set this property before adding the item to a bar. The default value is nil.
 
-That's just what we need. Before we get to the code, here's a quick run-down of `UIImage`:
+That's just what we need. Before we get to the code, I'll need to give you a quick run-down of `UIImage`:
 
 * `UIImage`'s represent a PNG or JPG.
-* You can create a `UIImage` by calling `[UIImage imageNamed:@"image-name"]`. Notice you don't need to specify the type of image, just the name of the image in your project navigator. Also you don't need to `alloc` or `init`.
+* You can create a `UIImage` by calling `[UIImage imageNamed:@"image-name"]`. Notice you don't need to specify the type of image, just the name of the image in your project navigator. 
+* Also you don't need to `alloc` or `init`.
 
-Let's try setting the images now. We'll add some images for you to the project navigator.
+Let's try setting the images now. We'll add some images files for you to the project navigator.
 
 ### Challenge Instruction
 
@@ -223,7 +223,7 @@ Using the `image` `@property` of `tabBarItem` set the following images for the v
 
 ### Video
 
-So far so good!  But at this point, our code could use a little refactoring. We shouldn't be setting our view controller's title and tabBarItem's in the App Delegate. Instead, we should set them in the view controller's themselves.  So where should we move the title and image setting code to in the controllers? We could try and use `loadView`, since that is called whenever the view controller's view is loaded - that should work, right?
+So far so good! At this point, our code could use a little refactoring. We shouldn't be setting our view controller's title and tabBarItem's in the App Delegate. Instead, we should set them in the view controller's themselves.  So where should we move the title and image setting code to in the controllers? We could try and use `loadView`, since that is called whenever the view controller's view is loaded - that should work, right?
 
 > FeedViewController.m
 
@@ -327,6 +327,108 @@ Now that you've gotten the basics of the `UITabBarController` we're going to int
 
 The vast majority of the time, the `UINavigationController` is paired with a `UITableViewController` to present the user with navigation options. You'll learn more about the `UITableViewController` in the next level.
 
-Let's talk a little about how the `UINavigationController` works.
+Let's talk a little about how the `UINavigationController` works. Like the `UITabBarController`, the `UINavigationController` is a *Container View Controller*, that is, it contains and manages other views. You initialize a `UINavigationController` by giving it a root view controller using `initWithRootViewController:`:
 
-![image](http://developer.apple.com/library/ios/DOCUMENTATION/WindowsViews/Conceptual/ViewControllerCatalog/Art/NavigationViews.png)
+```
+UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:myViewController];
+```
+
+When the navigation controller is displayed it places a navigation bar (`UINavigationBar`) at the top of the screen and positions the view controller right below. The heirarchy of views looks like this:
+
+![image from apple docs](http://developer.apple.com/library/ios/DOCUMENTATION/WindowsViews/Conceptual/ViewControllerCatalog/Art/NavigationViews.png)
+
+Making the navigation controller proceed to a new screen is called *pushing* and making the navigation controller show the previous screen is called *popping*. This is common terminology when you are dealing with *stacks*. Going back to the Settings app example, if we were on the first view…
+
+![image](https://dl.dropbox.com/s/24nhw4bwhu68kqr/nav_controller_example_initial.jpeg)
+
+And wanted to *push* to the "General Settings" view, we would send the `pushViewController:animated:` message to the navigation controller:
+
+```
+[self.navigationController pushViewController:generalSettings animated:YES];
+```
+
+Which would *push* the "General Settings" view controller onto the stack and display the view we want.
+
+![image](https://dl.dropbox.com/s/3va4q098y5rb7hq/nav_controller_example.jpeg)
+
+Sending the `popViewControllerAnimated:` message from the "General Settings" would *pop* us back to the first view controller:
+
+```
+[navController popViewControllerAnimated:YES];
+```
+
+![image](https://dl.dropbox.com/s/24nhw4bwhu68kqr/nav_controller_example_initial.jpeg)
+
+Normally, you'll want to pass `YES` for the parameter that asks if you want the push/pop to be animated. The `UINavigationController` provides some nice built in animation for us. As you may have noticed, it also provides a "Back" button for free that appears and disappears automatically depending on what view controller the user is on.
+
+Now that you know a bit about the `UINavigationController` it's time to try it out.
+
+### Challenge Instruction
+
+Place each of our main view controllers inside a `UINavigationControler`. Then, give the navigation controllers to the tab bar instead of the previous view controllers.
+
+### Answer
+
+```
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+{
+    // Override point for customization after application launch.
+    
+    FeedViewController *feedViewController = [[FeedViewController alloc] init];
+    UINavigationController *feedNavController = [[UINavigationController alloc] initWithRootViewController:feedViewController];
+    
+    FavoritesViewController *favoritesViewController = [[FavoritesViewController alloc] init];
+    UINavigationController *favoritesNavController = [[UINavigationController alloc] initWithRootViewController:favoritesViewController];
+    
+    ProfileViewController *profileViewController = [[ProfileViewController alloc] init];
+    UINavigationController *profileNavController = [[UINavigationController alloc] initWithRootViewController:profileViewController];
+
+    UITabBarController *tabBarController = [[UITabBarController alloc] init];
+    tabBarController.viewControllers = @[feedNavController, favoritesNavController, profileNavController];
+    
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window.rootViewController = tabBarController;
+    [self.window makeKeyAndVisible];
+    
+    return YES;
+}
+```
+
+## Challenge 6
+
+Did you notice that the `UINavigationController` knew the names of our view controllers? That's because we set the `title` `@property` of our view controllers. It's used for numerous things.
+
+Now, let's add a profile picture to the `ProfileViewController`. There is a special `UIView` that is used to display images called `UIImageView` but since we want our profile picture to be tappable (can you really "click" a touch screen?) we're going to use a `UIButton`. You should already know how to use these from the last level but just in case, here's a quick refresher:
+
+* `UIButton`s are initialized like this: `[UIButton buttonWithType:<UIButtonType>]`.
+* `UIButton`s are given actions to perform like this: `[myButton addTarget:<target> action:@selector(<selector-name>) forControlEvents:<UIControlEvent>];`
+
+TODO: Talk about adding image to custom button.
+
+### Challenge Instruction
+
+TODO: Create custom button on Profile screen.
+
+### Answer
+
+## Challenge 7
+
+TODO: Introduce UIImageView.
+
+### Challenge Instruction
+
+TODO: Push new view controller w/ UIImageView.
+
+### Answer
+
+## Challenge 8
+
+### Video
+
+What if you tried to push an instance of the same type of view controller the navigation controller is currently on onto the stack? What if you tried to push, literally, the same view controller that is being shown onto the stack?
+
+### Challenge Instruction
+
+Experiment with the `UINavigationController`.
+
+### Answer
