@@ -370,7 +370,7 @@ Remember these lines over in our AppDelegate:
 ```
     CGRect viewRect = [[UIScreen mainScreen] bounds];
     UIView *view = [[UIView alloc] initWithFrame:viewRect];
-    self.ViewController.view = view;
+    self.viewController.view = view;
 ```
 
 (Show both method definitions on the same slide and do a Magic Move so we can see the before and after for each method.. if it works.)
@@ -387,7 +387,7 @@ Remember these lines over in our AppDelegate:
 Notice we didn't carry over the background color or anything else that didn't have to do with setting up the view. This is because there is a method to take care of that called `viewDidLoad`. It's very important that you make sure only create views in the `loadView` method and only setup the views in the `viewDidLoad` method. There's some magic going on behind the scenes and you will almost certainly run into trouble if you don't adhere to this. Let's update our `viewDidLoad` method now to setup the view.
 
 ```
-- (void)loadView
+- (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
@@ -399,13 +399,7 @@ Great! Notice that this method makes a call to `super`. That's important because
 
 Go ahead and run the app and you'll see that it still works! (this might be a good time for a diagram showing responsibilities… i.e. AppDelegate vs ViewController vs View.. maybe talk about rootViewController in it… just review)
 
-Now, I have a confession to make.  Three of these lines aren't even needed and the code will still work.  By default if we don't create a view for our ViewController, it will automatically create one for us and also set it to the bounds of our window (help, not sure if the second part here is true).  Yeah, pretty cool huh?  That means the only line we need here is:
-
-```
-self.view.backgroundColor = [UIColor purpleColor];
-```
-
-Notice we had to add the `self.` here to reference the view that's created for us by default.
+Now, I have a confession to make.  Three of these lines aren't even needed and the code will still work.  By default if we don't create a `view` for our View Controller, it will automatically create one for us and also set it to the bounds of our screen. Yeah, pretty cool huh? This means we can completely get rid of the `loadView` method.
 
 ### Touch
 
