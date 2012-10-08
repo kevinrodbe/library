@@ -268,6 +268,8 @@ Remember that `loadView` is called once when the `view` `@property` is accessed 
 
 Next, let's try moving the code to the `initWithNibName:bundle:` method. Try doing this and see what happens.
 
+TODO: talk about initWithNib
+
 ### Challenge Instruction
 
 Move the initialization code from the `loadView` methods to the `initWithNibName:bundle:` of the view controllers.
@@ -317,6 +319,10 @@ Move the initialization code from the `loadView` methods to the `initWithNibName
 ```
 
 ## Challenge 5
+
+TODO: Change stuff in the views in the tab bar.
+
+## Challenge 6
 
 ### Video
 
@@ -401,10 +407,7 @@ Place each of our main view controllers inside a `UINavigationControler`. Then, 
 
 Did you notice that the `UINavigationController` knew the names of our view controllers? That's because we set the `title` `@property` of our view controllers. It's used for numerous things.
 
-Now, let's add a profile picture to the `ProfileViewController`. There is a special `UIView` that is used to display images called `UIImageView` but since we want our profile picture to be tappable (can you really "click" a touch screen?) we're going to use a `UIButton`. You should already know how to use these from the last level but just in case, here's a quick refresher:
-
-* `UIButton`s are initialized like this: `[UIButton buttonWithType:<UIButtonType>]`.
-* `UIButton`s are given actions to perform like this: `[myButton addTarget:<target> action:@selector(<selector-name>) forControlEvents:<UIControlEvent>];`
+Now, let's add a profile picture to the `ProfileViewController`. There is a special `UIView` that is used to display images called `UIImageView` but since we want our profile picture to be tappable (can you really "click" a touch screen?) we're going to use a `UIButton`.
 
 A new `UIButton` method you'll need to know about is `- (void)setImage:(UIImage *)image forState:(UIControlState)state`. This sets an image to the button for a particular state. The only two states you need to know about right now are `UIControlStateNormal` and `UIControlStateHighlighted` which correspond to when a button is resting and when the button is being pressed, respectively.
 
@@ -415,6 +418,12 @@ Let's add the profile picture to the `ProfileViewController`. Once we've added i
 In the `ProfileViewController`'s `viewDidLoad` method, create a new `UIButton` called `profilePicture` of the type `UIButtonTypeCustom`. Give it a frame of `CGRectMake(15, 15, 52, 60)` and have it display the image named "profile_picture" for both the `UIControlStateNormal` and `UIControlStateHighlighted` states. Finally, add the new button to the view controller's `view`.
 
 (You may also want to change the `self.view`'s background color to make the image more visible)
+
+> Hint:
+> You should already know how to use these from the last level but just in case, here's a quick refresher:
+>
+> * `UIButton`s are initialized like this: `[UIButton buttonWithType:<UIButtonType>]`.
+> * `UIButton`s are given actions to perform like this: `[myButton addTarget:<target> action:@selector(<selector-name>) > forControlEvents:<UIControlEvent>];`
 
 ### Answer
 
