@@ -4,8 +4,11 @@ Improving the Feed
 
 ### Goals
 
+* Storyboard intro. How storyboards make creating cells easy. Let's make the posts pretty now.
 * Over-coming a UITableView gotcha: resuable cells. Make sure you reset your UI!
 * How to integrate Pull-To-Refresh.
+* Variable height cells.
+* Reloading Table data.
 
 ### User Knowledge Assumptions
 
@@ -16,13 +19,27 @@ Improving the Feed
 
 ### Video
 
+Intro to storyboards.
+
+### Challenge Instruction
+
+Check out all the code we removed and continue to the next challenge.
+
+### Answer
+
+N/A
+
+## Challenge 2
+
+### Video
+
 We added a new `@property` to our `InstaPhotoPost` model called `isPopularPost` which denotes that the particular post has been liked more than 25 times.
 
 ```
 TODO: Show changes we made to the model here…
 ```
 
-We've also updated our table cells to have this little "Popular"badge which is hidden by default:
+We've also updated our table cells to have this little "Popular" badge which is hidden by default:
 
 > TODO: Show updated table cell picture.
 
@@ -38,20 +55,9 @@ Update the `FeedViewController` to check if the current cell `isTrending`. If th
 TODO:
 ```
 
-## Challenge 2
-
-### Video
-
-
-
-### Challenge Instruction
-
-### Answer
-
 ## Challenge 3
 
 ### Video
-
 
 ### Challenge Instruction
 
@@ -61,7 +67,6 @@ TODO:
 
 ### Video
 
-
 ### Challenge Instruction
 
 ### Answer
@@ -70,6 +75,13 @@ TODO:
 
 ### Video
 
+### Challenge Instruction
+
+### Answer
+
+## Challenge 6
+
+### Video
 
 ### Challenge Instruction
 
