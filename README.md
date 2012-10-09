@@ -36,12 +36,8 @@ Creating the InstaPhoto Feed.
 * Learn how to us `UITableView`s to display static data.
 * See how `UITableView` uses both the *delegation* and *datasource* pattern.
 * How the `autoresizingMask` works.
-* Learn how to overcome two common pitfalls: changing a cell's backgound color and displaying cells of variable height.
+* Learn how to overcome a common pitfall: changing a cell's backgound color.
 * How to use `NSString`'s `stringWithFormat:` method.
-
-### Intermission 1
-
-Storyboards: what are they and how to use them. This will be a 4 - 8 minute video introducing user's to the concept of storyboards. There wont be any challenges, just a video to watch that shows us using storyboards to eliminate much of the code we previously wrote!
 
 ### Level 5
 
@@ -56,9 +52,11 @@ Making the InstaPhoto Feed pull real data. Networking with AFNetworking.
 
 Improving the InstaPhoto Feed.
 
-* How `Storyboards` make creating cells easy. Let's make the posts pretty now.
+* Storyboard intro. How storyboards make creating cells easy. Let's make the posts pretty now.
 * Over-coming a UITableView gotcha: resuable cells. Make sure you reset your UI!
 * How to integrate Pull-To-Refresh.
+* Variable height cells.
+* Reloading Table data.
 
 ### Level 7
 

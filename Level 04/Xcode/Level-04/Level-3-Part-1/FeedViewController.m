@@ -31,6 +31,8 @@
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds];
     self.tableView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
     self.tableView.dataSource = self;
+    self.tableView.delegate = self;
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:self.tableView];
 }
 
@@ -47,14 +49,29 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 25;
+    return 15;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *postCell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"postCell"];
-    [postCell.textLabel setText:[NSString stringWithFormat:@"Row %d", indexPath.row]];
+    [postCell.textLabel setText:[NSString stringWithFormat:@"Task %d", indexPath.row]];
     return postCell;
+}
+
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    UIColor *newColor = [UIColor colorWithHue:359.0 saturation:(((CGFloat)indexPath.row / 15.0) * 0.9) + 0.1 brightness:1.0 alpha:1.0];
+    cell.backgroundColor = newColor;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    FeedViewController *newFeedView = [[FeedViewController alloc] init];
+    newFeedView.title = [[[tableView cellForRowAtIndexPath:indexPath] textLabel] text]; // optional
+    [self.navigationController pushViewController:newFeedView animated:YES];
 }
 
 @end
