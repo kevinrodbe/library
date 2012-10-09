@@ -16,7 +16,7 @@
 
 ### Video
 
-Before we make the table view dynamic we'll need to get some data. To do this we are going to be making some real network requests to the InstaPhoto backed. Historically, writing network code for iOS has not been fun. It required using the delegate pattern, writing lots of boiler plate code, and manual labor. Apple has recently made things a little nicer but most developers still choose to use 3rd-party networking libraries because they still offer many advantages. We are going to teach you how to use a 3rd party networking library that has become very popular recently: AFNetworking.
+Before we make the table view dynamic we'll need to get some data. To do this we are going to be making some real network requests to the InstaPhoto backend. Historically, writing network code for iOS has not been fun. It required using the delegate pattern, writing lots of boiler plate code, and manual labor. Apple has recently made things a little nicer but most developers still choose to use 3rd-party networking libraries because they still offer many advantages. We are going to teach you how to use a 3rd party networking library that has become very popular recently: AFNetworking.
 
 ##### AFNetworking
 
