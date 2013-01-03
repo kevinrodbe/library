@@ -11,4 +11,4 @@ app.createChallenge '1-2', ->
   `var appointment;`
   
   # Answer:
-  `var appointment = new Appointment()`
+  `appointment = new Appointment()`

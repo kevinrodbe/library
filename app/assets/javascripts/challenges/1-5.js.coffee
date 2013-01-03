@@ -24,7 +24,7 @@ app.createChallenge '1-5', ->
   });`
 
   # Alternate Answer:
-  `var AppointmentView = Backbone.View.extend({
+  `AppointmentView = Backbone.View.extend({
     render: function(){
       this.$el.html('<li>' + this.model.get('title') + '</li>');
     }

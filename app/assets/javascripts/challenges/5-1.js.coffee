@@ -17,7 +17,7 @@ app.createChallenge '5-1', ->
   # Answer:
   `var AppointmentList = Backbone.Collection.extend({
     model: Appointment
-  });
+  });`
 
   # need this or coffeescript will produce a js syntax error
   this

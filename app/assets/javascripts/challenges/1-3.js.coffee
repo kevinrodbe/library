@@ -12,5 +12,5 @@ app.createChallenge '1-3', ->
   `var AppointmentView;`
   
   # Answer:
-  `var AppointmentView = Backbone.View.extend({});`
+  `AppointmentView = Backbone.View.extend({});`
 

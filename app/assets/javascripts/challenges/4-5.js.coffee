@@ -18,7 +18,7 @@ app.createChallenge '4-5', ->
     
     initialize: function(){
       this.model.on('change', this.render, this);
-    }
+    },
 
     events:  { "click a": "cancel" },
     cancel: function(){
@@ -38,7 +38,7 @@ app.createChallenge '4-5', ->
     initialize: function(){
       this.model.on('change', this.render, this);
       this.model.on('destroy', this.remove, this);
-    }
+    },
 
     events:  { "click a": "cancel" },
     cancel: function(){

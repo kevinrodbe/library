@@ -1,6 +1,6 @@
 #= require jquery
-#= require jquery_ujs
-#= require backbone-rails
+#= require underscore
+#= require backbone
 #= require_self
 #= require_tree .
 
@@ -10,7 +10,7 @@ window.app = {}
 app.slides = {}
 app.challenges = {}
 
-app.collection = app.challenges
+app.collection = app.slides
 
 app.loader = (name) ->
   challenge = app.collection[name]
@@ -18,7 +18,7 @@ app.loader = (name) ->
   if challenge?
     if challenge.dependencies?.length > 0
       challenge.dependencies.forEach (c) ->
-        loader c
+        app.loader c
 
     challenge.func.apply window
   else

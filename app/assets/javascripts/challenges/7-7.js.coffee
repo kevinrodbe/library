@@ -56,7 +56,7 @@ app.createChallenge '7-7', ->
 
     start: function(){
       Backbone.history.start({pushState: true});
-    }
+    },
 
     index: function(){
       var appointmentsView = new AppointmentListView({collection: this.appointmentList});

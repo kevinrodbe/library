@@ -24,6 +24,6 @@ app.createChallenge '1-4', ->
   # initial code:
   
   # Answer:
-  `var appointmentView = new AppointmentView({model: appointment});`
+  `appointmentView = new AppointmentView({model: appointment});`
 
 

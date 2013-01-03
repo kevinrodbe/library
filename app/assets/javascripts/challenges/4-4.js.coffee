@@ -40,7 +40,7 @@ app.createChallenge '4-4', ->
     
     initialize: function(){
       this.model.on('change', this.render, this);
-    }
+    },
 
     events:  { "click a": "cancel" },
     cancel: function(){

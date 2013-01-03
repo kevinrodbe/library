@@ -13,8 +13,8 @@ app.createChallenge '5-2', ->
   `
   var appointments = new AppointmentList();
   var json = [
-    {title: 'Back pain'}
-    {title: 'Dry mouth'}
+    {title: 'Back pain'},
+    {title: 'Dry mouth'},
     {title: 'Erection lasting more than 4 hours'}
   ]
   `
@@ -23,8 +23,8 @@ app.createChallenge '5-2', ->
   `
   var appointments = new AppointmentList();
   var json = [
-    {title: 'Back pain'}
-    {title: 'Dry mouth'}
+    {title: 'Back pain'},
+    {title: 'Dry mouth'},
     {title: 'Erection lasting more than 4 hours'}
   ]
 

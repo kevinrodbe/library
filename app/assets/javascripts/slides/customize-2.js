@@ -1,5 +1,6 @@
-createSlide('app', function(){
+//= require backbone-localstorage
 
+createSlide('customize-2', function(){
   window.TodoItem = Backbone.Model.extend({
     toggleStatus: function(){
       if(this.get('status') == 'incomplete'){
@@ -41,6 +42,7 @@ createSlide('app', function(){
   window.TodoItems = Backbone.Collection.extend({
     model: TodoItem,
     url: '/todos',
+    // localStorage: new Backbone.LocalStorage("TodoItems"),
 
     initialize: function(){
       this.on('remove', this.hideModel, this);
@@ -57,7 +59,9 @@ createSlide('app', function(){
 
       this.remove(modelsToRemove);
     }
-  })
+  });
+
+
 
   window.TodosView = Backbone.View.extend({
     initialize: function(){
@@ -91,6 +95,7 @@ createSlide('app', function(){
 
     initialize: function(){
       this.todoItems = new TodoItems();
+      this.todoItems.on('sync', function(model, resp, options){ console.group("Sync"); console.log(model); console.log(resp); console.log(options); console.groupEnd();});
       this.todosView = new TodosView({collection: this.todoItems});
       this.todosView.render();
       $('#app').append(this.todosView.el);

@@ -17,7 +17,7 @@ app.createChallenge '2-5', ->
   # Answer:
   `appointment.on('change:cancelled', function(){
     alert("Hey Dr. Goodparts, your appointment has changed!");
-  });`
+  });
   `
 
   # need this or coffeescript will produce a js syntax error
