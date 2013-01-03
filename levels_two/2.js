@@ -3,7 +3,7 @@
 // Since you already know the basics of Backbone collections, let's look at some more
 // advanced features.
 
-// #### Parsing Data
+// #### parse
 //
 // Collections are resources just like models, and therefore need to be parsed
 // in much the same way.  Collection resources often include extra data in a
@@ -14,15 +14,18 @@
 //      "total": 25,
 //      "per_page": 10,
 //      "page": 2,
-//      "models": [
+//      "todos": [
 //        {"id": 1},
 //        {"id": 2},
 //        ...
 //      ]
 //    }
 
-// Parse some collection data and keep a reference to the paging data.
-var Collection = Backbone.Collection.extend({
+// Parse some collection data and keep a reference to the paging data.  These
+// are just plain properties and are in no way Backbone specific.  However,
+// you'll want to avoid overwriting standard collection methods and properties
+// when using this technique.
+var Todos = Backbone.Collection.extend({
   parse: function(response) {
     this.perPage = response.per_page;
     this.page = response.page;
@@ -35,9 +38,9 @@ var Collection = Backbone.Collection.extend({
 
 // Like models, collections also implement `toJSON`.  You can add a wrapper or
 // a change the data via the same methods.
-var Collection = Backbone.Collection.extend({
+var Todos = Backbone.Collection.extend({
   toJSON: function() {
-    return {models: this.models};
+    return {todos: this.models};
   }
 });
 
@@ -48,7 +51,7 @@ var Collection = Backbone.Collection.extend({
 
 // Sort order is specified by the `comparator` property, which specifies an
 // attribute to sort by.
-var Collection = Backbone.Collection.extend({
+var Todos = Backbone.Collection.extend({
   comparator: 'priority'
 });
 
@@ -56,7 +59,7 @@ var Collection = Backbone.Collection.extend({
 // comparator.  This function takes a model as an argument and returns the
 // value to be compared.  For example, you can sort a collection in reverse
 // order.
-var Collection = Backbone.Collection.extend({
+var Todos = Backbone.Collection.extend({
   comparator: function(model) {
     return -model.get('priority');
   }
