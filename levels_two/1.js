@@ -10,7 +10,7 @@
 
 // As you know, models expect an object containing the attributes to be set
 // during initialization.
-var todo = new Todo({description: 'milk', status: 'complete'});
+var todo = new TodoItem({description: 'milk', status: 'complete'});
 
 // However, resources come in all different shapes and sizes and you can't
 // always change them to fit the expectations of the client.  What if your
@@ -24,12 +24,12 @@ var todo = new Todo({description: 'milk', status: 'complete'});
 
 // When you instantiate a model with namespaced data, the attributes won't be
 // correct.
-var todo = new Todo({todo: {description: 'milk', status: 'complete'}});
+var todo = new TodoItem({todo: {description: 'milk', status: 'complete'}});
 todo.get('description'); // undefined :(
 
 // This is where the `parse` function comes in.  It allows you to modify server
 // data before setting the attributes on your model.
-var Todo = Backbone.Model.extend({
+var TodoItem = Backbone.Model.extend({
   parse: function(response) {
     return response.todo;
   }
@@ -38,7 +38,7 @@ var Todo = Backbone.Model.extend({
 // By default, `parse` is only called upon receiving data from the server after
 // saving or fetching a model.  However, you can force the parsing of data via
 // the `parse` option.
-var todo = new Todo({
+var todo = new TodoItem({
   todo: {description: 'milk', status: 'complete'}
 }, {parse: true});
 
@@ -46,7 +46,12 @@ var todo = new Todo({
 // the following example, rename the `desc` property as `description`.  Also,
 // ensure that the old property doesn't cause confusion by removing it with the
 // `delete` operator.
-var Todo = Backbone.Model.extend({
+//
+// *Note: Javascript's `delete` operator is used to completely remove
+// properties from an object.  See MDN for more info.*
+//
+// https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Operators/delete
+var TodoItem = Backbone.Model.extend({
   parse: function(response) {
     response = response.todo;
     response.description = response.desc;
@@ -73,7 +78,7 @@ JSON.stringify({toJSON: function(){ return {x: 1}; }}); // '{"x": 1}'
 // doing so, you'll want to make sure you return a *copy* of the attributes via
 // `_.clone` so that they can be munged before being sent to the server if
 // desired.
-var Todo = Backbone.Model.extend({
+var TodoItem = Backbone.Model.extend({
   toJSON: function() {
     return {todo: _.clone(this.attributes)};
   }
@@ -87,7 +92,7 @@ var Todo = Backbone.Model.extend({
 // Also, make sure you restore the `desc` property with the value of
 // `description` and then remove the client only `description` property with
 // the `delete` operator.
-var Todo = Backbone.Model.extend({
+var TodoItem = Backbone.Model.extend({
   toJSON: function() {
     var attrs = _.clone(this.attributes);
     attrs.desc = attrs.description;
@@ -102,6 +107,6 @@ var Todo = Backbone.Model.extend({
 // In other words, `model.get('id') === model.id`.  However, you sometimes need
 // to use a non-standard `id` attribute.  For example, both CouchDB and MongoDB
 // use `_id` instead of `id`.
-var Todo = Backbone.Model.extend({
+var TodoItem = Backbone.Model.extend({
   idAttribute: '_id'
 });
