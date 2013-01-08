@@ -5,8 +5,9 @@ class TodosController < ApplicationController
 
   def index
     @todos = Todo.all
-
+    
     respond_with @todos
+    #render json: {todos: @todos, page: 1, perPage: 10, total: Todo.count }
   end
 
   def show
