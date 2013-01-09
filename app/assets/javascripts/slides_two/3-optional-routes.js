@@ -15,3 +15,5 @@ createSlide('3-optional-routes', function(){
 
   $(function(){ Backbone.history.start() });
 });
+
+// TodoRouter.navigate('search/asdfaf/2', {trigger: true})

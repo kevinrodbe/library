@@ -13,3 +13,5 @@ createSlide('3-regexes', function(){
 
   $(function(){ Backbone.history.start() });
 });
+
+// TodoRouter.navigate('todo/17', {trigger: true})
