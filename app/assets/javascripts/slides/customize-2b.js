@@ -1,6 +1,6 @@
 //= require backbone-localstorage
 
-createSlide('customize-2', function(){
+createSlide('customize-2b', function(){
   window.TodoItem = Backbone.Model.extend({
     toggleStatus: function(){
       if(this.get('status') == 'incomplete'){
@@ -10,6 +10,45 @@ createSlide('customize-2', function(){
       }
 
       this.save();
+    },
+    sync: function(method, model, options){
+      options || (options = {});
+
+      var key = "TodoItem-" + model.get("id");
+      var resp, error;
+
+      switch(method){
+        case 'create':
+          localStorage.setItem(key, JSON.stringify(model.toJSON()));
+          resp = model.toJSON();
+        break;
+
+        case 'update':
+          localStorage.setItem(key, JSON.stringify(model.toJSON()))
+          resp = model.toJSON();
+        break;
+
+        case 'delete':
+          localStorage.removeItem(key);
+          resp = model.toJSON();
+        break;
+
+        case 'read':
+          var resp = localStorage.getItem(key);
+          if (resp){
+            resp = JSON.parse(resp);
+          }else{
+            error = "Could not find TodoItem with id = " + model.get("id");
+          }
+        break;
+      }
+
+      if (error && options.error){
+        options.error(error);
+        return;
+      }
+
+      options.success && options.success(resp);
     }
   });
 

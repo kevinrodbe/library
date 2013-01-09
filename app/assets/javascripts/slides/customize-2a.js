@@ -1,6 +1,6 @@
 //= require backbone-localstorage
 
-createSlide('customize-2', function(){
+createSlide('customize-2a', function(){
   window.TodoItem = Backbone.Model.extend({
     toggleStatus: function(){
       if(this.get('status') == 'incomplete'){
@@ -10,6 +10,13 @@ createSlide('customize-2', function(){
       }
 
       this.save();
+    },
+    sync: function(method, model, options){
+      if (method === "read"){
+        Backbone.sync(method, model, options);
+      }else{
+        console.error("You can not " + method + " the TodoItem model");
+      }
     }
   });
 

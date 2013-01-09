@@ -73,10 +73,9 @@ var TodoItemView = Backbone.View.extend({
 // For example, let's say you have an Array of strings and want to render each one
 // of them as an `li`, in underscore.js you'd have to use _.each, like so:
 
-_.template("<% _.each(names, function(name) { %>" +
-    "<li><%= name %></li>" +
-    "<% }); %>"
-  )
+<% _.each(names, function(name) { %>
+  <li><%= name %></li>
+<% }); %>
 
 // From an aesthetic standpoint, this is pretty bad. It's really awkward that we
 // have to have a line just to close the function call that just looks like a mishmash
@@ -99,8 +98,44 @@ _.template("<% _.each(names, function(name) { %>" +
 <li>Nate</li>
 <li>Jacob</li>
 
+// You can also loop through an array of objects using a Mustache section very easily.
+// Let's say you have this json:
+
+{
+  "people": [
+    { name: "Eric", hairColor: "brown" },
+    { name: "Nate", hairColor: "blond" },
+    { name: "Jacob", hairColor: "blue" },
+  ]
+}
+
+// In underscore, you'd have to do something like this:
+
+<% _.each(people, function(person) { %>
+  <li><%= person.name %> has <%= person.hairColor %> hair</li>
+<% }); %>
+
+// And then with Mustache:
+
+{{#people}}
+  <li>{{ name }} has {{ hairColor }} hair</li>
+{{/people}}
+
+// Which would then output
+
+<li>Eric has brown hair</li>
+<li>Nate has blond hair</li>
+<li>Jacob has blue hair</li>
+
+// Sections can also be used for these features:
+//  * False Values or Emtpy Lists
+//  * Array's of strings or objects
+//  * Inverted sections (only render if something is false, empty, etc.)
+//  * Functions
+
 // Mustache has a lot of other nice features, and with Backbone, it's extremely easy
-// to start using it right away.
+// to start using it right away. 
+// For more on Mustache.js: https://github.com/janl/mustache.js/
 
 // ### Customize Sync (Local Storage)
 
@@ -126,5 +161,108 @@ todos.create({"description": "Pickup Milk"}) // POST /todos
 // function to make a "RESTful" JSON request.  This is known as the default Backbone "persistence strategy".  This makes
 // it really easy to use a different "persistence strategy", by just replacing the `Backbone.sync` function.
 
+// You can listen to the 'sync' event on a collection (or model) to inspect what's going on under the hood.  The
+// sync event passes 3 arguments to the event callback: the model or collection, the server response, and any options used in the sync operation.
+// You can listen for this event and log out these arguments to the console, like this:
 
+todos.on('sync', function(model, resp, options){ 
+  console.group("Sync"); 
+  console.log(model); 
+  console.log(resp); 
+  console.log(options); 
+  console.groupEnd();
+});
+
+// `console.group` groups together related console calls so they are easier to see.  Now when you call `todos.fetch()`, you see these three objects in the console
+// **show console screencast**
+
+// `sync` takes three arguments: `method`, `model`, and `options`.  
+//
+// * `method` is the CRUD method (`"create"`, `"read"`, `"update"`, or `"delete"`)
+// * `model` is the model to the be saved (or collection to be read)
+// *  `options` optional, holds success and error callbacks, and all other jQuery request options
+
+// You can override sync at the global level or just through a specific model.  For example, if you wanted to ensure that a model is only ever "read"
+// you could override the sync method like so:
+
+var TodoItem = Backbone.Model.extend({
+  sync: function(method, model, options){
+    if (method === "read"){
+      Backbone.sync(method, model, options);
+    }else{
+      console.error("You can not " + method + " the TodoItem model");
+    }
+  }
+});
+
+// When the method is `"read"`, we call the `Backbone.sync` function, passing in the `method`, `model`, and `options`. If not, we
+// log an error to the console.  This ensures that a TodoItem is only ever read and never synced back up to the server.
+
+// `sync` is usually used for a different purpose though: changing the "persistance strategy" completely.  For example, instead of using
+// a RESTful JSON server to store data, we could use HTML5 localStorage, which allows you to store key/value pairs locally and have them persist
+// across sessions (like cookies). Unlike cookies, this information is never sent to the remote web server.  It also has pretty good browser support,
+// and is extremely simple to use. Let's override TodoItem `sync` to make it use `localStorage`:
+
+// First, setup the sync function to use a `switch` statement to handle all four methods.
+var TodoItem = Backbone.Model.extend({
+  sync: function(method, model, options){
+    // If options doesn't already exist, set it to an empty object
+    options || (options = {});
+
+    switch(method){
+      case 'create':
+      break;
+      case 'read':
+      break;
+      case 'update':
+      break;
+      case 'delete':
+      break;
+    }
+  }
+});
+
+// Now all we need to do is write some code to implement each of these four methods.  Before we do that, we
+// need to know a little bit more about how `sync` works.  The default implementation of `sync` will make use
+// of the `options.success` and `options.error` callback functions to pass back information about the `sync` operation
+// (for example, the attributes object returned from the read operation).  
+
+// Let's first implement the `create` method:
+
+case 'create':
+  var key = "TodoItem-" + model.get("id");
+  localStorage.setItem(key, JSON.stringify(model.toJSON()));
+break;
+
+// Here we call `localStorage.setItem`, passing in the key and the value (a JSON string of the model's attributes).  The "key" we construct
+// by concatenating the `"TodoItem-"` string with the model's `"id"` attribute.  This will give us a unique key that won't conflict with other models
+// (if we had other models using localStorage we couldn't use just the model id as the key).
+
+// Now we can implement the `"read"` method to retrieve the same key from localStorage, like so:
+
+case 'read':
+  var key = "TodoItem-" + model.get("id");
+  var result = localStorage.getItem(key);
+  if (result){
+    result = JSON.parse(result);
+  }else{
+    options.error && options.error("Could not find TodoItem with id = " + model.get("id"));
+  }
+break;
+
+// We first construct the key in the same way as we did in `create`, and then call `getItem` to try and retrieve the value. If 
+// that value exists, we use JSON.parse to convert it into a JSON object.  If the value doesn't exist, then call the `options.error`
+// callback, passing in a helpful error message.
+
+// We still need to do something with the successful result.  After the switch statement, we can add this code to call the `success` callback
+// with the result:
+options.success && options.success(result);
+
+// Now let's see this in action **Show a screencast**
+
+// Of course, we'd still need to implement `delete` and `update` to complete this localStorage persistence strategy, but you get the idea.
+// If you wanted to replace the persistence strategy for your entire Backbone app (all collections and models), you could use
+// the [Backbone.localStorage](https://github.com/jeromegn/Backbone.localStorage) library.
+
+// After including the script into your app (after the backbone.js script), all you have to do is set the localStorage propert 
 // ### Customize $
