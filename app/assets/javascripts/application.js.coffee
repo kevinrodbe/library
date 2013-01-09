@@ -46,4 +46,4 @@ $ ->
   if challenge_slot == ''
     challenge_slot = 'app'
 
-  app.loader '3-optional-routes'
+  app.loader challenge_slot
