@@ -1,4 +1,4 @@
-# Try Objective-C
+# Try Objective-C - Level 01
 
 ## What is Objective-C
 
@@ -80,5 +80,37 @@ It sounds complicated, but it's a pretty generic error message that in this case
 
 ### Pointers
 
-A pointer is a reference to a spot in memory.  When you declare a pointer and have it point to the value of a variable, the pointer itself doesn't contain the value, just the information about the location of the value.
+A pointer is a reference to a spot in memory.  To declare a pointer, put a `*` in between the data type and variable name.  You'll see it written a few different ways, but they all mean the same thing:
+
+	int* sum;
+	int * sum;
+	int *sum;
+
+* Try declaring a pointer to a variable named `sum` of type **NSNumber**.
+
+When you declare your variable as a pointer and then create an object.  You are actually storing a reference to the memory location of your object, but **not the object itself**.
+
+This is an important feature, because objects can get really big and slow to pass around to different parts of your program, but memory references are always really small and can be swiftly passed around.
+
+Once you create a variable as a pointer, you can interact with it just like you would a normal variable, but always keep it in the back of your mind that you are modifying  your initialized object via a pointer (passing by reference).
+
+* With that knowledge, create two pointers to variables of type NSNumber
+
+### Mutability and Initializers
+
+Mutable is just a fancy word that means "this can change after being initialized," and likewise immutable means "this cannot change after being initialized". Most NS-prefixed Classes are immutable, meaning that they cannot be changed once they are initialized.
+
+So, you just alloc/init'd an NSNumber object, and now you want to set the value.  Not so fast, buddy!  NSNumber is an immutable Class, and instantiation creates an immutable object.  Your best and only approach when dealing with immutable Classes is to use a custom initializer that is undoubtedly bundled with that Class.  NSNumber has several: `initWithBool:`, `initWithFloat:`, and `initWithInt:` (among others).  `initWithInt:` sounds like it will work great for this example!  The `initWithInt:` message gets sent to an allocated NSNumber object and gets passed one argument - the int that you want to be the value of your NSNumber object.
+
+* Create a pointer to a variable named `ourNum` of type NSNumber, and initialize that object with the integer value `5`.
+
+* Create another pointer to a variable named `yourNum` of type NSNumber, and initialize that object with the integer value `10	`.
+
+You can access the value of an NSNumber object by passing it the message `intValue`.
+
+* Try logging out the value of `yourNum` to the console.  `[yourNum intValue];`
+
+* Finally, create a pointer to an object of type `NSNumber` called `sum`, and initialize the value of `sum` to the intValue of `ourNum` plus the intValue of `yourNum`.
+
+Great!  You've got a pointer to an NSNumber object that contains the sum of ourNum and yourNum.  Now just go ahead and log that out to the console using that trusty printf function…
 
