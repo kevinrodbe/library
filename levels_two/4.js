@@ -41,17 +41,6 @@ var TodoView = Backbone.View.extend({
   }
 });
 
-// #### Templates
-//
-// Most Backbone views will include a template of some kind.  We'll be using
-// `_.template` in our examples because they are readily available, but it's
-// quite easy to use a separate library, as we'll demonstrate below using
-// mustachejs.  You can still adhere to Backbone conventions using whatever
-// template library you like best.
-var TodoView = Backbone.View.extend({
-  template: Mustache.compile('...')
-});
-
 // #### Escaping
 //
 // When writing content for the web, it's important to be aware of security
@@ -59,8 +48,8 @@ var TodoView = Backbone.View.extend({
 // is to escape arbitrary user content via `_.escape` and  Backbone provides
 // two shortcuts for doing so.
 //
-// Backbone models include an `escape` function that will return a particular attribute
-// in its escaped form.
+// Backbone models include an `escape` function that will return a particular
+// attribute in its escaped form.
 var TodoView = Backbone.View.extend({
   template: _.template('<%= model.escape("description") %>')
 });
@@ -82,3 +71,84 @@ var TodoView = Backbone.View.extend({
 // want to display change notifications when data comes from the server, but
 // not when it comes from a user action.  This is easily accomplished by
 // passing a custom option and checking for it in your event handler.
+//
+// For example, the following view listens for changes to the description
+// attribute and highlights the element when it changes to notify the user.
+var TodoView = Backbone.View.extend({
+
+  template: _.template('...'),
+
+  events: {
+    'change input': function(e) {
+      model.set({description: e.target.value});
+    }
+  },
+
+  initialize: function() {
+    this.model.on('change:description', this.change, this);
+  },
+
+  onChangeDescription: function(model, value) {
+    this.$('input').val(value);
+    this.highlight();
+  }
+
+});
+
+// When the change is a result of updating data from the server, this is
+// desirable.  However, if the user made the change by typing into the input
+// they don't need to be alerted of the action.  By providing a custom option,
+// we can prevent the highlighting.
+var TodoView = Backbone.View.extend({
+
+  template: _.template('...'),
+
+  events: {
+    'change input': function(e) {
+      model.set({description: e.target.value}, {highlight: false});
+    }
+  },
+
+  initialize: function() {
+    this.model.on('change:description', this.change, this);
+  },
+
+  onChangeDescription: function(model, value, options) {
+    this.$('input').val(value);
+    if (options.highlight !== false) this.highlight();
+  }
+
+});
+
+
+// #### View Removal
+//
+// When removing a view from the DOM but holding a reference to its model or
+// collection, later changes can cause unwanted latent effects.  This can be
+// prevented by cleaning up event handlers on models and collections when
+// removing a view.
+var TodoView = Backbone.View.extend({
+
+  initialize: function() {
+    this.model.on('sync', this.showMessage, this);
+  },
+
+  remove: function() {
+    Backbone.View.prototype.remove.apply(this, arguments);
+    this.model.off(null, null, this);
+  }
+
+});
+
+// In Backbone 0.9.9, two new methods were introduced to help with this
+// pattern: `listenTo` and `stopListening`.  `listenTo` works like an inverted
+// version on `on`, taking an object to listen to and assuming `this` as the
+// context.  `stopListening` removes these listeners and is called during view
+// removal.  The view above can be rewritten to use `listenTo` as follows.
+var TodoView = Backbone.View.extend({
+
+  initialize: function() {
+    this.listenTo(this.model, 'sync', this.showMessage);
+  }
+
+});
