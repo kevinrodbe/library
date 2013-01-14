@@ -19,12 +19,12 @@ createSlide('customize-2b', function(){
 
       switch(method){
         case 'create':
-          localStorage.setItem(key, JSON.stringify(model.toJSON()));
+          localStorage.setItem(key, JSON.stringify(model));
           resp = model.toJSON();
         break;
 
         case 'update':
-          localStorage.setItem(key, JSON.stringify(model.toJSON()))
+          localStorage.setItem(key, JSON.stringify(model))
           resp = model.toJSON();
         break;
 

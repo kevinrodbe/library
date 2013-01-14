@@ -24,7 +24,7 @@ var TodoItemView = Backbone.View.extend({
     "<em><%= assigned_to %></em>"),
 
   render: function(){
-    this.$el.html(this.template(this.model.toJSON()));
+    this.$el.html(this.template(this.model.attributes));
   }
 });
 
@@ -230,7 +230,7 @@ var TodoItem = Backbone.Model.extend({
 // Let's first implement the `create` method:
 
 case 'create':
-  var key = "TodoItem-" + model.get("id");
+  var key = "TodoItem-" + model.id;
   localStorage.setItem(key, JSON.stringify(model.toJSON()));
 break;
 

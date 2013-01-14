@@ -42,7 +42,7 @@ createSlide('customize-2', function(){
   window.TodoItems = Backbone.Collection.extend({
     model: TodoItem,
     url: '/todos',
-    // localStorage: new Backbone.LocalStorage("TodoItems"),
+    localStorage: new Backbone.LocalStorage("TodoItems"),
 
     initialize: function(){
       this.on('remove', this.hideModel, this);
