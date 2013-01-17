@@ -55,10 +55,14 @@ h3 {
 #app div div:last-child h3 {
   padding-bottom: 10px;
 }
-h3 input {
+h3 input.completer {
   left: 16px;
   position: absolute;
   top: 12px;
+}
+h3 input.desc {
+  font: normal 1.1em/28px $font-base;
+  outline: none;
 }
 h3 a {
   color: #be7837;

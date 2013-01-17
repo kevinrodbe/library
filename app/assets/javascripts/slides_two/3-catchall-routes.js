@@ -1,12 +1,25 @@
 createSlide('3-catchall-routes', function(){
+  // window.TodoRouter = new (Backbone.Router.extend({
+
+  //   routes: {
+  //     '*path': 'notFound'
+  //   },
+
+  //   notFound: function(path) {
+  //     alert('Sorry!  There is no content here.');
+  //   }
+
+  // }));
+
   window.TodoRouter = new (Backbone.Router.extend({
 
     routes: {
-      '*path': 'notFound'
+      'file/*path': 'file'
     },
 
-    notFound: function(path) {
-      alert('Sorry!  There is no content here.');
+    file: function(path) {
+      var parts = path.split("/");
+      console.log(parts);
     }
 
   }));

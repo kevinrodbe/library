@@ -1,4 +1,5 @@
 #= require jquery
+#= require jquery-ui
 #= require underscore
 #= require backbone
 #= require_self
@@ -10,7 +11,7 @@ window.app = {}
 app.slides = {}
 app.challenges = {}
 
-app.collection = app.slides
+app.collection = app.challenges
 
 app.loader = (name) ->
   challenge = app.collection[name]
