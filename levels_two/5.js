@@ -15,9 +15,10 @@ var App = {
 
 // Another handy way to go about it is to use a Backbone view as an App object.
 // This provides several benefits that I'll describe below.
-var App = Backbone.View.extend({
+
+var App = new (Backbone.View.extend({
   ...
-});
+}))({el: document.body})
 var app = new App({el: document.body});
 
 // #### Page Events
