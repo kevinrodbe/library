@@ -1,6 +1,6 @@
-createSlide('app', function(){
-
+createSlide('forms', function(){
   window.TodoItem = Backbone.Model.extend({
+    urlRoot: "/todos",
     toggleStatus: function(){
       if(this.get('status') == 'incomplete'){
         this.set({'status': 'complete'});
@@ -86,7 +86,9 @@ createSlide('app', function(){
   window.TodoApp = new (Backbone.Router.extend({
     routes: {
       "": "index",
-      "todos/:id": "show"
+      'todos/new': 'newTodo',
+      "todos/:id": "show",
+      'todos/:id/edit': "edit"
     },
 
     initialize: function(){
@@ -98,6 +100,8 @@ createSlide('app', function(){
 
     index: function(){
       this.todoItems.fetch();
+      $('#app').html(this.todosView.render().el);
+      $('#app').append('<h2><a href="#/todos/new">New Todo</a></h2>');
     },
 
     start: function(){
@@ -108,9 +112,45 @@ createSlide('app', function(){
 
     show: function(id){
       this.todoItems.focusOnTodoItem(id);
+    },
+
+    edit: function(id){
+      var todoForm = new TodoForm({model: this.todoItems.get(id) });
+      $('#app').html(todoForm.render().el);
+    },
+
+    newTodo: function(){
+      var model = new TodoItem({description: "What do you have to do?"});
+      var todoForm = new TodoForm({model: model});
+      $('#app').append(todoForm.render().el);
     }
 
   }));
 
   $(function(){ TodoApp.start() });
+
+  window.TodoForm = Backbone.View.extend({
+    template: _.template('<form><input class=todoBox name=description value="<%= description %>" /><button>Save</button></form>'),
+    events: {
+      submit: 'save'
+    },
+    save: function(e) {
+      e.preventDefault();
+      this.model.save({
+        description: this.$('input[name=description]').val()
+      }, { 
+        success: function(model, response, options){
+          Backbone.history.navigate('', { trigger: true });
+        },
+        error: function(model, xhr, options){
+          var errors = JSON.parse(xhr.responseText).errors;
+          alert('Oops, something went wrong with saving the TodoItem: ' + errors);
+        }
+      });
+    },
+    render: function(){
+      this.$el.html(this.template(this.model.attributes));
+      return this;
+    }
+  });
 });

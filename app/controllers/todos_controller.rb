@@ -21,9 +21,13 @@ class TodosController < ApplicationController
   end
 
   def create
-    @todo = Todo.create params[:todo]
+    @todo = Todo.new params[:todo]
 
-    respond_with @todo
+    if @todo.save
+      render json: @todo, status: :created
+    else
+      render json: { errors: @todo.errors.full_messages }, status: 422
+    end
   end
 
   def destroy

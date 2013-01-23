@@ -11,7 +11,7 @@ window.app = {}
 app.slides = {}
 app.challenges = {}
 
-app.collection = app.challenges
+app.collection = app.slides
 
 app.loader = (name) ->
   challenge = app.collection[name]
