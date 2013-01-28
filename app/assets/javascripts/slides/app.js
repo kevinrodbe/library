@@ -60,15 +60,17 @@ createSlide('app', function(){
   })
 
   window.TodosView = Backbone.View.extend({
+    template: _.template('<div class=nextpage><a href="#/todos/p<%= nextPage %>">next page</a></div>'),
     initialize: function(){
       this.addOne = _.bind(this.addOne, this);
 
       this.collection.on('add', this.addOne);
-      this.collection.on('reset', this.addAll, this);
+      this.collection.on('reset', this.render, this);
     },
 
     render: function(){
-      this.addAll()
+      this.addAll();
+      this.$el.append(this.template({page: this.collection.page, nextPage: this.collection.page + 1}));
       return this;
     },
 
@@ -86,6 +88,7 @@ createSlide('app', function(){
   window.TodoApp = new (Backbone.Router.extend({
     routes: {
       "": "index",
+      "todos/p:page": "page",
       "todos/:id": "show"
     },
 
@@ -94,6 +97,10 @@ createSlide('app', function(){
       this.todosView = new TodosView({collection: this.todoItems});
       this.todosView.render();
       $('#app').append(this.todosView.el);
+    },
+
+    page: function(page){
+      this.todoItems.fetch({data: {page: page}});
     },
 
     index: function(){

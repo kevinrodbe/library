@@ -25,13 +25,16 @@ body {
 }
 
 // ----- Base ----- //
-
+.nextpage a {
+  font-size: 2.5em;
+}
+.nextpage { padding: 5px; text-align: right;}
 .content {
   background: #fff;
   border-bottom: 3px solid #e1d9d3;
   box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
   margin: 0 auto;
-  width: 500px;
+  width: 550px;
 }
 #app {
   background: image-url('bg-content.png') repeat;

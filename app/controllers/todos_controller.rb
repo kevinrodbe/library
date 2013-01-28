@@ -4,10 +4,19 @@ class TodosController < ApplicationController
   respond_to :json
 
   def index
-    @todos = Todo.all
+
+    limit = (params[:per_page] || 5).to_i
+
+    offset = if params[:page].blank?
+      limit
+    else
+      params[:page].to_i * limit
+    end - limit
+
+    @todos = Todo.offset(offset).limit(limit).all
     
-    respond_with @todos
-    #render json: {todos: @todos, page: 1, perPage: 10, total: Todo.count }
+    respond_with Todo.all
+    # render json: { todos: @todos, page: (params[:page] || 1).to_i, per_page: limit, total: Todo.count }
   end
 
   def show
