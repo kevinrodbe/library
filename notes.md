@@ -1,6 +1,6 @@
 ---
-layout: post
-title: Rails 4 - Zombie Outlaws
+layout: page
+title: Rails for Zombies 2
 ---
 
 
