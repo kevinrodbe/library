@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: page
 title: Rails 4 - Zombie Outlaws
 ---
 
@@ -84,7 +84,7 @@ end
 
 ### Note
 
-Rails 4 apps are now threadsafe by default in production environments, with **cache\_classes** and **eager\_load** enabled.
+Rails 4 apps are now threadsafe by default in production environments, with `cache\_classes` and `eager\_load` enabled.
 
 
 Ruby 1.9.3
@@ -129,7 +129,7 @@ end
 
 ### Note
 
-The **ActiveModel::Module** provides all features needed to integrate non-ActiveRecord models with ActionPack.
+The `ActiveModel::Module` provides all features needed to integrate non-ActiveRecord models with ActionPack.
 
 
 ActiveRecord Finders
@@ -180,21 +180,25 @@ Dynamic Finders
 
 ### Deprecated
 
-* Model.find_all_by_...
-* Model.scoped_by_...
-* Model.find_last_by_...
-* Model.first_or_initialize_by_...
-* Model.find_or_create_by_...
-* Model.first_or_create_by_...!
+```ruby
+Model.find_all_by_...
+Model.scoped_by_...
+Model.find_last_by_...
+Model.first_or_initialize_by_...
+Model.find_or_create_by_...
+Model.first_or_create_by_...!
+```
 
 ### New
 
 Use the `where` method, like:
 
-* Model.where(...)
-* Model.where(...).last
-* Model.find_or_initialize_by(...)
-* Model.find_or_create_by(...)
+```ruby
+Model.where(...)
+Model.where(...).last
+Model.find_or_initialize_by(...)
+Model.find_or_create_by(...)
+```
 
 
 Scopes
@@ -249,7 +253,7 @@ You must explicitly state which tables you reference, when using SQL snippets:
 User.includes(:courses).references(:courses).where("courses.active = ?", true)
 ```
 
-or
+Or:
 
 ```ruby
 User.includes(:courses).where({ courses: { active: true }})
@@ -293,7 +297,7 @@ Course.where.not(topic: 'Rails')
 
 Builds proper SQL when value is nil:
 
-```
+```ruby
 Course.where.not(topic: nil)
 # => "SELECT "courses".* FROM "courses"  WHERE ("courses"."topic" IS NOT NULL)"
 ```
@@ -451,12 +455,12 @@ class ItemsController < ApplicationController
 end
 ```
 
-```html
+```erb
 # app/views/items/show.html.erb
 <p id="notice"><%= custom_success %></p>
 ```
 
-```html
+```erb
 # app/views/items/new.html.erb
 <p id="notice"><%= custom_error %></p>
 ```
