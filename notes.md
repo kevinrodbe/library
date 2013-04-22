@@ -84,7 +84,7 @@ end
 
 ### Note
 
-Rails 4 apps are now threadsafe by default in production environments, with `cache\_classes` and `eager\_load` enabled.
+Rails 4 apps are now threadsafe by default in production environments, with `cache_classes` and `eager_load` enabled.
 
 
 Ruby 1.9.3
@@ -108,8 +108,6 @@ Returns the following error:
 ```
 > NoMethodError: undefined method `id' for nil:NilClass
 ```
-
-### New
 
 This is due to objects in Ruby 1.9.3 no longer responding to the `id` method.
 
@@ -239,7 +237,7 @@ Causes the records to be loaded from the database if they have not been loaded a
 Book.find_by(title: 'Rails 4').comments.load
 ```
 
-Is the same as:
+### Deprecated
 
 The old **Relation#all** method is deprecated.
 
@@ -373,7 +371,7 @@ class OrdersController < ActionController::Base
 end
 ```
 
-List of `\*_action` callbacks:
+List of `*_action` callbacks:
 
 ```ruby
 before_action
@@ -390,7 +388,7 @@ skip_around_action
 append_around_action
 ```
 
-The old `\*_filter` callbacks still work.
+The old `*_filter` callbacks still work.
 
 
 Custom Handling for request\_from\_forgery
@@ -505,7 +503,7 @@ end
 
 ### Note
 
-Make sure your application is running in thread-safe mode and that you are using a thread-safe server, like [puma](http://puma.io).
+Make sure your application is running in thread-safe mode and that you are using a thread-safe server, like [Puma](http://puma.io).
 
 
 Turbolinks
