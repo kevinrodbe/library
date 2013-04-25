@@ -1,15 +1,21 @@
 ---
 layout: page
 title: Rails 4 - Zombie Outlaws
+course_url: http://rails4.codeschool.com
+path: ruby
 ---
 
 
-Rails 4 Notes
-================================
-
-
-Match
+Ruby 1.9.3
 --------------------------------
+
+Rails 4 requires at least Ruby 1.9.3
+
+
+Routes
+--------------------------------
+
+### Match
 
 ```ruby
 # config/routes.rb
@@ -21,9 +27,7 @@ CodeSchool::Application.routes.draw do
 end
 ```
 
-
-Patch
---------------------------------
+### Patch
 
 `PATCH` is now the default verb for updating RESTful resources.
 
@@ -50,9 +54,7 @@ test "updates item with PATCH" do
 end
 ```
 
-
-Concerns
---------------------------------
+### Concerns
 
 ```ruby
 # config/routes.rb
@@ -87,13 +89,7 @@ end
 Rails 4 apps are now threadsafe by default in production environments, with `cache_classes` and `eager_load` enabled.
 
 
-Ruby 1.9.3
---------------------------------
-
-Rails 4 requires at least Ruby 1.9.3
-
-
-Removed Whiny Nils
+Whiny Nils
 --------------------------------
 
 Calling a method on a `nil` object:
@@ -112,7 +108,7 @@ Returns the following error:
 This is due to objects in Ruby 1.9.3 no longer responding to the `id` method.
 
 
-ActiveModel::Model Module
+ActiveModel::Model
 --------------------------------
 
 ```ruby
@@ -150,8 +146,10 @@ Model.last
 ```
 
 
-Model.find_by
+Models
 --------------------------------
+
+### Model.find_by
 
 This new finder method takes a hash and returns the first occurrence.
 
@@ -170,6 +168,52 @@ It can also take two arguments, like this:
 
 ```ruby
 Book.find_by("published_on < ?", 1.month.ago)
+```
+
+### Model.all
+
+The `Model.all` method now returns a chainable object.
+
+```ruby
+all_users = User.all
+some_users = all_users.where(some_params)
+other_users = all_users.where(other_params)
+```
+
+#### Deprecated
+
+The old `Model.scoped` method is deprecated.
+
+### Model#update
+
+```ruby
+@zombie.update(name: "JimBob")
+```
+
+Is the same as:
+
+```ruby
+@zombie.update_attributes(name: "JimBob")
+```
+
+### Model#update\_columns
+
+Builds a SQL statement and executes it directly in the database. No model validations are run.
+
+```ruby
+@zombie.update_columns(name: "JimBob")
+```
+
+Is the same as:
+
+```ruby
+@zombie.update_column(:name, "JimBob")
+```
+
+Is the same as:
+
+```ruby
+@zombie.update_attribute(:name, "JimBob")
 ```
 
 
@@ -212,24 +256,10 @@ default_scope { where(admin: true) }
 ```
 
 
-Model.all
+Relations
 --------------------------------
 
-The `Model.all` method now returns a chainable object.
-
-```ruby
-all_users = User.all
-some_users = all_users.where(some_params)
-other_users = all_users.where(other_params)
-```
-
-Is the same as:
-
-The old `Model.scoped` method is deprecated.
-
-
-Relation#load
---------------------------------
+### Relation#load
 
 Causes the records to be loaded from the database if they have not been loaded already.
 
@@ -237,9 +267,53 @@ Causes the records to be loaded from the database if they have not been loaded a
 Book.find_by(title: 'Rails 4').comments.load
 ```
 
-### Deprecated
+#### Deprecated
 
 The old **Relation#all** method is deprecated.
+
+### Relation#none
+
+```ruby
+class Comment < ActiveRecord::Base
+  def self.authenticate(user)
+    if user.author?
+      all
+    else
+      none
+    end
+  end
+end
+```
+
+#### Note
+
+Returns a chainable **ActiveRecord::NullRelation**
+
+```ruby
+Comment.authenticate(user).limit(10)
+# => []
+```
+
+### Relation#not
+
+```ruby
+Course.where.not(topic: 'Rails')
+# => "SELECT "courses".* FROM "courses"  WHERE ("courses"."topic" != 'Rails')"
+```
+
+Builds proper SQL when value is nil:
+
+```ruby
+Course.where.not(topic: nil)
+# => "SELECT "courses".* FROM "courses"  WHERE ("courses"."topic" IS NOT NULL)"
+```
+
+### Relation#order
+
+```ruby
+User.order(:name, created_at: :desc)
+User.order(name: :asc, created_at: :desc)
+```
 
 
 References
@@ -257,92 +331,6 @@ Or:
 User.includes(:courses).where({ courses: { active: true }})
 User.includes(:courses).where('courses.active' => true)
 User.includes(:courses).order('courses.name')
-```
-
-
-Relation\#none
---------------------------------
-
-```ruby
-class Comment < ActiveRecord::Base
-  def self.authenticate(user)
-    if user.author?
-      all
-    else
-      none
-    end
-  end
-end
-```
-
-### Note
-
-Returns a chainable **ActiveRecord::NullRelation**
-
-```ruby
-Comment.authenticate(user).limit(10)
-# => []
-```
-
-
-Relation#not
---------------------------------
-
-```ruby
-Course.where.not(topic: 'Rails')
-# => "SELECT "courses".* FROM "courses"  WHERE ("courses"."topic" != 'Rails')"
-```
-
-Builds proper SQL when value is nil:
-
-```ruby
-Course.where.not(topic: nil)
-# => "SELECT "courses".* FROM "courses"  WHERE ("courses"."topic" IS NOT NULL)"
-```
-
-
-Relation#order
---------------------------------
-
-```ruby
-User.order(:name, created_at: :desc)
-User.order(name: :asc, created_at: :desc)
-```
-
-
-Model#update
---------------------------------
-
-```ruby
-@zombie.update(name: "JimBob")
-```
-
-Is the same as:
-
-```ruby
-@zombie.update_attributes(name: "JimBob")
-```
-
-
-Model#update\_columns
---------------------------------
-
-Builds a SQL statement and executes it directly in the database. No model validations are run.
-
-```ruby
-@zombie.update_columns(name: "JimBob")
-```
-
-Is the same as:
-
-```ruby
-@zombie.update_column(:name, "JimBob")
-```
-
-Is the same as:
-
-```ruby
-@zombie.update_attribute(:name, "JimBob")
 ```
 
 
@@ -391,7 +379,7 @@ append_around_action
 The old `*_filter` callbacks still work.
 
 
-Custom Handling for request\_from\_forgery
+protect\_from\_forgery
 --------------------------------
 
 ```ruby
@@ -433,7 +421,7 @@ CodeSchool::Application.config.secret_key_base = ENV['SECRET_KEY_BASE']
 ```
 
 
-Custom Flash Types & Flash Helpers
+Flash Types & Helpers
 --------------------------------
 
 ```ruby
@@ -464,7 +452,7 @@ end
 ```
 
 
-Handy Collection Form Helpers
+Collection Form Helpers
 --------------------------------
 
 ```ruby
@@ -537,8 +525,10 @@ http://localhost:3000/rails/info
 ```
 
 
-Test Directory Structure
+Tests
 --------------------------------
+
+### Test Directory Structure
 
 ```ruby
 test/controllers
@@ -549,9 +539,7 @@ test/mailers
 test/models
 ```
 
-
-Test Rake Tasks
---------------------------------
+### Test Rake Tasks
 
 ```ruby
 rake test:models
@@ -560,9 +548,7 @@ rake test:helpers
 rake test:mailers
 ```
 
-
-Skipping a Test
---------------------------------
+### Skipping a Test
 
 ```ruby
 class ItemTest < ActiveSupport::TestCase
