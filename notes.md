@@ -6,12 +6,6 @@ path: ruby
 ---
 
 
-Ruby 1.9.3
---------------------------------
-
-Rails 4 requires at least Ruby 1.9.3
-
-
 Routes
 --------------------------------
 
@@ -85,6 +79,12 @@ end
 ```
 
 Rails 4 apps are now threadsafe by default in production environments, with `cache_classes` and `eager_load` enabled.
+
+
+Ruby 1.9.3
+--------------------------------
+
+Rails 4 requires at least Ruby 1.9.3
 
 
 Whiny Nils
