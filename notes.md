@@ -84,8 +84,6 @@ CodeSchool::Application.configure do
 end
 ```
 
-### Note
-
 Rails 4 apps are now threadsafe by default in production environments, with `cache_classes` and `eager_load` enabled.
 
 
@@ -120,8 +118,6 @@ class SupportTicket
   validates_presence_of :title
 end
 ```
-
-### Note
 
 The `ActiveModel::Module` provides all features needed to integrate non-ActiveRecord models with ActionPack.
 
@@ -179,8 +175,6 @@ all_users = User.all
 some_users = all_users.where(some_params)
 other_users = all_users.where(other_params)
 ```
-
-#### Deprecated
 
 The old `Model.scoped` method is deprecated.
 
@@ -267,8 +261,6 @@ Causes the records to be loaded from the database if they have not been loaded a
 Book.find_by(title: 'Rails 4').comments.load
 ```
 
-#### Deprecated
-
 The old **Relation#all** method is deprecated.
 
 ### Relation#none
@@ -284,8 +276,6 @@ class Comment < ActiveRecord::Base
   end
 end
 ```
-
-#### Note
 
 Returns a chainable **ActiveRecord::NullRelation**
 
@@ -488,8 +478,6 @@ class EventsController < ApplicationController
   end
 end
 ```
-
-### Note
 
 Make sure your application is running in thread-safe mode and that you are using a thread-safe server, like [Puma](http://puma.io).
 
