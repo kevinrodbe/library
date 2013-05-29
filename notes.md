@@ -1,6 +1,6 @@
 ---
 layout: page
-title: iOS Operation: MapKit
+title: iOS Operation - MapKit
 course_url: http://operationmapkit.codeschool.com
 path: ios
 ---
