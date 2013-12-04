@@ -27,8 +27,8 @@ Full list of status and helper methods: [https://github.com/rack/rack/blob/maste
 
 ### Invalid Response
 
-* Client's fault
-* Server's error
+* Client's fault (400)
+* Server's error (500)
 
 
 ## Status with no Message Body
