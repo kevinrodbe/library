@@ -88,7 +88,7 @@ edit_zombie GET    /zombies/:id/edit(.:format) zombies#edit
             DELETE /zombies/:id(.:format)      zombies#destroy
 ```
 
-Supposed that on our API, we want to limit the actions that can be performed on zombies. The `resources` method can take an options hash as its second argument. Two options that we can use to control which actions we want to allow on the resources are `only` and `except`.
+Suppose we want to limit the actions that can be performed on the zombies resources. The `resources` method takes an options hash as its second argument. Two options that we can use to control which actions we want to allow on the resources are `only` and `except`.
 
 ```ruby
 resources :zombie, only: :index
@@ -132,7 +132,7 @@ or
 resources :zombie, except: [:update, :destroy]
 ```
 
-It's a good strategy to limit your API end points to those that will actually be used.
+It's a good practice to limit your API end points to only those that will actually be used by our clients.
 
 
 ## CONSTRAINTS and NAMESPACE
@@ -140,7 +140,7 @@ It's a good strategy to limit your API end points to those that will actually b
 **Main website**: ZombieBroadcast.com
 **API root**: api.ZombieBroadcast.com
 
-It's a good practice to give our API its own subdomain for a couple reasons.
+Giving our API its own subdomain is a good approach for a couple reasons.
 
 First, it allows us to decouple our public facing website from our backend API and deploy them to different servers. If for some reason our website server goes down, then our API will not be affected. 
 
@@ -170,12 +170,15 @@ In order to run this locally you will need to do one of the followings:
   * Use [POW](http://pow.cx)
   * Access your app through a service like http://lvh.me
 
+TODO: describe editing /etc/hosts.
+
 From Jacob:
 
 > Biggest advantage of using the subdomain is scalability. You can tweak your API be at a completely different IP address and you get more flexibility. Start with a single app and then you can split into different apps if you need.
 
 ### NAMESPACE
 
+Since our codebase is also serving a web version of our application, we need to be extra careful with organizing our file structure. Specially our controllers. We don't want to mix controllers that serve our API with ones that serve our website, so we are going to create a different namespace for the API controllers.
 
 ```ruby
 constraints subdomain: 'api' do
