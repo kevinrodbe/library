@@ -4,12 +4,23 @@ This is the repo for the Rails API Course, including [content](content) and [cod
 
 ## Demo app
 
-Following the *Zombie Apocalypse Broadcast* theme, here's an example of using the web API from a given API client:
+Following the *Zombie Apocalypse Broadcast* theme, here's an idea for a demo web API:
 
-1- Get a list of infected humans. (**GET** to /infected_humans)
-2- For each human, find the medical kit they need. (we can follow **hyperlink** for medical kit)
-3- Purchase the medical kit. (**POST** to /medical_kits/:id/purchase)
-4- Apply medical kit to respective human. (**PATCH** /humans/:id)
+1. Get a list of infected humans. (**GET** to /infected_humans or /humans?status=infected)
+2. For each human, find the medical kit they need. (we can follow **hyperlink** for medical kit)
+3. Purchase the medical kit. (**POST** to /medical_kits/:id/purchase)
+4. Apply medical kit to respective human. (**PATCH** /humans/:id)
+
+## Table of Contents
+
+(WIP)
+
+1. [Route Constraints + Namespace](content/01-recap-intro.md) (complete)
+2. [Content Negotiation](content/02-content-negotiation.md) (in progress)
+3. Status Codes
+4. Creating Resources
+5. Versioning
+6. Authentication 
 
 ## TODOS
 
