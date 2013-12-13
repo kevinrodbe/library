@@ -1,4 +1,4 @@
-## Rails APIs and REST
+# Rails APIs and REST
 
 This is a course about building Web APIs in Rails - more specifically REST web APIs in Rails. 
 
@@ -137,8 +137,8 @@ It's a good practice to limit your API end points to only those that will actua
 
 ## CONSTRAINTS and NAMESPACE
 
-**Main website**: ZombieBroadcast.com
-**API root**: api.ZombieBroadcast.com
+**Main website**: ZombieBroadcast.com, serves users with a browser and a mouse.
+**API root**: api.ZombieBroadcast.com, serves other applications.
 
 Giving our API its own subdomain is a good approach for a couple reasons.
 
