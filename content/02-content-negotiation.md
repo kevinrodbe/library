@@ -95,7 +95,7 @@ Our custom media type will be `application/vnd.apocalypse+json`.
 
 The media type name tells us that the payload of the HTTP request or response is to be treated as part of an application-specific interaction. The vnd.apocalypse part of the media type name declares that the media type is vendor-specific (vnd), and that the owner is the **apocalypse** application. The +json part declares JSON is used for the document formatting.
 
-Let's go to `config/initializers/mime_types.rb` and add our custom `apocalypse` media type there:
+Let's go to `config/initializers/mime_types.rb` and register our custom `apocalypse` media type:
 
 ```ruby
 # Be sure to restart your server when you modify this file.
@@ -106,11 +106,11 @@ Let's go to `config/initializers/mime_types.rb` and add our custom `apocalypse` 
 Mime::Type.register_alias 'application/vnd.apocalypse+json', :apocalypse
 ```
 
-In our controller, we need to respond with the proper format. We can do this in a couple of different ways. 
+Back in our controller, we need to respond with the proper format. We can do this in a couple of different ways. 
 
 One way is using the `respond_to` method that takes a block.
 
-```
+```ruby
 def index
   @zombies = Zombie.all
 
@@ -123,7 +123,7 @@ end
 
 Inside of the `format.apocalypse` block, we'll call our custom serializer that returns the proper media type. For now, we'll use the json serializer for simplicity:
 
-```
+```ruby
 def index
   @zombies = Zombie.all
 
@@ -221,42 +221,10 @@ First, we should never rely on URI extensions for determining format. Luckly, if
 * respond_to + block
 * respond_to :type + respond_with()
 
-
-## Custom Mime Types
-
-
-
-TODO: add language example.
+TODO: add RSpec request example setting the Accept header.
+TODO: add language/locale example.
 
 * Rails Guides on [locale using Accept-Language](http://guides.rubyonrails.org/i18n.html#using-accept-language)
 * https://github.com/iain/http_accept_language
-
-## INBOX
-
-Content below is likely to be moved around or removed.
-
-## Rails format extensions
-
-Rails allows you to select different content types by appending extensions to URL, like `/users.json` or `/posts/1.xml`. While this allows for exploring the API from your browser, for example, this strategy should be avoided.
-
-> URIs should be opaque to consumers. Only the issuer of the URI knows how to interpret and map it to a resource. Using extensions such as .xml, .html, or .json is a historical convention that stems from the time when web servers simply mapped URIs directly to files. (Excerpt From: Ian Robinson. “REST in Practice.” iBooks.)
-
-> Using content negotiation, consumers can negotiate for specific representation formats from a service. They do so by populating the HTTP Accept request header with a list of media types they’re prepared to process. (Excerpt From: Ian Robinson. “REST in Practice.” iBooks.)
-
-See [The Lie of the API](http://ruben.verborgh.org/blog/2013/11/29/the-lie-of-the-api/)
-
-## Available Mime::Types
-
-For a complete list of the default Mime Types that ship with Rails, run the following command from a Rails console:
-
-```ruby
-Mime::SET.collect(&:to_s)
-```
-
-To register new Mime Types, or if you happen to want to use a custom Mime Types, see the *config/initializers/mime_types.rb* file.
-
-
-## Challenge Suggestion
-
 * Add RSS Mime Type ?
 * Add iCal Mime Type ?
