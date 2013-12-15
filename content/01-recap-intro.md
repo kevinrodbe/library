@@ -51,7 +51,7 @@ PUT
 DELETE
 ```
 
-They are HTTP verbs and they dictate the different things we can do with the zombie resources.
+They are HTTP verbs, or methods, and they dictate the different things we can do with the zombie resources.
 
 The last piece of the puzzle is how to find these resources on the web. This is done through a **Uniform Resource Identifier**, or URI. Here are the different URIs for our zombies resources:
 
