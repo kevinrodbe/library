@@ -202,6 +202,8 @@ While tweaking the URI allows for quickly switching between media types, and eve
 
 > URIs should be opaque to consumers. Only the issuer of the URI knows how to interpret and map it to a resource. Using extensions such as .xml, .html, or .json is a historical convention that stems from the time when web servers simply mapped URIs directly to files. (Excerpt From: Ian Robinson. “REST in Practice.” iBooks.)
 
+Instead of using the URI for content negotiation, we should use request Headers.
+
 So far, when we talked about the HTTP protocol we talked about two things: URIs and actions, or HTTP verbs. Turns out we can also exchange information through **Headers**.
 
 > Using content negotiation, consumers can negotiate for specific representation formats from a service. They do so by populating the HTTP Accept request header with a list of media types they’re prepared to process. (Excerpt From: Ian Robinson. “REST in Practice.” iBooks.)

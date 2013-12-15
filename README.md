@@ -17,20 +17,19 @@ Following the *Zombie Apocalypse Broadcast* theme, here's an idea for a demo web
 
 1. [Route Constraints + Namespace](content/01-recap-intro.md) (complete)
 2. [Content Negotiation](content/02-content-negotiation.md) (in progress)
-3. Status Codes
-4. Creating Resources
-5. Versioning
-6. Authentication 
+3. Resources and Status Codes
+4. Versioning
+5. Authentication 
 
 ## TODOS
 
-* Chapter 1 - Recaps from RFZ2
-* Starting in Rails 2 - RESTful resources, using proper HTTP verbs.
 * REST = Representational State Transfer. Resources (noun) addressable through URI and accessible via Methods (verbs), GET, POST, PUT, PATCH, DELETE, HEAD
+
 * [GUID](http://en.wikipedia.org/wiki/Globally_unique_identifier)
     * Using the uuid datatype with the PostgreSQL adapter
     * https://coderwall.com/p/n_0awq
     * Gotcha: http://rny.io/rails/postgresql/2013/07/27/use-uuids-in-rails-4-with-postgresql.html
+
 * Multiple gets
     * /api/v1/groups?ids=1,2
     * /api/v1/groups?page=10
@@ -57,24 +56,6 @@ The two most important things to look for on a media type:
 * Hypermedia Controls (they do the linking between documents)
 
 The JSON media type: [application/json](http://en.wikipedia.org/wiki/JSON#MIME_type)
-
-## The Resource
-
-> The key abstraction of information in REST is a resource. Any information that can be named can be a resource: a document or image, a temporal service (e.g. "today's weather in Los Angeles"), a collection of other resources, a non-virtual object (e.g. a person), and so on. 
-
-Basically, anything that can be given a name can be a resource.
-
-For example:
-
-  * Today's weather in Orlando -> /weather/orlando
-  * The Zombie Leader -> /zombies/leader
-  * Patient Zero -> /infected_humans/1
-  * Survivors -> /survivors
-  * Remaining Medical Kits. -> /medical_kits/remaining
-
-Our web API is the actually mapping between resources and their various representations.
-
-> A resource is a conceptual mapping to a set of entities, not the entity that corresponds to the mapping at any particular point in time.
 
 ### INBOX
 
