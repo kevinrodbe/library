@@ -85,8 +85,6 @@ The **GET** method also has the property of "idempotence". This means that the s
 
 It's worth mentioning one exception that sort of breaks this rule. For example, if you have an API for an ecommerce application, you might need to track unique views for each product. In this case, it's ok to increment a counter on each GET request to a product URI. I've done this a couple of times myself. The important distinction here is that the user did not request the side-effects, so therefore cannot be held accountable for them.
 
-TODO: Integration tests with rspec-rails. No Capybara, explain why.
-
 ## RSpec Rails
 
 In order to test our API, we will write integration tests.
@@ -129,6 +127,7 @@ Back in our controller, we setup the proper response:
 class API::ZombiesController < ApplicationController
   def index
     @zombies = Zombie.all
+    render json: @zombies
   end
 end
 ```
