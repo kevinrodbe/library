@@ -212,8 +212,7 @@ edit_api_zombie GET    /api/zombies/:id/edit(.:format) api/zombies#edit {:subdom
                 DELETE /api/humans/:id(.:format)       api/humans#destroy {:subdomain=>"api"}
 ```
 
-This means we'll need to place our API controllers under the `app/controllers/api` directory, and our API controller classes are now
-part of the `Api` module, like so:
+This means we'll need to place our API controllers under the `app/controllers/api` directory, and our API controller classes are now part of the `Api` module, like so:
 
 ```ruby
 # app/controllers/api
@@ -222,7 +221,8 @@ end
 ```
 
 Notice we now have **api** both in our URI and as our subdomain, i.e. [api.ZombieBroadcast/api/zombies]() and [api.ZombieBroadcast/api/humans](). 
-We can remove this unnecessary duplication, by overriding the **path** option in our namespace and setting it to either `nil` or `'/'`. I personally prefer `'/'`, so let's go with that for now:
+
+We can remove this unnecessary duplication by overriding the **path** option in our namespace and setting it to either `nil` or `'/'`. I personally prefer `'/'`, so let's go with that for now:
 
 ```ruby
 constraints subdomain: 'api' do

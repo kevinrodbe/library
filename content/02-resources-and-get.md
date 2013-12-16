@@ -4,11 +4,11 @@ This level covers Resources and the GET HTTP verb.
 
 ## Resources
 
-> The key abstraction of information in REST is a resource. Any information that can be named can be a resource: a document or image, a temporal service (e.g. "today's weather in Los Angeles"), a collection of other resources, a non-virtual object (e.g. a person), and so on. 
+The key abstraction of information in REST is a **resource**. Any information that can be named can be a resource: a document or image, a temporal service (e.g. "today's weather in Los Angeles"), a collection of other resources, a non-virtual object (e.g. a person), and so on. 
 
 > Resources are the fundamental building blocks of web-based systems, to the extent that the Web is often referred to as being “resource-oriented.
 
-> Resources themselves are not tied to a database, a model, or a controller. They are a high-level description of the thing you’re trying to get hold of when you submit a request. What you actually do get hold of is never the resource itself, but a representation of it.
+Resources themselves are not tied to a database, a model, or a controller. They are a high-level description of the thing you’re trying to get hold of when you submit a request. What you actually do get hold of is never the resource itself, but a representation of it.
 
 Basically, anything that can be given a name can be a resource.
 
@@ -36,7 +36,7 @@ Resources can also be singular,
 resource :session
 ```
 
-which would generate a different set of actions:
+which generates a different set of actions:
 
 ```
 $ rake routes
@@ -71,7 +71,7 @@ edit_zombie GET    /zombies/:id/edit(.:format) zombies#edit
 Now let's see how to properly build our API in order to respond to client actions on those resources. We'll start with the GET method.
 
 
-## GET (with API tests)
+## GET /zombies
 
 From the [RFC](http://tools.ietf.org/search/rfc2616#section-9.3):
 
@@ -105,7 +105,7 @@ It's worth mentioning there might be some exceptions to this rule. One example w
 
 An API for an ecommerce application might need to track unique views for each product. In this case, it's ok to increment a counter on each GET request to a product URI. I've done this a couple of times myself. The important distinction here is that the user did not request the side-effects, so therefore cannot be held accountable for them.
 
-## RSpec Rails
+## Tests
 
 To better understand how Rails implements REST, let's write some basic API integration tests.
 
@@ -171,8 +171,8 @@ Back in our controller, we setup the proper response:
 # app/controllers/api/zombies_controller.rb
 class API::ZombiesController < ApplicationController
   def index
-    @zombies = Zombie.all
-    render json: @zombies
+    zombies = Zombie.all
+    render json: zombies
   end
 end
 ```
@@ -183,8 +183,8 @@ Unless an error occurs, the default status code is 200. I prefer to always be mo
 # app/controllers/api/zombies_controller.rb
 class API::ZombiesController < ApplicationController
   def index
-    @zombies = Zombie.all
-    render json: @zombies, status: 200
+    zombies = Zombie.all
+    render json: zombies, status: 200
   end
 end
 ```
@@ -195,15 +195,15 @@ or in a more expressive way
 # app/controllers/api/zombies_controller.rb
 class API::ZombiesController < ApplicationController
   def index
-    @zombies = Zombie.all
-    render json: @zombies, status: :ok
+    zombies = Zombie.all
+    render json: zombies, status: :ok
   end
 end
 ```
 
 which translates to a 200 status code.
 
-Lastly, successful GET requests are expected to include the resource in the response body. We are already doing that by rendering the `@zombies` in JSON format. Let's add a simple expectation to verify that.
+Lastly, successful GET requests are expected to include the resource in the response body. We are already doing that by rendering the `zombies` in JSON format. Let's add a simple expectation to verify that.
 
 ```ruby
 # spec/requests/listing_zombies_spec.rb
@@ -233,8 +233,6 @@ All information needed to find a specific resource is included as part of the UR
 /zombies/:id/victims/:id
 ```
 
-
-
 For the default resource routes, Rails doesn't the use query strings for identifying resources.
 
 ```
@@ -248,7 +246,7 @@ In REST, most URIs will not use any query strings but there are some situations 
 * Filter, `/zombies?weapon=axe`
 * Pagination, `/zombies?page=2&per_page=25`
 
-Let's look at an example of a filter. In the following code, we want to list all zombies whose weapons are an **axe**. We will pass in the weapon name as a query string, which looks like this:
+Let's look at an example of a filter. In the following code, we want to list all zombies whose weapons are an **axe**. We will pass the weapon name as a query string, which looks like this:
 
 ```
 /zombies?weapons=axe
@@ -259,11 +257,11 @@ In our controller, we access the query string from the `params` object:
 ```ruby
 class API::ZombiesController < ApplicationController
   def index
-    @zombies = Zombie.all # remember, starting in Rails 4 this returns a chainable scope
+    zombies = Zombie.all # remember, starting in Rails 4 this returns a chainable scope
     if weapon = params[:weapon]
-      @zombies = @zombies.where(weapon: weapon)
+      zombies = zombies.where(weapon: weapon)
     end
-    render json: @zombies, status: 200
+    render json: zombies, status: 200
   end
 end
 ```
@@ -308,3 +306,36 @@ Notice the second argument to the `JSON.parse` method, called **symbolize_names*
 ```
 
 It's not required to transform these keys into symbols, but I think it's pretty handy since that's the way we typically build and access hashes in Ruby.
+
+## GET /zombies/:id
+
+TODO: elaborate.
+
+```ruby
+# app/controllers/api/zombies_controller.rb
+class API::ZombiesController < ApplicationController
+  def show
+    zombie = Zombie.find(params[:id])
+    render json: zombie, status: 200
+  end
+end
+```
+
+```ruby
+require 'spec_helper'
+
+describe "Listing Zombies" do
+
+  describe "GET /zombies" do
+    it 'returns zombie from id' do
+      zombie = Zombie.create!(name: 'Joanna', weapon: 'axe')
+
+      get api_zombie_url(zombie)
+      expect(response.status).to be(200)
+
+      zombie_response = JSON.parse(response.body, symbolize_names: true)
+      expect(zombie_response[:name]).to eq(zombie.name)
+    end
+  end
+end
+```
