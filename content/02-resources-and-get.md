@@ -222,14 +222,9 @@ end
 
 ## Query Strings
 
-The default routes provided by Rails resources don't adopt the use of query strings for identifying resources. 
+The style of URI paths used by Rails is called [Path Segmented Expansion](http://tools.ietf.org/html/rfc6570#section-3.2.6).
 
-```
-# BAD BAD BAD
-/zombies?id=1
-```
-
-All information needed to find a specific resource is included as part of the URI.
+All information needed to find a specific resource is included as part of the URI and separated by the slash ("/") operator.
 
 ```
 /zombies
@@ -238,13 +233,44 @@ All information needed to find a specific resource is included as part of the UR
 /zombies/:id/victims/:id
 ```
 
+
+
+For the default resource routes, Rails doesn't the use query strings for identifying resources.
+
+```
+# BAD BAD BAD
+/zombies?id=1
+```
+
 In REST, most URIs will not use any query strings but there are some situations when it's ok to use them. Some examples are:
 
 * Search, `/zombies?keyword=john`
 * Filter, `/zombies?weapon=axe`
 * Pagination, `/zombies?page=2&per_page=25`
 
-TODO: elaborate.
+Let's look at an example of a filter. In the following code, we want to list all zombies whose weapons are an **axe**. We will pass in the weapon name as a query string, which looks like this:
+
+```
+/zombies?weapons=axe
+```
+
+In our controller, we access the query string from the `params` object:
+
+```ruby
+class API::ZombiesController < ApplicationController
+  def index
+    @zombies = Zombie.all # remember, starting in Rails 4 this returns a chainable scope
+    if weapon = params[:weapon]
+      @zombies = @zombies.where(weapon: weapon)
+    end
+    render json: @zombies, status: 200
+  end
+end
+```
+
+In our test code, we want to start by creating two zombies with two different weapons. Then, we want to issue a GET request to our zombies endpoint passing in the **weapon** query string.
+
+The last step is verifying that our action only returns zombies that use that weapon. In order to do that, we need to parse the response using `JSON.parse`.
 
 ```ruby
 # spec/request/listing_zombies_spec.rb
@@ -255,35 +281,30 @@ describe "Listing Zombies" do
   describe "GET /zombies" do
 
     context 'filtering by weapon' do
-      before do
-        @john = Zombie.create!(name: 'John', weapon: 'axe')
-        @joanna = Zombie.create!(name: 'Joanna', weapon: 'shotgun')
-      end
 
       it 'returns zombies with specified weapon' do
-        get api_zombies_url(weapon: 'axe')
+        Zombie.create!(name: 'Joanna', weapon: 'axe')
+        Zombie.create!(name: 'John', weapon: 'shotgun')
+
+        get api_zombies_url(weapon: 'axe') # becomes http://api.example.com/zombies?weapon=axe
         expect(response.status).to be(200)
 
         zombies = JSON.parse(response.body, symbolize_names: true)
         names = zombies.collect { |z| z[:name] }
-        expect(names).to include('John')
-        expect(names).to_not include('Joanna')
+        expect(names).to include('Joanna')
+        expect(names).to_not include('John')
       end
     end
   end
 end
 ```
 
-Back in our controller
+Notice the second argument to the `JSON.parse` method, called **symbolize_names**. As the name implies, this option transforms the keys so we can access them using symbols instead of string,
 
 ```ruby
-class API::ZombiesController < ApplicationController
-  def index
-    @zombies = Zombie.all # remember, starting in Rails 4 this returns a chainable scope
-    if weapon = params[:weapon]
-      @zombies = @zombies.where(weapon: weapon)
-    end
-    render json: @zombies
-  end
-end
+{'id'=>51, 'name'=>"John"}
+# becomes
+{:id=>51, :name=>"John"}
 ```
+
+It's not required to transform these keys into symbols, but I think it's pretty handy since that's the way we typically build and access hashes in Ruby.

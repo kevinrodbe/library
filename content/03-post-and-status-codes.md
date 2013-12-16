@@ -57,6 +57,8 @@ Content below serves as reference.
 
 * Respond with 201
 * Respond with LOCATION set
+* When no response body is needed, respond with head :created or head :ok
+    * "netflix" feature that synchronizes time elapsed.
 
 ## Unsuccessful
 
@@ -81,6 +83,11 @@ Use:
 
 Full list of status and helper methods: [https://github.com/rack/rack/blob/master/lib/rack/response.rb#L115-L131]()
 
+
+* [GUID](http://en.wikipedia.org/wiki/Globally_unique_identifier)
+    * Using the uuid datatype with the PostgreSQL adapter
+    * https://coderwall.com/p/n_0awq
+    * Gotcha: http://rny.io/rails/postgresql/2013/07/27/use-uuids-in-rails-4-with-postgresql.html
 
 ### Valid Response
 

@@ -53,7 +53,7 @@ DELETE
 
 They are HTTP verbs, or methods, and they dictate the different things we can do with the zombie resources.
 
-The last piece of the puzzle is how to find these resources on the web. This is done through a **Uniform Resource Identifier**, or URI. Here are the different URIs for our zombies resources:
+The last piece of the puzzle is how to find these resources on the web. This is done through a **Uniform Resource Identifier**, or [URI](http://tools.ietf.org/html/rfc6570). Here are the different URIs for our zombies resources:
 
 ```
 /zombies(.:format)
@@ -61,6 +61,7 @@ The last piece of the puzzle is how to find these resources on the web. This is 
 /zombies/:id/edit(.:format)
 /zombies/:id(.:format)
 ```
+
 
 Now putting it all together, a Web API is a combination of actions, or HTTP verbs, and URIs that point to representations of resources.
 

@@ -2,6 +2,12 @@
 
 This is the repo for the Rails API Course, including [content](content) and [code examples](/code).
 
+## Prerequisites
+
+* Rails For Zombies 1
+* Rails For Zombies 2
+* Testing with RSpec
+
 ## Demo app
 
 Following the *Zombie Apocalypse Broadcast* theme, here's an idea for a demo web API:
@@ -26,15 +32,6 @@ Following the *Zombie Apocalypse Broadcast* theme, here's an idea for a demo web
 ## TODOS
 
 * REST = Representational State Transfer. Resources (noun) addressable through URI and accessible via Methods (verbs), GET, POST, PUT, PATCH, DELETE, HEAD
-
-* [GUID](http://en.wikipedia.org/wiki/Globally_unique_identifier)
-    * Using the uuid datatype with the PostgreSQL adapter
-    * https://coderwall.com/p/n_0awq
-    * Gotcha: http://rny.io/rails/postgresql/2013/07/27/use-uuids-in-rails-4-with-postgresql.html
-
-* Multiple gets
-    * /api/v1/groups?ids=1,2
-    * /api/v1/groups?page=10
 
 * [The Lie of the API](http://ruben.verborgh.org/blog/2013/11/29/the-lie-of-the-api/)
 

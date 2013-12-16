@@ -230,3 +230,6 @@ TODO: add language/locale example.
 * https://github.com/iain/http_accept_language
 * Add RSS Mime Type ?
 * Add iCal Mime Type ?
+
+
+Food for thought [http://wiki.whatwg.org/wiki/Why_not_conneg](http://wiki.whatwg.org/wiki/Why_not_conneg)
