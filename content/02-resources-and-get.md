@@ -86,7 +86,7 @@ These are the two GET routes we'll implement for our zombies resources:
      zombie GET    /zombies/:id(.:format)      zombies#show
 ```
 
-The route to `/zombies/:id/edit` returns an edit form for an existing resource. Since we won't be serving HTML forms from our web API, we'll exclude `new` and `edit`.
+The routes to `/zombies/new` and `/zombies/:id/edit` return HTML forms for both creating new resources and for updating existing ones. Since we won't be serving any HTML from our web API, we'll exclude `new` and `edit`.
 
 ```ruby
 resources :zombies, except: [:new, :edit]
@@ -107,7 +107,7 @@ An API for an ecommerce application might need to track unique views for each pr
 
 ## Tests
 
-To better understand how Rails implements REST, let's write some basic API integration tests.
+To better understand how Rails implements REST, let's write some basic API integration tests which will represent client interactions with our API.
 
 So, integration tests... you mean Capybara ? 
 
@@ -144,7 +144,7 @@ describe "Listing Zombies" do
 end
 ```
 
-The status code for a successful response from a GET request is typically **200**. We'll look more into the different types of status codes later, but the **200's** class of status code indicates the client's request was successfully received, understood, and accepted.
+The status code for a successful response from a GET request is typically **200**. We'll look more into the different types of status codes later, but the **200** class of status code indicates the client's request was successfully received, understood, and accepted.
 
 Another way we can write our example is using a more general matcher, `be_success` or `be_successful`:
 
@@ -177,7 +177,7 @@ class API::ZombiesController < ApplicationController
 end
 ```
 
-Unless an error occurs, the default status code is 200. I prefer to always be more explicit when it comes to status code, and we can do that by passing the status as a hash option.
+Unless an error occurs, the default status code is 200. I prefer to be explicit when it comes to status codes, and we can do that by passing the status as a hash option.
 
 ```ruby
 # app/controllers/api/zombies_controller.rb
@@ -233,14 +233,15 @@ All information needed to find a specific resource is included as part of the UR
 /zombies/:id/victims/:id
 ```
 
-For the default resource routes, Rails doesn't the use query strings for identifying resources.
+For the default resource routes, Rails ignores URL query strings for identifying resources.
 
 ```
-# BAD BAD BAD
+# routes to Zombies#index
+# and NOT to Zombies#show
 /zombies?id=1
 ```
 
-In REST, most URIs will not use any query strings but there are some situations when it's ok to use them. Some examples are:
+In REST, most URIs will not depend on query strings but there are some situations when it's ok to use them. Some examples are:
 
 * Search, `/zombies?keyword=john`
 * Filter, `/zombies?weapon=axe`
@@ -309,26 +310,18 @@ It's not required to transform these keys into symbols, but I think it's pretty 
 
 ## GET /zombies/:id
 
-TODO: elaborate.
+We've seen how to list zombies. Now, let's see how to fetch a specific Zombie based on its id.
 
-```ruby
-# app/controllers/api/zombies_controller.rb
-class API::ZombiesController < ApplicationController
-  def show
-    zombie = Zombie.find(params[:id])
-    render json: zombie, status: 200
-  end
-end
-```
+First, the test code:
 
 ```ruby
 require 'spec_helper'
 
-describe "Listing Zombies" do
+describe "Finding Zombies" do
 
-  describe "GET /zombies" do
-    it 'returns zombie from id' do
-      zombie = Zombie.create!(name: 'Joanna', weapon: 'axe')
+  describe "GET /zombies/:id" do
+    it 'finds a zombie from its id' do
+      zombie = Zombie.create!(name: 'Joanna')
 
       get api_zombie_url(zombie)
       expect(response.status).to be(200)
@@ -336,6 +329,22 @@ describe "Listing Zombies" do
       zombie_response = JSON.parse(response.body, symbolize_names: true)
       expect(zombie_response[:name]).to eq(zombie.name)
     end
+  end
+end
+```
+
+The route helper `api_zombie_url(zombie)` gets translated to the URI `http://api.example.com/zombies/:id` which is routed to the `API::Zombies#show` controller action.
+
+We have two assertions. The first one checks for the 200 status code, meaning the response is successful, and the other one verifies the proper Zombie was returned by checking its name. 
+
+Our controller code to make the tests pass is pretty simple. Just find the Zombie and return its JSON representation along with the 200 status code.
+
+```ruby
+# app/controllers/api/zombies_controller.rb
+class API::ZombiesController < ApplicationController
+  def show
+    zombie = Zombie.find(params[:id])
+    render json: zombie, status: 200
   end
 end
 ```
