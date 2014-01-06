@@ -211,15 +211,42 @@ The [HTTP protocol](http://tools.ietf.org/html/rfc2616#section-12) offers a coup
 * Accept-Language (section 14.4)
 * User-Agent (section 14.43)
 
-How does that affect us, when developing a Rails API ?
+> How does that affect us as API developers ?
 
-First, we should never rely on URI extensions for determining format. Luckly, if we just use Rails' default tools, we don't have to worry about it:
+Luckly, if we stick with Rails' `respond_to` or/and `respond_with` then there's nothing to worry about.
 
-* respond_to + block
-* respond_to :type + respond_with()
+API **clients**, on the other hand, should remember to never rely on URI extensions for determining format.
 
+Let's see how we can write integration tests that simulate an API client requesting a specific media type and then verify the server responded with the proper media type.
+
+```ruby
+require 'spec_helper'
+
+describe 'Creating episodes' do
+
+  it 'returns 201 status code' do
+    post episodes_url,
+        { episode: { title: 'Bananasssss', description: 'Learn about bananas.' }},
+        { 'ACCEPT' => 'application/vnd.apocalypse+json' }
+
+    expect(response.status).to eq(201)
+    expect(response.content_type).to eq(Mime::APOCALYPSE)
+  end
+end
+```
+
+TODO: add `format.any(:xml, :json)` example.
 TODO: add RSpec request example setting the Accept header.
 TODO: add language/locale example.
+TODO: Verify the statement below from [here](http://apidock.com/rails/ActionController/MimeResponds/respond_to#1436-Accept-header-ignored):
+
+> Rails ignores the accept header when it contains “,/” or “/,” and returns HTML (or JS if it’s a xhr request).
+> This is by design to always return HTML when being accessed from a browser.
+> This doesn’t follow the mime type negotiation specification but it was the only way to circumvent old browsers with bugged accept header. They had he accept header with the first mime type as image/png or text/xml.
+
+Jose Valim [once said](https://twitter.com/josevalim/status/7928782685995009) not to trust Accept headers.. WAT ?
+
+> Don't rely on Accepts headers if you can (browsers are crazy!). Always pass :format as option to ensure proper response from #rails
 
 * Rails Guides on [locale using Accept-Language](http://guides.rubyonrails.org/i18n.html#using-accept-language)
 * https://github.com/iain/http_accept_language
