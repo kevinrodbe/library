@@ -98,12 +98,7 @@ The media type name tells us that the payload of the HTTP request or response is
 Let's go to `config/initializers/mime_types.rb` and register our custom `apocalypse` media type:
 
 ```ruby
-# Be sure to restart your server when you modify this file.
-
-# Add new mime types for use in respond_to blocks:
-# Mime::Type.register "text/richtext", :rtf
-# Mime::Type.register_alias "text/html", :iphone
-Mime::Type.register_alias 'application/vnd.apocalypse+json', :apocalypse
+Mime::Type.register 'application/vnd.apocalypse+json', :apocalypse
 ```
 
 Back in our controller, we need to respond with the proper format. We can do this in a couple of different ways. 
