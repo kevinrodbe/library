@@ -2,17 +2,15 @@
 
 This is a course about building Web APIs in Rails - more specifically REST web APIs in Rails. 
 
-Rails is not **TOTALLY** REST, as purists would argue, but it does give you a great head start for building REST APIs and all the tools you need to customize it to your business needs.
-
 > REST stands for Representational State Transfer, and it's an architectural style for distributed hypermedia systems. 
 
-But what exactly does that mean ?
+But what exactly does this mean ?
 
-It means that the web is a distributed system, which clients interact with by means of exchanging representation of **resources**. 
-
-By following a strict set of operations, REST allows building a service infrastructure that can support different types of applications.
+The web is a distributed system, which clients interact with by means of exchanging representation of **resources**. By following a strict set of operations, REST allows building a service infrastructure that can support different types of applications.
 
 This means a single web API can serve different clients simultaneously, like a rich JavaScript web application, a mobile client like an iPhone or Android, or a command line application, like the Heroku Toolbelt or the github command line application hub. These are all examples of clients that rely on a backend API to serve information.
+
+*(should we include the following disclaimer, at all ?)* Disclaimer: Rails is not **TOTALLY** REST, since it lacks a proper media type with **hypermedia** controls. However, it does give us a great head start for building REST APIs.
 
 ## WAT
 
@@ -72,7 +70,7 @@ Now putting it all together, a Web API is a combination of actions, or HTTP verb
 The default resource declaration allows for all CRUD operations to be performed:
 
 ```ruby
-resources :zombie
+resources :zombies
 ```
 
 This allows for creating, reading, updating and deleting zombies. 
@@ -92,20 +90,20 @@ edit_zombie GET    /zombies/:id/edit(.:format) zombies#edit
 Suppose we want to limit the actions that can be performed on the zombies resources. The `resources` method takes an options hash as its second argument. Two options that we can use to control which actions we want to allow on the resources are `only` and `except`.
 
 ```ruby
-resources :zombie, only: :index
+resources :zombies, only: :index
 ```
 
-With the previous code, when we run `rake routes` we now see a way different output:
+With the previous code, when we run `rake routes` we now see a different output:
 
 ```
     Prefix Verb URI Pattern        Controller#Action
    zombies GET /zombies(.:format) zombies#index
 ```
 
-If instead, we wanted to prevent our API from exposing the endpoint that destroys zombie resources, we could use `except`:
+If instead we wanted to prevent our API from exposing the endpoint that destroys zombie resources, we could use `except`:
 
 ```ruby
-resources :zombie, except: :destroy
+resources :zombies, except: :destroy
 ```
 
 Notice the missing entry for DELETE:
@@ -124,13 +122,13 @@ edit_zombie GET   /zombies/:id/edit(.:format) zombies#edit
 Both options can also take an array:
 
 ```ruby
-resources :zombie, only: [:index, :show]
+resources :zombies, only: [:index, :show]
 ```
 
 or
 
 ```ruby
-resources :zombie, except: [:update, :destroy]
+resources :zombies, except: [:update, :destroy]
 ```
 
 It's a good practice to limit your API end points to only those that will actually be used by our clients.
@@ -138,7 +136,7 @@ It's a good practice to limit your API end points to only those that will actua
 
 ## CONSTRAINTS and NAMESPACE
 
-**Main website**: ZombieBroadcast.com, serves users with a browser and a mouse.  
+**Main website**: ZombieBroadcast.com, serves users with a browser and a mouse.
 
 **API root**: api.ZombieBroadcast.com, serves other applications.
 
@@ -146,9 +144,9 @@ Giving our API its own subdomain is a good approach for a couple reasons.
 
 First, it allows us to decouple our public facing website from our backend API and deploy them to different servers. If for some reason our website server goes down, then our API will not be affected. 
 
-The other benefit is the ability to scale our applications individually. If our API starts getting lots of access, we can load balance traffic at the DNS level.
+The other benefit is the ability to scale our applications individually. If our API starts getting lots of access, we can load balance traffic at the DNS level, which is a way faster alternative than doing it from our app servers. 
 
-On most projects, I've found that it's easier to start with a single Rails codebase for both the backend API and the web client. Assuming our API is located at [api.zombiebroadcast.com](), let's see how we can organize our routes and ensure that access to our API comes strictly from the **api** subdomain.
+On most projects, I've found that it's easier to start with a single Rails codebase for both the backend API and the web client. Assuming our API root is located at [api.zombiebroadcast.com](), let's see how we can organize our routes and ensure that access to our API comes strictly from the **api** subdomain.
 
 ### CONSTRAINTS
 
@@ -223,7 +221,7 @@ end
 
 Notice we now have **api** both in our URI and as our subdomain, i.e. [api.ZombieBroadcast/api/zombies]() and [api.ZombieBroadcast/api/humans](). 
 
-We can remove this unnecessary duplication by overriding the **path** option in our namespace and setting it to either `nil` or `'/'`. I personally prefer `'/'`, so let's go with that for now:
+We can remove this duplication by overriding the **path** option in our namespace and setting it to either `nil` or `'/'`. I personally prefer `'/'`, so let's go with that for now:
 
 ```ruby
 constraints subdomain: 'api' do
