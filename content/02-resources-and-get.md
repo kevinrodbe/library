@@ -247,7 +247,9 @@ In REST, most URIs will not depend on query strings but there are some situation
 * Filter, `/zombies?weapon=axe`
 * Pagination, `/zombies?page=2&per_page=25`
 
-Let's look at an example of a filter. In the following code, we want to list all zombies whose weapons are an **axe**. We will pass the weapon name as a query string, which looks like this:
+Let's look at an example of a filter.
+
+In the following code, we want to list all zombies whose weapons are an **axe**. We will pass the weapon name as a query string, which looks like this:
 
 ```
 /zombies?weapons=axe
