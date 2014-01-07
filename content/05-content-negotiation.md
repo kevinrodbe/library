@@ -2,9 +2,7 @@
 
 Content Negotiation is the process in which an API client and the API server determine the best representation for a given response when there are multiple representations available. (From [Content Negotiation](http://en.wikipedia.org/wiki/Content_negotiation))
 
-We don't typically talk about this when serving web pages because the only representation that browsers understand is HTML.
-
-But web APIs are different. They need to be flexible and cater to different types of clients.
+We don't typically talk about this when serving web pages because the only representation that browsers understand is HTML. But web APIs are different. They need to be flexible and cater to different types of clients.
 
 In this level we are going to look at how to negotiate different characteristics of the response:
 
@@ -82,14 +80,14 @@ which results in a response in XML:
 
 So can we just add an extension for **any** media type that's out there, and Rails will just know what to do ? 
 
-Not quite. Rails ships with 21 different media types out of the box. If we ask for a format that's unknown to Rails, then we'll get back a `406 - Not Acceptable` response.
+Not quite. Rails ships with 21 different media types out of the box. If we ask for a media type that's unknown to Rails, then we'll get back a `406 - Not Acceptable` response.
 
-**Foot note**: For the complete list of formats supported by Rails, type `Mime::SET` from your Rails console - or `Mime::SET.collect(&:to_s)` for a more readable response.
+**Foot note**: For the complete list of media types supported by Rails, type `Mime::SET` from your Rails console - or `Mime::SET.collect(&:to_s)` for a more readable response.
 
 
 ## Adding a custom Mime Type
 
-TODO: Add reasons we'd want to use a custom Mime Type.
+TODO: Add reasons we'd want to use a custom Mime Type. Hypermedia ? Versioning ?
 
 Our custom media type will be `application/vnd.apocalypse+json`.
 
@@ -116,7 +114,7 @@ def index
 end
 ```
 
-Inside of the `format.apocalypse` block, we'll call our custom serializer that returns the proper media type. For now, we'll use the json serializer for simplicity:
+Inside of the `format.apocalypse` block, we'll call our custom serializer that returns the proper media type. For now, we'll use the JSON serializer for simplicity:
 
 ```ruby
 def index
@@ -135,7 +133,7 @@ We can now ask for our custom format:
 api.ZombieBroadcast.com/zombies.apocalypse
 ```
 
-And we'll get our response back using our custom serializer - which is simply JSON for now:
+And we'll get our response back using our custom mime type:
 
 ```
 [{"id":1,"name":"Jon","age":21,"created_at":"2013-12-13T17:00:21.925Z",
@@ -199,17 +197,9 @@ While tweaking the URI allows for quickly switching between media types, and eve
 
 Instead of using the URI for content negotiation, we should use request Headers.
 
-So far, when we talked about the HTTP protocol we talked about two things: URIs and actions, or HTTP verbs. Turns out we can also exchange information through **Headers**.
-
 > Using content negotiation, consumers can negotiate for specific representation formats from a service. They do so by populating the HTTP Accept request header with a list of media types they’re prepared to process. (Excerpt From: Ian Robinson. “REST in Practice.” iBooks.)
 
-The [HTTP protocol](http://tools.ietf.org/html/rfc2616#section-12) offers a couple of different request Headers clients can use to help the server determine which format is expected:
-
-* Accept* (section 14.1),
-* Accept-Charset (section 14.2),
-* Accept-Encoding (section 14.3),
-* Accept-Language (section 14.4)
-* User-Agent (section 14.43)
+The [HTTP protocol](http://tools.ietf.org/html/rfc2616#section-12) offers the **ACCEPT** header to help the server determine which media type a client accepts for the response.
 
 > How does that affect us as API developers ?
 
@@ -219,14 +209,8 @@ API **clients**, on the other hand, should remember to never rely on URI extensi
 
 Let's see how we can write integration tests that simulate an API client requesting a specific media type and then verify the server responded with the proper media type.
 
-TODO: add CONTENT_TYPE header.
 
-**HTTP_ACCEPT** -> "here is the mime type that I can understand."
-**CONTENT_TYPE** -> "here is the content type of the body I'm sending you."
-
-[http://www.w3.org/Protocols/rfc1341/4_Content-Type.html]()
-[http://www.commandercoriander.net/blog/2014/01/04/test-driving-a-json-api-in-rails]()
-
+> From Nate: It's actually somewhat uncommon that you'd have someone posting a custom format into your app.
 
 ```ruby
 require 'spec_helper'
@@ -235,8 +219,8 @@ describe 'Creating episodes' do
 
   it 'returns 201 status code' do
     post episodes_url,
-        { episode: { title: 'Bananasssss', description: 'Learn about bananas.' }},
-        { 'ACCEPT' => 'application/vnd.apocalypse+json' }
+        { episode: { title: 'Bananasssss', description: 'Learn about bananas.' }}.to_json,
+        { 'HTTP_ACCEPT' => 'application/vnd.apocalypse+json', 'CONTENT_TYPE' => Mime::JSON }
 
     expect(response.status).to eq(201)
     expect(response.content_type).to eq(Mime::APOCALYPSE)
@@ -244,8 +228,21 @@ describe 'Creating episodes' do
 end
 ```
 
+**HTTP_ACCEPT** -> "here is the mime type that I can understand."
+**CONTENT_TYPE** -> "here is the content type of the body I'm sending you."
+
+If you need to POST a custom Mime Type, then you need to tell Rails how to parse its content:
+
+```ruby
+# config/initializers/mime_type.rb
+Mime::Type.register 'application/vnd.apocalypse+json', :apocalypse
+ActionDispatch::ParamsParser::DEFAULT_PARSERS[Mime::APOCALYPSE]= :json
+```
+
+[http://www.w3.org/Protocols/rfc1341/4_Content-Type.html]()
+[http://www.commandercoriander.net/blog/2014/01/04/test-driving-a-json-api-in-rails]()
+
 TODO: add `format.any(:xml, :json)` example.
-TODO: add RSpec request example setting the Accept header.
 TODO: add language/locale example.
 TODO: Verify the statement below from [here](http://apidock.com/rails/ActionController/MimeResponds/respond_to#1436-Accept-header-ignored):
 
