@@ -67,7 +67,7 @@ Now putting it all together, a Web API is a combination of actions, or HTTP verb
 
 ## ONLY and EXCEPT
 
-The default resource declaration allows for all CRUD operations to be performed:
+The default resource declaration allows for all CRUD (Create, Retrieve, Update, Delete) operations to be performed:
 
 ```ruby
 resources :zombies

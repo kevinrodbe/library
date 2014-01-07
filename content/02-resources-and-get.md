@@ -20,11 +20,11 @@ For example:
   * Survivors -> /survivors
   * Remaining Medical Kits. -> /medical_kits/remaining
 
-> A resource is a conceptual mapping to a set of entities, not the entity that corresponds to the mapping at any particular point in time.
+> A resource is a conceptual mapping to a set of entities, not the entity that corresponds to the mapping at any particular point in time. - Steve Klabnik, Designing Hypermedia APIs
 
 Our web API is the mapping between resources and their various representations.
 
-The syntax for declaring resources in Rails should already be familiar to you. We've seen it a couple of times in the previous chapter, and it's super simple:
+The syntax for declaring resources in Rails should already be familiar to you. We've seen it a couple of times in the previous chapter:
 
 ```ruby
 resources :zombies
@@ -116,7 +116,7 @@ Well, Capybara is **not** the best option when it comes to API testing because i
 > Do not test APIs with Capybara. It wasn’t designed for it. 
 - Jonas Nicklas, the creator of Capybara.
 
-So we'll stick with RSpec and rspec-rails:
+So we'll stick with RSpec request specs using rspec-rails:
 
 ```
 group :test, :development do
@@ -126,7 +126,7 @@ end
 
 We run `bundle` to resolve our dependencies and `rails g rspec:install` to create our `spec/spec_helper.rb` for us. 
 
-To create our integration test, we run `rails g integration_test listing_zombies` which creates the **spec/requests/listing_zombies_spec.rb** file.
+To create our first integration test, or request spec, we run `rails g integration_test listing_zombies` which creates the **spec/requests/listing_zombies_spec.rb** file.
 
 Let's replace the content of that file with the following:
 
@@ -306,7 +306,7 @@ Notice the second argument to the `JSON.parse` method, called **symbolize_names*
 {:id=>51, :name=>"John"}
 ```
 
-It's not required to transform these keys into symbols, but I think it's pretty handy since that's the way we typically build and access hashes in Ruby.
+It's not required to transform these keys into symbols, but it's pretty handy since that's the way we typically build and access hashes in Ruby.
 
 ## GET /zombies/:id
 
@@ -345,6 +345,46 @@ class API::ZombiesController < ApplicationController
   def show
     zombie = Zombie.find(params[:id])
     render json: zombie, status: 200
+  end
+end
+```
+
+## Extracting a helper method
+
+We'll be doing a lot of JSON parsing in our integration tests. Manually calling `JSON.parse(response.body, symbolize_names: true)` every time we need to parse a response to JSON can quickly become tedious, so let's see how we can extract that to an RSpec helper method.
+
+We can define helper methods in a module and include them in our integration tests using RSpec's **config.include** option. Let's create a new file under *spec/support/json.rb* and add our new module:
+
+```ruby
+# spec/support/json.rb
+module RSpecRequestHelpers
+  def json(body)
+    JSON.parse(body, symbolize_names: true)
+  end
+end
+
+RSpec.configure do |config|
+  config.include RSpecRequestHelpers, type: :request
+end
+```
+
+Now back in our specs we can simply call our `json` helper method:
+
+```ruby
+require 'spec_helper'
+
+describe "Finding Zombies" do
+
+  describe "GET /zombies/:id" do
+    it 'finds a zombie from its id' do
+      zombie = Zombie.create!(name: 'Joanna')
+
+      get api_zombie_url(zombie)
+      expect(response.status).to be(200)
+
+      zombie_response = json(response.body)
+      expect(zombie_response[:name]).to eq(zombie.name)
+    end
   end
 end
 ```
