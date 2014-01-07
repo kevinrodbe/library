@@ -1,8 +1,12 @@
-## POST (with API tests)
+## POST
 
-The POST method is used to request that the server accept the entity enclosed in the request as a new representation of the resource at the specified URI. 
+The POST HTTP verb is used to request that the server accept the entity enclosed in the request as a new representation of the resource at the specified URI. In short, we use POST to send stuff to the server.
 
-If a resource has been created on the origin server, the response SHOULD be 201 (Created) and contain an entity which describes the status of the request and refers to the new resource, and a Location.
+When a POST request results in a new resource being created on the server, then:
+
+* The **status code** for the response should be 201 (Created).
+* The response **body** should contain a representation of the new resource.
+* The **Location** headerd should be set with the location of the new resource.
 
 TODO: elaborate more.
 
