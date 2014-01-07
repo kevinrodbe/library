@@ -368,7 +368,9 @@ RSpec.configure do |config|
 end
 ```
 
-Now back in our specs we can simply call our `json` helper method:
+The `type: :request` option ensures that our **RSpecRequestHelpers** module is only mixed into request type specs.
+
+Back in our request specs we can simply call our `json` helper method:
 
 ```ruby
 require 'spec_helper'
