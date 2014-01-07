@@ -219,6 +219,15 @@ API **clients**, on the other hand, should remember to never rely on URI extensi
 
 Let's see how we can write integration tests that simulate an API client requesting a specific media type and then verify the server responded with the proper media type.
 
+TODO: add CONTENT_TYPE header.
+
+**HTTP_ACCEPT** -> "here is the mime type that I can understand."
+**CONTENT_TYPE** -> "here is the content type of the body I'm sending you."
+
+[http://www.w3.org/Protocols/rfc1341/4_Content-Type.html]()
+[http://www.commandercoriander.net/blog/2014/01/04/test-driving-a-json-api-in-rails]()
+
+
 ```ruby
 require 'spec_helper'
 
