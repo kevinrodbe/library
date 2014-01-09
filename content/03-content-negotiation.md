@@ -2,7 +2,7 @@
 
 Content Negotiation is the process in which an API client and the API server determine the best representation for a given response when there are multiple representations available. (From [Content Negotiation](http://en.wikipedia.org/wiki/Content_negotiation))
 
-We don't typically talk about this when serving web pages because the only representation that browsers understand is HTML. But web APIs are different. They need to be flexible and cater to different types of clients. **TODO:** mention examples.
+We don't typically talk about this when serving web pages because the only representation that browsers understand is HTML. But web APIs are different. They need to be flexible and cater to different types of clients.
 
 In this level we are going to look at how to negotiate two different characteristics of the response:
 
@@ -11,15 +11,15 @@ In this level we are going to look at how to negotiate two different characteris
 
 ## Media Types The Rails Way
 
-A media type specifies the scheme of the response.
+A media type specifies the scheme of the response and helps clients identify the format of the payload, like HTML, XML or JSON for example.
 
-For default resources,
+For Rails resources, defined with the **resources** method
 
 ```ruby
 resources :zombies
 ```
 
-Rails gives us a way to switch between different formats by adding an extension to the URI itself. This is what the `(.:format)` portion of the output from `rake routes` means.
+one way to switch between different formats is by adding an extension to the URI when making a request to the server. This is what the `(.:format)` portion of the output from `rake routes` means.
 
 ```
      Prefix Verb   URI Pattern                 Controller#Action
@@ -33,13 +33,27 @@ edit_zombie GET    /zombies/:id/edit(.:format) zombies#edit
             DELETE /zombies/:id(.:format)      zombies#destroy
 ```
 
-The default media type is `text/html`. If we want `application/json` instead, the media type for the JSON format, then we can simply add `.json` to the URI:
+The default media type is `text/html`, which serves responses in HTML format. 
+
+If a client wants to request `application/json` instead, the media type for the JSON format, then they simply add `.json` to the URI:
 
 ```ruby
 api.ZombieBroadcast.com/zombies.json
 ```
 
-Assuming we have a proper JSON serializer in place, our server will respond with a JSON string:
+Before our API is actually able to generate proper JSON responses, we need to add JSON support to our **ZombiesController**. One way we can do that is by calling the `respond_to` method from our controller action.
+
+```ruby
+def index
+  zombies = Zombie.all
+
+  respond_to do |format|
+    format.json { render json: zombies, status: 200 }
+  end
+end
+```
+
+Under the hood, `render json: zombies` calls the `to_json` method on `zombies` and the server responds with a JSON string:
 
 ```
 [{"id":1,"name":"Jon","age":123,"created_at":"2013-12-12T20:01:24.586Z",
@@ -47,13 +61,33 @@ Assuming we have a proper JSON serializer in place, our server will respond with
 "created_at":"2013-12-12T20:01:25.196Z","updated_at":"2013-12-12T20:01:25.196Z"}]
 ```
 
-If we want `application/xml`, the media type for XML, then simply adding a `.xml` will do it: 
+We can also check the **Content-Type** header in the response (very useful for debugging, btw), which should be set to the proper media type:
+
+```
+HTTP/1.1 200 OK 
+Content-Type: application/json; charset=utf-8
+```
+
+Now if an API client wants `application/xml`, the media type for XML, they add an `.xml` extension to our URI:
 
 ```ruby
 api.ZombieBroadcast.com/zombies.xml
 ```
 
-which results in the following XML response:
+In our controller, we add an entry for the XML format:
+
+```ruby
+def index
+  zombies = Zombie.all
+
+  respond_to do |format|
+    format.json { render json: zombies, status: 200 }
+    format.xml { render xml: zombies, status: 200 }
+  end
+end
+```
+
+Much like with JSON, `render xml: zombies` will call the `to_xml` method on `zombies`, which results in the following XML response:
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
@@ -75,9 +109,19 @@ which results in the following XML response:
 </zombies>
 ```
 
-So can we just add an extension for **any** media type that's out there, and Rails will magically know what to do ? 
+And the **Content-Type** header is also set to `application/xml`:
 
-Not quite. Rails ships with 21 different media types out of the box. If we ask for a media type that's unknown to Rails, then we'll get back a `406 - Not Acceptable` response.
+```
+HTTP/1.1 200 OK 
+Content-Type: application/xml; charset=utf-8
+```
+
+Rails ships with 21 different media types out of the box. If we ask for a media type that's unknown to Rails, then we'll get back a `406 - Not Acceptable` response.
+
+```
+HTTP/1.1 406 Not Acceptable 
+Content-Type: text/html; charset=utf-8
+```
 
 For the complete list of media types supported by your Rails app, run `Mime::SET` from the Rails console - or `Mime::SET.collect(&:to_s)` for a more readable response.
 
@@ -102,7 +146,7 @@ TODO: Add reasons we'd want to use a custom Mime Type: Versioning - see [Github 
 
 Our custom media type will be `application/vnd.apocalypse+json`.
 
-The media type name **application** tells us that the payload of the HTTP request or response is to be treated as part of an application-specific interaction. The **vnd.apocalypse** part of the media type name declares that the media type is vendor-specific (vnd), and that the owner is the **apocalypse** application. The **+json** part declares JSON is used for the document formatting.
+The media type name **application** tells us that the payload is to be treated as part of an application-specific interaction. The **vnd.apocalypse** part of the media type name declares that the media type is vendor-specific (vnd), and that the owner is the **apocalypse** application. The **+json** part declares JSON is used for the document formatting.
 
 Let's go to `config/initializers/mime_types.rb` and register our custom `apocalypse` media type:
 
@@ -110,29 +154,25 @@ Let's go to `config/initializers/mime_types.rb` and register our custom `apocaly
 Mime::Type.register 'application/vnd.apocalypse+json', :apocalypse
 ```
 
-Back in our controller, we need to respond with the proper format. We can do this in a couple of different ways. 
-
-One way is using the `respond_to` method that takes a block.
+Back in our controller, we need to add an entry to `respond_to` with our custom format.
 
 ```ruby
 def index
   @zombies = Zombie.all
 
   respond_to do |format|
-    format.html # looks for index.html.erb template
     format.apocalypse {}
   end
 end
 ```
 
-Inside of the `format.apocalypse` block, we'll call our custom serializer that returns the proper media type. For now, we'll use the JSON serializer for simplicity:
+Inside of the `format.apocalypse` block, we'll call our custom serializer that returns the proper media type. For now, we'll just use the JSON serializer for simplicity:
 
 ```ruby
 def index
   @zombies = Zombie.all
 
   respond_to do |format|
-    format.html
     format.apocalypse { render json: @zombies }
   end
 end
@@ -160,7 +200,7 @@ HTTP/1.1 200 OK
 Content-Type: application/vnd.apocalypse+json; charset=utf-8 # W00t
 ```
 
-Another method we can use is the `respond_to/respond_with`. We call `respond_to` from our controller class to tell it which media type to accept:
+Another method we can use is `respond_to/respond_with`. For this, we call `respond_to` from our controller class, instead of from our action, to tell it which media type to accept:
 
 ```ruby
 class ZombiesController < ApplicationController
@@ -199,7 +239,7 @@ json.array!(@zombies) do |zombie|
 end
 ```
 
-If we wanted to stay away from templates, we could pass a block to `respond_with`, similar to how we were doing it previously in **respond_to**:
+If we wanted to avoid templates, we could pass a block to `respond_with`, similar to how we were doing it previously in **respond_to**:
 
 ```ruby
 class ZombiesController < ApplicationController
