@@ -13,13 +13,13 @@ In this level we are going to look at how to negotiate two different characteris
 
 A media type specifies the scheme of the response and helps clients identify the format of the payload, like HTML, XML or JSON for example.
 
-For Rails resources, defined with the **resources** method
+For Rails resources defined with the **resources** method
 
 ```ruby
 resources :zombies
 ```
 
-one way to switch between different formats is by adding an extension to the URI when making a request to the server. This is what the `(.:format)` portion of the output from `rake routes` means.
+there's a simple way to switch between different formats, by adding an extension to the URI when making a request to the server. This is what the `(.:format)` portion of the output from `rake routes` means.
 
 ```
      Prefix Verb   URI Pattern                 Controller#Action
@@ -35,13 +35,13 @@ edit_zombie GET    /zombies/:id/edit(.:format) zombies#edit
 
 The default media type is `text/html`, which serves responses in HTML format. 
 
-If a client wants to request `application/json` instead, the media type for the JSON format, then they simply add `.json` to the URI:
+If a client wants to request `application/json` instead, a media type that serves JSON format, then they simply add `.json` to the URI:
 
 ```ruby
 api.ZombieBroadcast.com/zombies.json
 ```
 
-Before our API is actually able to generate proper JSON responses, we need to add JSON support to our **ZombiesController**. One way we can do that is by calling the `respond_to` method from our controller action.
+But before our API is actually able to generate proper JSON responses, we need to add JSON support to our **ZombiesController**. One way we can do that is by calling the `respond_to` method from our controller action.
 
 ```ruby
 def index
@@ -68,7 +68,7 @@ HTTP/1.1 200 OK
 Content-Type: application/json; charset=utf-8
 ```
 
-Now if an API client wants `application/xml`, the media type for XML, they add an `.xml` extension to our URI:
+Now if an API client wants `application/xml`, a media type that serves XML, they add an `.xml` extension to our URI:
 
 ```ruby
 api.ZombieBroadcast.com/zombies.xml
@@ -87,7 +87,7 @@ def index
 end
 ```
 
-Much like with JSON, `render xml: zombies` will call the `to_xml` method on `zombies`, which results in the following XML response:
+Much like with JSON, `render xml: zombies` calls the `to_xml` method on `zombies`, which results in the following XML response:
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
@@ -123,7 +123,7 @@ HTTP/1.1 406 Not Acceptable
 Content-Type: text/html; charset=utf-8
 ```
 
-For the complete list of media types supported by your Rails app, run `Mime::SET` from the Rails console - or `Mime::SET.collect(&:to_s)` for a more readable response.
+For the complete list of media types supported by a given Rails app, run `Mime::SET` from the Rails console - or `Mime::SET.collect(&:to_s)` for a more readable response.
 
 ```
 Loading development environment (Rails 4.1.0.beta1)

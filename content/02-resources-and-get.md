@@ -4,6 +4,8 @@ This level covers Resources and the GET HTTP verb.
 
 TODO: introduce the concept of **HEADER**.
 
+x- headers are non-standard headers.
+
 ## Resources
 
 The key abstraction of information in REST is a **resource**. Any information that can be named can be a resource: a document or image, a temporal service (e.g. "today's weather in Los Angeles"), a collection of other resources, a non-virtual object (e.g. a person), and so on. 
