@@ -22,12 +22,12 @@ Following the *Zombie Apocalypse Broadcast* theme, here's an idea for a demo web
 (WIP)
 
 1. [Route Constraints + Namespace](content/01-recap-intro.md) (complete)
-2. [Resources and the GET method](content/02-resources-and-get.md) (in process)
-3. Status codes and the POST method.
-4. PUT, PATCH, DELETE.
-5. [Content Negotiation](content/05-content-negotiation.md) (in progress)
-6. Versioning
-7. Authentication 
+2. [Resources and the GET method](content/02-resources-and-get.md) (complete)
+3. [Content Negotiation](content/03-content-negotiation.md) (in progress)
+4. [Post and Status Code](content/04-post-and-status-codes.md) (in progress)
+5. Put, Patch and Delete (pending)
+6. Versioning (might be merged with another level)
+7. [Authentication](content/07-authentication.md) (pending)
 
 ## TODOS
 

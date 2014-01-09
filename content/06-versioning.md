@@ -1,5 +1,7 @@
 ## API Versioning
 
+**Move this to 04 ?**
+
 See [http://railscasts.com/episodes/350-rest-api-versioning?view=asciicast]()
 
 * Three ways: 
