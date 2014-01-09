@@ -1,8 +1,11 @@
 # Content Negotiation
 
-Content Negotiation is the process in which an API client and the API server determine the best representation for a given response when there are multiple representations available. (From [Content Negotiation](http://en.wikipedia.org/wiki/Content_negotiation))
+Web APIs need to be flexible and cater to different types of clients. Content Negotiation is the process in which an API client and the API server determine the best representation for a given response when there are multiple representations available. (From [Content Negotiation](http://en.wikipedia.org/wiki/Content_negotiation))
 
-We don't typically talk about this when serving web pages because the only representation that browsers understand is HTML. But web APIs are different. They need to be flexible and cater to different types of clients.
+When navigating web pages we don't typically worry about content negotiation because, as users, we delegate most of this task to the browser. It tells the server, on our behalf, what representation it accepts. 
+
+Looking at a web site like google.com, the browser asks for HTML and we see the google.com front-page. If we want to change the language, we could change our browser settings and have it ask the google.com server for its content to be in German (de-DE) instead of English (en-US). Or when we click on a download link for a PDF, the browser asks the server for a PDF format.
+
 
 In this level we are going to look at how to negotiate two different characteristics of the response:
 
