@@ -2,7 +2,13 @@
 
 The POST HTTP verb is used to request that the server accept the entity enclosed in the request as a new representation of the resource at the specified URI. In short, we use POST to send stuff to the server.
 
-When a POST request results in a new resource being created on the server, then:
+POST requests are neither safe or idempotent. Successful POST requests create new resources on the server. Submitting forms, adding an item to our shopping cart and rating a recently purchased product are all operations that generate side-effects. 
+
+Sequential POST requests to the same URI are likely to change the state of the application each time, that's why sometimes you'll see warnings when refreshing or re-visiting a browser URL right after submiting a form:
+
+![](http://i.stack.imgur.com/52vBU.png)
+
+When a POST request results in a new resource being successfully created on the server, then:
 
 * The **status code** for the response should be 201 (Created).
 * The response **body** should contain a representation of the new resource.

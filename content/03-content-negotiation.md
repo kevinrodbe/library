@@ -2,19 +2,16 @@
 
 Content Negotiation is the process in which an API client and the API server determine the best representation for a given response when there are multiple representations available. (From [Content Negotiation](http://en.wikipedia.org/wiki/Content_negotiation))
 
-We don't typically talk about this when serving web pages because the only representation that browsers understand is HTML. But web APIs are different. They need to be flexible and cater to different types of clients.
+We don't typically talk about this when serving web pages because the only representation that browsers understand is HTML. But web APIs are different. They need to be flexible and cater to different types of clients. **TODO:** mention examples.
 
-In this level we are going to look at how to negotiate different characteristics of the response:
+In this level we are going to look at how to negotiate two different characteristics of the response:
 
 1. Media-Type
 2. Language
-4. User Agent (??)
-3. Encoding (??)
-
 
 ## Media Types The Rails Way
 
-A media type specifies the scheme, or the format, of the response.
+A media type specifies the scheme of the response.
 
 For default resources,
 
@@ -36,13 +33,13 @@ edit_zombie GET    /zombies/:id/edit(.:format) zombies#edit
             DELETE /zombies/:id(.:format)      zombies#destroy
 ```
 
-The default media type is `text/html`. If we want `application/json` instead, the media type for JSON, we can simply add `.json` to the URI:
+The default media type is `text/html`. If we want `application/json` instead, the media type for the JSON format, then we can simply add `.json` to the URI:
 
 ```ruby
 api.ZombieBroadcast.com/zombies.json
 ```
 
-Assuming we have a proper JSON serializer in place, then our server responds with a JSON string:
+Assuming we have a proper JSON serializer in place, our server will respond with a JSON string:
 
 ```
 [{"id":1,"name":"Jon","age":123,"created_at":"2013-12-12T20:01:24.586Z",
@@ -56,7 +53,7 @@ If we want `application/xml`, the media type for XML, then simply adding a `.xml
 api.ZombieBroadcast.com/zombies.xml
 ```
 
-which results in a response in XML:
+which results in the following XML response:
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
@@ -78,20 +75,34 @@ which results in a response in XML:
 </zombies>
 ```
 
-So can we just add an extension for **any** media type that's out there, and Rails will just know what to do ? 
+So can we just add an extension for **any** media type that's out there, and Rails will magically know what to do ? 
 
 Not quite. Rails ships with 21 different media types out of the box. If we ask for a media type that's unknown to Rails, then we'll get back a `406 - Not Acceptable` response.
 
-**Foot note**: For the complete list of media types supported by Rails, type `Mime::SET` from your Rails console - or `Mime::SET.collect(&:to_s)` for a more readable response.
+For the complete list of media types supported by your Rails app, run `Mime::SET` from the Rails console - or `Mime::SET.collect(&:to_s)` for a more readable response.
 
+```
+Loading development environment (Rails 4.1.0.beta1)
+2.0.0p195 :001 > Mime::SET
+=> [#<Mime::Type:0x007fe2e1dc0f48 @synonyms=["application/xhtml+xml"], @symbol=:html, @string="text/html">,
+#<Mime::Type:0x007fe2e1dc07c8 @synonyms=[], @symbol=:text, @string="text/plain">, #<Mime::Type:0x007fe2e1dc0048
+@synonyms=["application/javascript", "application/x-javascript"], @symbol=:js, @string="text/javascript">,
+#<Mime::Type:0x007fe2e218b9e8 @synonyms=[], @symbol=:css, @string="text/css">,...
+ 
+2.0.0p195 :002 > Mime::SET.collect(&:to_s)
+=> ["text/html", "text/plain", "text/javascript", "text/css", "text/calendar", "text/csv", "text/vcard",
+"image/png", "image/jpeg", "image/gif", "image/bmp", "image/tiff", "video/mpeg", "application/xml", 
+"application/rss+xml", "application/atom+xml", "application/x-yaml", "multipart/form-data",
+"application/x-www-form-urlencoded", "application/json", "application/pdf", "application/zip"]
+```
 
 ## Adding a custom Mime Type
 
-TODO: Add reasons we'd want to use a custom Mime Type. Hypermedia ? Versioning ?
+TODO: Add reasons we'd want to use a custom Mime Type: Versioning - see [Github API](http://developer.github.com/changes/2014-01-07-upcoming-change-to-default-media-type/) and [Heroku](https://blog.heroku.com/archives/2014/1/8/json_schema_for_heroku_platform_api)
 
 Our custom media type will be `application/vnd.apocalypse+json`.
 
-The media type name tells us that the payload of the HTTP request or response is to be treated as part of an application-specific interaction. The vnd.apocalypse part of the media type name declares that the media type is vendor-specific (vnd), and that the owner is the **apocalypse** application. The +json part declares JSON is used for the document formatting.
+The media type name **application** tells us that the payload of the HTTP request or response is to be treated as part of an application-specific interaction. The **vnd.apocalypse** part of the media type name declares that the media type is vendor-specific (vnd), and that the owner is the **apocalypse** application. The **+json** part declares JSON is used for the document formatting.
 
 Let's go to `config/initializers/mime_types.rb` and register our custom `apocalypse` media type:
 
@@ -149,7 +160,23 @@ HTTP/1.1 200 OK
 Content-Type: application/vnd.apocalypse+json; charset=utf-8 # W00t
 ```
 
-Another method we can use is the `respond_to/respond_with`. We first call `respond_to :apocalypse`, usually at the top of our controller. Then, we simply call `respond_with(@zombies)`, and it will automatically figure out what format the client is expecting.
+Another method we can use is the `respond_to/respond_with`. We call `respond_to` from our controller class to tell it which media type to accept:
+
+```ruby
+class ZombiesController < ApplicationController
+  respond_to :apocalypse
+end
+```
+
+If we needed to support multiple media types, then we could pass multiple arguments to the `respond_to` method:
+
+```ruby
+class ZombiesController < ApplicationController
+  respond_to :apocalypse #, :xml, :html
+end
+```
+
+Then, we call `respond_with` from our controller action, passing in our model or collection of models, and Rails will automatically figure out what format the client expects back.
 
 ```ruby
 class ZombiesController < ApplicationController
@@ -162,7 +189,7 @@ class ZombiesController < ApplicationController
 end
 ```
 
-One last thing we need to do, is to add a template for the `apocalypse` format. Again, for simplicity, we'll simply return JSON format using a jbuilder template.
+One last thing we need to do is add a template for the `apocalypse` format. The template name needs to include the mime type on its extension, so for the index action we'll name it *app/views/zombies/index.apocalypse.jbuilder* and we'll use jbuilder to produce a JSON response:
 
 ```ruby
 # app/views/zombies/index.apocalypse.jbuilder
@@ -172,7 +199,7 @@ json.array!(@zombies) do |zombie|
 end
 ```
 
-If we wanted to stay away from templates, we could pass a block to `respond_with`, similar to how we were doing it previously:
+If we wanted to stay away from templates, we could pass a block to `respond_with`, similar to how we were doing it previously in **respond_to**:
 
 ```ruby
 class ZombiesController < ApplicationController
@@ -187,8 +214,6 @@ class ZombiesController < ApplicationController
 end
 ```
 
-As we'll see later (or not?), a custom Media Type also allows us add Hypermedia capabilities to our response.
-
 ## A better way
 
 While tweaking the URI allows for quickly switching between media types, and even helps with exploring the API from our browser, this strategy should be avoided.
@@ -201,37 +226,34 @@ Instead of using the URI for content negotiation, we should use request Headers.
 
 The [HTTP protocol](http://tools.ietf.org/html/rfc2616#section-12) offers the **ACCEPT** header to help the server determine which media type a client accepts for the response.
 
-> How does that affect us as API developers ?
+How does that affect us as API developers ?
 
 Luckly, if we stick with Rails' `respond_to` or/and `respond_with` then there's nothing to worry about.
 
 API **clients**, on the other hand, should remember to never rely on URI extensions for determining format.
 
-Let's see how we can write integration tests that simulate an API client requesting a specific media type and then verify the server responded with the proper media type.
-
-
-> From Nate: It's actually somewhat uncommon that you'd have someone posting a custom format into your app.
+Let's see how we can write integration tests that simulate an API client requesting a specific media type and then verify that the server responded properly.
 
 ```ruby
 require 'spec_helper'
 
-describe 'Creating episodes' do
+describe 'Listing Zombies' do
 
-  it 'returns 201 status code' do
-    post episodes_url,
-        { episode: { title: 'Bananasssss', description: 'Learn about bananas.' }}.to_json,
-        { 'HTTP_ACCEPT' => 'application/vnd.apocalypse+json', 'CONTENT_TYPE' => Mime::JSON }
+  it 'returns successful response' do
+    get api_zombies_url, {}, { 'ACCEPT' => Mime::APOCALYPSE }
 
-    expect(response.status).to eq(201)
+    expect(response.status).to eq(200)
     expect(response.content_type).to eq(Mime::APOCALYPSE)
   end
 end
 ```
 
-**HTTP_ACCEPT** -> "here is the mime type that I can understand."
+**ACCEPT** -> "here is the mime type that I can understand."
 **CONTENT_TYPE** -> "here is the content type of the body I'm sending you."
 
 If you need to POST a custom Mime Type, then you need to tell Rails how to parse its content:
+
+> From Nate: It's actually somewhat uncommon that you'd have someone POSTing a custom format into your app.
 
 ```ruby
 # config/initializers/mime_type.rb
@@ -239,11 +261,11 @@ Mime::Type.register 'application/vnd.apocalypse+json', :apocalypse
 ActionDispatch::ParamsParser::DEFAULT_PARSERS[Mime::APOCALYPSE]= :json
 ```
 
-[http://www.w3.org/Protocols/rfc1341/4_Content-Type.html]()
-[http://www.commandercoriander.net/blog/2014/01/04/test-driving-a-json-api-in-rails]()
+## Language
 
-TODO: add `format.any(:xml, :json)` example.
 TODO: add language/locale example.
+
+
 TODO: Verify the statement below from [here](http://apidock.com/rails/ActionController/MimeResponds/respond_to#1436-Accept-header-ignored):
 
 > Rails ignores the accept header when it contains “,/” or “/,” and returns HTML (or JS if it’s a xhr request).
@@ -261,3 +283,9 @@ Jose Valim [once said](https://twitter.com/josevalim/status/7928782685995009) no
 
 
 Food for thought [http://wiki.whatwg.org/wiki/Why_not_conneg](http://wiki.whatwg.org/wiki/Why_not_conneg)
+
+
+Resources:
+
+[http://www.w3.org/Protocols/rfc1341/4_Content-Type.html]()
+[http://www.commandercoriander.net/blog/2014/01/04/test-driving-a-json-api-in-rails]()

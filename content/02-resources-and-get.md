@@ -54,7 +54,7 @@ Because we are declaring a single resource for session, notice the missing **ind
 
 ## Resources CRUD
 
-By using the `resources` method in `config/routes.rb` file, Rails automatically sets up the routes for the basic CRUD operations.
+By using the `resources` method in the `config/routes.rb` file, Rails automatically sets up the routes for the basic CRUD operations.
 
 ```
      Prefix Verb   URI Pattern                 Controller#Action
@@ -97,15 +97,15 @@ Two important characteristics about the GET method:
 * Safe
 * Idempotent
 
-First, it is considered to be a **safe** method because it SHOULD NOT take any action other than retrieval. A **GET** request should not create, update or destroy anything in the database.
+First, it is considered to be a **safe** method because it SHOULD NOT take any action other than retrieval. Safe methods are used to **read** resources from a server. A **GET** request should not create, update or destroy anything in the database.
 
-The **GET** method also has the property of "idempotence". This means that the side-effects of sequential GET requests to the same URI are the same as for a single request - the application should maintain the same state.
+The **GET** method also has the property of **idempotence**. This means that the side-effects of sequential GET requests to the same URI are the same as for a single request - the application should maintain the same state.
 
-It's worth mentioning there might be some exceptions to this rule. One example would be a visitor counter.
+It's worth mentioning there might be some exceptions to this rule. One example is a view counter.
 
 An API for an ecommerce application might need to track unique views for each product. In this case, it's ok to increment a counter on each GET request to a product URI. I've done this a couple of times myself. The important distinction here is that the user did not request the side-effects, so therefore cannot be held accountable for them.
 
-## Tests
+## API Tests
 
 To better understand how Rails implements REST, let's write some basic API integration tests which will represent client interactions with our API.
 
@@ -252,7 +252,7 @@ Let's look at an example of a filter.
 In the following code, we want to list all zombies whose weapons are an **axe**. We will pass the weapon name as a query string, which looks like this:
 
 ```
-/zombies?weapons=axe
+/zombies?weapon=axe
 ```
 
 In our controller, we access the query string from the `params` object:
@@ -325,7 +325,7 @@ describe "Finding Zombies" do
     it 'finds a zombie from its id' do
       zombie = Zombie.create!(name: 'Joanna')
 
-      get api_zombie_url(zombie)
+      get api_zombie_url(zombie) # becomes http://api.example.com/zombies/1
       expect(response.status).to be(200)
 
       zombie_response = JSON.parse(response.body, symbolize_names: true)
@@ -355,24 +355,24 @@ end
 
 We'll be doing a lot of JSON parsing in our integration tests. Manually calling `JSON.parse(response.body, symbolize_names: true)` every time we need to parse a response to JSON can quickly become tedious, so let's see how we can extract that to an RSpec helper method.
 
-We can define helper methods in a module and include them in our integration tests using RSpec's **config.include** option. Let's create a new file under *spec/support/json.rb* and add our new module:
+We can define helper methods in a module and include them in our integration tests using RSpec's **config.include** option. Let's create a new file under *spec/support/request_helpers.rb* and add our new module:
 
 ```ruby
-# spec/support/json.rb
-module RSpecRequestHelpers
+# spec/support/request_helpers.rb
+module RequestHelpers
   def json(body)
     JSON.parse(body, symbolize_names: true)
   end
 end
 
 RSpec.configure do |config|
-  config.include RSpecRequestHelpers, type: :request
+  config.include RequestHelpers, type: :request
 end
 ```
 
-The `type: :request` option ensures that our **RSpecRequestHelpers** module is only mixed into request type specs.
+The `type: :request` option ensures that our **RequestHelpers** module is only mixed into request type specs.
 
-Back in our request specs we can simply call our `json` helper method:
+Back in our request specs we can replace our call to `JSON.parse` with our `json` helper method:
 
 ```ruby
 require 'spec_helper'
