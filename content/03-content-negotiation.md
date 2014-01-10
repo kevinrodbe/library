@@ -219,7 +219,7 @@ class ZombiesController < ApplicationController
 end
 ```
 
-Then, we call `respond_with` from our controller action, passing in our model or collection of models, and Rails will automatically figure out what format the client expects back.
+From our controller action, we call `respond_with` passing in our model or collection of models as an argument, and Rails automatically figures out what format the client expects back.
 
 ```ruby
 class ZombiesController < ApplicationController
@@ -232,7 +232,7 @@ class ZombiesController < ApplicationController
 end
 ```
 
-One last thing we need to do is add a template for the `apocalypse` format. The template name needs to include the mime type on its extension, so for the index action we'll name it *app/views/zombies/index.apocalypse.jbuilder* and we'll use jbuilder to produce a JSON response:
+One last thing we need to do is add a template for the `apocalypse` format. The template name needs to include the mime type as part of its extension, so for the index action we'll name it *app/views/zombies/index.apocalypse.jbuilder* and we'll use jbuilder to produce a JSON response:
 
 ```ruby
 # app/views/zombies/index.apocalypse.jbuilder
@@ -242,7 +242,7 @@ json.array!(@zombies) do |zombie|
 end
 ```
 
-If we wanted to avoid templates, we could pass a block to `respond_with`, similar to how we were doing it previously in **respond_to**:
+If we wanted to avoid using templates, we could pass a block to `respond_with`, similar to how we were doing it previously in **respond_to**:
 
 ```ruby
 class ZombiesController < ApplicationController
