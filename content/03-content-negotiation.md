@@ -4,7 +4,7 @@ Web APIs need to be flexible and cater to different types of clients. Content Ne
 
 When navigating web pages we don't typically worry about content negotiation because, as users, we delegate most of this task to the browser. It tells the server, on our behalf, what representation it accepts. 
 
-Looking at a web site like google.com, the browser asks for HTML and we see the google.com front-page. If we want to change the language, we could change our browser settings and have it ask the google.com server for its content to be in German (de-DE) instead of English (en-US). Or when we click on a download link for a PDF, the browser asks the server for a PDF format.
+Visiting at a web site like google.com, the browser asks for HTML and we see the google.com front-page. If we want to change the language, we could change our browser settings and have it ask the google.com server for its content to be in German (de-DE) instead of English (en-US). Or when we click on a download link for a PDF, the browser asks the server for a PDF format.
 
 
 In this level we are going to look at how to negotiate two different characteristics of the response:
@@ -44,7 +44,7 @@ If a client wants to request `application/json` instead, a media type that serve
 api.ZombieBroadcast.com/zombies.json
 ```
 
-But before our API is actually able to generate proper JSON responses, we need to add JSON support to our **ZombiesController**. One way we can do that is by calling the `respond_to` method from our controller action.
+But before our API is actually able to generate proper JSON responses, we need to add JSON support to our **ZombiesController**. One way we can do that is by using the `respond_to` method from our controller action.
 
 ```ruby
 def index
@@ -56,7 +56,7 @@ def index
 end
 ```
 
-Under the hood, `render json: zombies` calls the `to_json` method on `zombies` and the server responds with a JSON string:
+Under the hood, `render json: zombies` calls the `to_json` method on `zombies` and responds with a JSON string:
 
 ```
 [{"id":1,"name":"Jon","age":123,"created_at":"2013-12-12T20:01:24.586Z",
@@ -119,6 +119,8 @@ HTTP/1.1 200 OK
 Content-Type: application/xml; charset=utf-8
 ```
 
+### Listing Mime Types
+
 Rails ships with 21 different media types out of the box. If we ask for a media type that's unknown to Rails, then we'll get back a `406 - Not Acceptable` response.
 
 ```
@@ -126,7 +128,7 @@ HTTP/1.1 406 Not Acceptable
 Content-Type: text/html; charset=utf-8
 ```
 
-For the complete list of media types supported by a given Rails app, run `Mime::SET` from the Rails console - or `Mime::SET.collect(&:to_s)` for a more readable response.
+For the complete list of media types supported by our Rails app, we can run `Mime::SET` from the Rails console - or `Mime::SET.collect(&:to_s)` for a more readable response.
 
 ```
 Loading development environment (Rails 4.1.0.beta1)
@@ -141,120 +143,6 @@ Loading development environment (Rails 4.1.0.beta1)
 "image/png", "image/jpeg", "image/gif", "image/bmp", "image/tiff", "video/mpeg", "application/xml", 
 "application/rss+xml", "application/atom+xml", "application/x-yaml", "multipart/form-data",
 "application/x-www-form-urlencoded", "application/json", "application/pdf", "application/zip"]
-```
-
-## Adding a custom Mime Type
-
-TODO: Elaborate on reasons we'd want to use a custom Mime Type: Versioning - see [Github API](http://developer.github.com/changes/2014-01-07-upcoming-change-to-default-media-type/) and [Heroku](https://blog.heroku.com/archives/2014/1/8/json_schema_for_heroku_platform_api)
-
-Our custom media type will be `application/vnd.apocalypse+json`.
-
-The media type name **application** tells us that the payload is to be treated as part of an application-specific interaction. The **vnd.apocalypse** part of the media type name declares that the media type is vendor-specific (vnd), and that the owner is the **apocalypse** application. The **+json** part declares JSON is used for the document formatting.
-
-Let's go to `config/initializers/mime_types.rb` and register our custom `apocalypse` media type:
-
-```ruby
-Mime::Type.register 'application/vnd.apocalypse+json', :apocalypse
-```
-
-Back in our controller, we need to add an entry to `respond_to` with our custom format.
-
-```ruby
-def index
-  @zombies = Zombie.all
-
-  respond_to do |format|
-    format.apocalypse {}
-  end
-end
-```
-
-Inside of the `format.apocalypse` block, we'll call our custom serializer that returns the proper media type. For now, we'll just use the JSON serializer for simplicity:
-
-```ruby
-def index
-  @zombies = Zombie.all
-
-  respond_to do |format|
-    format.apocalypse { render json: @zombies }
-  end
-end
-```
-
-We can now ask for our custom format:
-
-```ruby
-api.ZombieBroadcast.com/zombies.apocalypse
-```
-
-And we'll get our response back using our custom mime type:
-
-```
-[{"id":1,"name":"Jon","age":21,"created_at":"2013-12-13T17:00:21.925Z",
-"updated_at":"2013-12-13T17:00:21.925Z"},{"id":2,"name":"Angela",
-"age":251,"created_at":"2013-12-13T17:00:21.949Z",
-"updated_at":"2013-12-13T17:00:21.949Z"}]
-```
-
-If we look at the response Headers, we'll notice the server sent back the correct media type under the **Content-Type** Header.
-
-```
-HTTP/1.1 200 OK
-Content-Type: application/vnd.apocalypse+json; charset=utf-8 # W00t
-```
-
-Another method we can use is `respond_to/respond_with`. For this, we call `respond_to` from our controller class, instead of from our action, to tell it which media type to accept:
-
-```ruby
-class ZombiesController < ApplicationController
-  respond_to :apocalypse
-end
-```
-
-If we needed to support multiple media types, then we could pass multiple arguments to the `respond_to` method:
-
-```ruby
-class ZombiesController < ApplicationController
-  respond_to :apocalypse #, :xml, :html
-end
-```
-
-From our controller action, we call `respond_with` passing in our model or collection of models as an argument, and Rails automatically figures out what format the client expects back.
-
-```ruby
-class ZombiesController < ApplicationController
-  respond_to :apocalypse
-
-  def index
-    @zombies = Zombie.all
-    respond_with(@zombies)
-  end
-end
-```
-
-One last thing we need to do is add a template for the `apocalypse` format. The template name needs to include the mime type as part of its extension, so for the index action we'll name it *app/views/zombies/index.apocalypse.jbuilder* and we'll use jbuilder to produce a JSON response:
-
-```ruby
-# app/views/zombies/index.apocalypse.jbuilder
-json.array!(@zombies) do |zombie|
-  json.extract! zombie, :name, :age
-  json.url zombie_url(zombie, format: :json)
-end
-```
-
-If we wanted to avoid using templates, we could pass a block to `respond_with`, similar to how we were doing it previously in **respond_to**:
-
-```ruby
-class ZombiesController < ApplicationController
-  respond_to :apocalypse
-
-  def index
-    @zombies = Zombie.all
-    respond_with(@zombies) do |format|
-      format.apocalypse { render json: @zombies }
-    end
-  end
-end
 ```
 
 ## A better way
@@ -283,34 +171,21 @@ require 'spec_helper'
 describe 'Listing Zombies' do
 
   it 'returns successful response' do
-    get api_zombies_url, {}, { 'HTTP_ACCEPT' => Mime::APOCALYPSE }
+    get api_zombies_url, {}, { 'HTTP_ACCEPT' => Mime::JSON }
 
     expect(response.status).to eq(200)
-    expect(response.content_type).to eq(Mime::APOCALYPSE)
+    expect(response.content_type).to eq(Mime::JSON)
   end
 end
 ```
 
-If you need to POST a custom Mime Type, then you need to tell Rails how to parse its content: (TODO: elaborate more on this.)
-
-> From Nate: It's actually somewhat uncommon that you'd have someone POSTing a custom format into your app.
-
-```ruby
-# config/initializers/mime_type.rb
-Mime::Type.register 'application/vnd.apocalypse+json', :apocalypse
-ActionDispatch::ParamsParser::DEFAULT_PARSERS[Mime::APOCALYPSE]= :json
-```
-
-**ACCEPT** -> "here is the mime type that I can understand."
-**CONTENT_TYPE** -> "here is the content type of the body I'm sending you."
+TODO: mention curl.
 
 ## Language
 
 For switching between different languages, the HTTP protocol offers the **Accept-Language** request header. This header field is similar to Accept, but restricts the set of natural languages that are preferred as a response to the request.
 
 Let's see how we can add support to a second language to our Rails API. We'll start with some basic integration tests.
-
-TODO: elaborate.
 
 ```ruby
 # spec/requests/changing_locales_spec.rb
@@ -351,7 +226,7 @@ class API::ZombiesController < ApplicationController
   def index
     @zombies = Zombie.all
     respond_to do |format|
-      format.apocalypse
+      format.json
     end
   end
 end
@@ -360,14 +235,14 @@ end
 In our template, we'll add an entry for **message**. The value for this entry will be internationalized, so we'll use the `I18n.t` method to lookup the corresponding value for the **warning_message** key and pass a value for the *name* placeholder.
 
 ```ruby
-# app/views/api/zombies/index.apocalypse.jbuilder
+# app/views/api/zombies/index.json.jbuilder
 json.array!(@zombies) do |zombie|
   json.extract! zombie, :id, :name, :age
   json.message I18n.t('warning_message', name: zombie.name)
 end
 ```
 
-Rails adds all **.yml** files under *config/locales* to your translations load path. The one for english is automatically created for you, so we'll use that one and add our entry for the warning message.
+Rails adds all **.yml** files under *config/locales* to the translations load path. The one for english is automatically created for us, so we'll use that one and add our entry for the warning message.
 
 ```
 # config/locales/en.yml
@@ -413,7 +288,7 @@ Response in portuguese:
 {"id":2,"name":"Angela","age":251,"warning_message":"Cuidado com Angela!"}]
 ```
 
-However, in order for your web API to suppport different languages in a way that's more closely compatible with the HTTP spec (which very few web APIs are), you will need more logic than just straight up assigning `request.env['HTTP_ACCEPT_LANGUAGE']` to `I18n.locale`. Certain things also need to be taken in consideration, like users sending a list of preferred languages instead of just one, or using different formatting options for the Header value.
+However, in order for your web API to suppport different languages in a way that's more closely compatible with the HTTP spec (which very few web APIs are), we will need more logic than just straight up assigning `request.env['HTTP_ACCEPT_LANGUAGE']` to `I18n.locale`. Certain things also need to be taken in consideration, like users sending a list of preferred languages instead of just one, or using different formatting options for the Header value.
 
 To help us with figuring all of that out, we'll use the [http_accept_language](https://github.com/iain/http_accept_language) gem. This will basically take care of everything for us.
 
