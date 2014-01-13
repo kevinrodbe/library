@@ -1,10 +1,19 @@
 ## API Versioning and Custom Media Type
 
+The biggest take away: try as hard as possible to not introduce breaking changes so that versioning isn’t a big issue; make as many of your changes backwards-compatible as possible.
+
 * Three ways: 
     * /api/v1/users (uses namespace)
     * /api/users?version=1 (uses param)
     * /api/users (uses Accept header and custom Mime Type)
+    
+Why not use version on the URI ?
 
+> Because URIs are used in the Web as the fundamental identifier by so many things — caches, spiders, forms, and so on — embedding information that’s likely to change into them make them unstable, thereby reducing their value. For example, a cache invalidates content associated with a URL when a POST request flows through it; if the URL is different because there are different versions floating around, it doesn’t work.
+
+* Rails Routes -> [http://stackoverflow.com/questions/9627546/api-versioning-for-rails-routes]()
+* Checking version -> [http://freelancing-gods.com/posts/versioning_your_ap_is]()
+* Steve Klabnik -> [http://blog.steveklabnik.com/posts/2011-07-03-nobody-understands-rest-or-http#i_want_my_api_to_be_versioned]()
 * See [http://developer.github.com/v3/media/](http://developer.github.com/v3/media/) for example of API version in header
 * See Service-Oriented Design with Ruby on Rails page 65.
 * See [The Lie of the API](http://ruben.verborgh.org/blog/2013/11/29/the-lie-of-the-api/)
@@ -23,6 +32,8 @@ Let's go to `config/initializers/mime_types.rb` and register our custom `apocaly
 ```ruby
 Mime::Type.register 'application/vnd.apocalypse.v1+json', :apocalypse_v1
 ```
+
+TODO: add ApiVersion constraint to routes and scope controllers to proper version module.
 
 Back in our controller, we need to add an entry to `respond_to` with our custom format.
 
@@ -51,8 +62,8 @@ end
 We can now ask for our custom format:
 
 ```
-$ curl -H "Accept: application/apocalypse_v1" \
-  http://api.ZombieBroadcast.com/zombies.apocalypse_v1
+$ curl -H "Accept: application/vnd.apocalypse.v1+json" \
+  http://api.ZombieBroadcast.com/zombies
 ```
 
 And we'll get our response back using our custom mime type:
