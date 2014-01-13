@@ -1,5 +1,5 @@
 //
-//  CSAppDelegate.h
+//  CSMapVC.h
 //  cs-maps-level1
 //
 //  Created by Jon Friskics on 1/13/14.
@@ -9,8 +9,8 @@
 #import <UIKit/UIKit.h>
 #import <GoogleMaps/GoogleMaps.h>
 
-@interface CSAppDelegate : UIResponder<UIApplicationDelegate>
+@interface CSMapVC : UIViewController
 
-@property(strong, nonatomic) UIWindow *window;
+@property(strong, nonatomic) GMSMapView *mapView;
 
 @end
