@@ -29,6 +29,8 @@ expect(response.header['Location']).to eq(episode_url(Episode.last)) # location 
 
 See [Rack::Utils](https://github.com/rack/rack/blob/master/lib/rack/utils.rb#L542-L601)
 
+> It is bad form to return 200 and then the response just says 'request failed' - Jon Frikics
+
 Our previous spec:
 
 ```ruby
@@ -72,7 +74,7 @@ Content below serves as reference.
 
 ## Unsuccessful
 
-* Respond with error type
+* Respond with error status code
 * Respond with error message
     * Should contain information so the client can fix
 
