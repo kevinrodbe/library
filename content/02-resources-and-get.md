@@ -4,7 +4,7 @@ This level covers Resources and the GET HTTP verb.
 
 TODO: introduce the concept of **HEADER**.
 
-x- headers are non-standard headers.
+> Headers are like labels that we stick on an envelope to ensure that it’s delivered to the right place and to set processing context for the contents - REST in Practice.
 
 ## Resources
 
@@ -170,6 +170,8 @@ end
 This matcher is a bit more general, and it will return true for any status code >= 200 and < 300.
 
 Back in our controller, we setup the proper response:
+
+TODO: change syntax to module API; class ZombiesController
 
 ```ruby
 # app/controllers/api/zombies_controller.rb
