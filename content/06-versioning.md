@@ -24,7 +24,7 @@ To add support for API versions in our Rails app URIs, we first add a **namespac
 
 ```ruby
 # config/routes.rb
-namespace :api, path: '/' do
+namespace :api, path: '/', constraints: { subdomain: 'api' } do
   namespace :v1 do
     resources :zombies
   end
@@ -118,7 +118,7 @@ If we run our routing spec now, it should pass.
 
 While additional major features might be placed under new namespace versions, we should expect most of our application code to be re-used across all versions.
 
-Suppose our API tracks the IP from each request using a `before_action` and we simply include its value back in the response. We've been doing this since our API version 1, and version 2 still supports it.
+Suppose our API tracks the IP from each request using a `before_action` and we simply include its value back in the response. We've been doing this since our API version 1, and version 2 should also support it.
 
 This is our **ZombiesController** for v1:
 
@@ -128,16 +128,11 @@ module API
   module V1
     class ZombiesController < ApplicationController
 
-      before_action :track_ip
+      before_action ->{ @remote_ip = request.headers['REMOTE_ADDR'] }
 
       def index
         render text: "#{@remote_ip} using version 1", status: 200
       end
-
-      protected
-        def track_ip
-          @remote_ip = request.headers['REMOTE_ADDR']
-        end
     end
   end
 end
@@ -151,7 +146,7 @@ module API
   module V2
     class ZombiesController < ApplicationController
 
-      before_action :track_ip
+      before_action ->{ @remote_ip = request.headers['REMOTE_ADDR'] }
 
       def index
         render text: "#{@remote_ip} using version 2", status: 200
@@ -196,11 +191,12 @@ Running the previous spec should pass.
 
 To reduce the unnecessary duplication, we'll extract the common code out to an **API::BaseController** class.
 
-
 ```ruby
 # app/controllers/api/base_controller.rb
 module API
   class BaseController < ApplicationController
+    abstract!
+
     before_action :track_ip
 
     protected
@@ -210,6 +206,8 @@ module API
   end
 end
 ```
+
+We add `abstract!` to the top of our **API::BaseController** controller, since this controller should never have actions of its own.
 
 Then, we'll use the **API::BaseController** class as the base class for our controllers across all different API versions:
 
@@ -240,6 +238,41 @@ end
 
 We were able to remove duplicate code and all our tests should still pass. You can now use **API::BaseController** to place any code common to all API versions, like authentication, auditing, logging, etc.
 
+We can use a similar approach for code that needs to be shared within only a specific version. 
+
+Suppose version 2 of our API needs some special logging feature for auditing reasons. We will place the code for that under a base controller that's specific used for version 2. We'll call it **API::V2::VersionController**:
+
+```ruby
+# app/controllers/api/v2/version_controller.rb
+module API
+  module V2
+    class VersionController < BaseController
+      abstract!
+
+      before_action :audit_logging
+
+      def audit_logging
+        # log stuff
+      end
+    end
+  end
+end
+```
+
+Then we'll inherit all our version 2 controllers from this one:
+
+```ruby
+module API
+  module V2
+    class ZombiesController < VersionController
+      def index
+        render text: "#{@remote_ip} Version Two!"
+      end
+    end
+  end
+end
+```
+
 ## Versioning using the Accept header
 
 Why not use version on the URI ?
@@ -247,11 +280,23 @@ Why not use version on the URI ?
 > Because URIs are used in the Web as the fundamental identifier by so many things — caches, spiders, forms, and so on — embedding information that’s likely to change into them make them unstable, thereby reducing their value. For example, a cache invalidates content associated with a URL when a POST request flows through it; if the URL is different because there are different versions floating around, it doesn’t work.
 
 TODO: Elaborate; See [Github API](http://developer.github.com/changes/2014-01-07-upcoming-change-to-default-media-type/) and [Heroku](https://blog.heroku.com/archives/2014/1/8/json_schema_for_heroku_platform_api)
-TODO: add ApiVersion constraint to routes and scope controllers to proper version module.
 
 Our custom media type will be `application/vnd.apocalypse[.version]+json`.
 
 The media type name **application** tells us that the payload is to be treated as part of an application-specific interaction. The **vnd.apocalypse** part of the media type name declares that the media type is vendor-specific (vnd), and that the owner is the **apocalypse** application. The **+json** part declares JSON is the format used for the response body.
+
+
+### Route Constraint
+
+
+
+
+### (OPTION A - Custom header)
+
+
+
+
+### (OPTION B - "Rails Registered" Custom header)
 
 Let's go to `config/initializers/mime_types.rb` and register our custom `apocalypse` media type for version 1 of our API:
 
