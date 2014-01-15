@@ -249,48 +249,36 @@ Why not use version on the URI ?
 TODO: Elaborate; See [Github API](http://developer.github.com/changes/2014-01-07-upcoming-change-to-default-media-type/) and [Heroku](https://blog.heroku.com/archives/2014/1/8/json_schema_for_heroku_platform_api)
 TODO: add ApiVersion constraint to routes and scope controllers to proper version module.
 
-Our custom media type will be `application/vnd.apocalypse.v1+json`.
+Our custom media type will be `application/vnd.apocalypse[.version]+json`.
 
-The media type name **application** tells us that the payload is to be treated as part of an application-specific interaction. The **vnd.apocalypse** part of the media type name declares that the media type is vendor-specific (vnd), and that the owner is the **apocalypse** application. The **+json** part declares JSON is used for the document formatting.
+The media type name **application** tells us that the payload is to be treated as part of an application-specific interaction. The **vnd.apocalypse** part of the media type name declares that the media type is vendor-specific (vnd), and that the owner is the **apocalypse** application. The **+json** part declares JSON is the format used for the response body.
 
-Let's go to `config/initializers/mime_types.rb` and register our custom `apocalypse` media type:
+Let's go to `config/initializers/mime_types.rb` and register our custom `apocalypse` media type for version 1 of our API:
 
 ```ruby
 Mime::Type.register 'application/vnd.apocalypse.v1+json', :apocalypse_v1
 ```
 
-Back in our controller, we need to add an entry to `respond_to` with our custom format.
+Back in our controller, we need to add an entry to `respond_to` with our custom format. Inside of the `format.apocalypse_v1` block, we'll call our JSON serializer:
 
 ```ruby
 def index
   @zombies = Zombie.all
 
   respond_to do |format|
-    format.apocalypse_v1 {}
+    format.apocalypse_v1 { render json: @zombies, status: 200 }
   end
 end
 ```
 
-Inside of the `format.apocalypse_v1` block, we'll call our custom serializer that returns the proper media type. For now, we'll just use the JSON serializer for simplicity:
-
-```ruby
-def index
-  @zombies = Zombie.all
-
-  respond_to do |format|
-    format.apocalypse_v1 { render json: @zombies }
-  end
-end
-```
-
-We can now ask for our custom format:
+We can now ask for our custom mime type:
 
 ```
 $ curl -H "Accept: application/vnd.apocalypse.v1+json" \
   http://api.ZombieBroadcast.com/zombies
 ```
 
-And we'll get our response back using our custom mime type:
+And we'll get our proper response back:
 
 ```
 [{"id":1,"name":"Jon","age":21,"created_at":"2013-12-13T17:00:21.925Z",
