@@ -2,25 +2,25 @@
 
 Once our API is deployed to production and clients start relying on it, any change or new feature that needs to be introduced will need to be done so in a way that doesn't disrupt existing clients.
 
-Versioning our API helps prevent major changes from breaking existing API clients. Everytime a new, backwards-incompatible change needs to be made, we create a new API version and add the change only to this new version. This way, old clients relying in previous versions are not be affected.
+Versioning our API helps prevent major changes from breaking existing API clients. Every time a new, backwards-incompatible change needs to be made, we create a new API version and add the change only to this new version. This way, old clients relying in previous versions are not be affected.
 
-We are going to be looking at two ways to version our Rails API:
+There are multiple strategies to API versioning and we are going to be looking at the two most popular:
 
   * Using the URI
   * Using the **Accept** header
 
 ## Versioning using the URI
 
-The easiest and most straight forward way to version our API is to add the version to the URI:
+The simplest and most straight forward way to version our API is to add the version to the URI:
 
 ```
 api.ZombieApocalypse.com/v1/zombies
 api.ZombieApocalypse.com/v2/humans
 ```
 
-Including the API version in the URL makes it easy to see which version is being used by simply looking at it. It also allows us to test our API using the browser, which is pretty handy.
+Including the API version in the URI makes it easy to see which version is being used just by looking at it. It also allows us to test our API using the browser, which is pretty handy.
 
-To add support for API versions in our Rails app URIs, we first add a **namespace** for each version supported by our application:
+To add support for versioned URIs in our Rails app, we first add a **namespace** for each version supported by our application:
 
 ```ruby
 # config/routes.rb
@@ -57,7 +57,7 @@ edit_api_v2_zombie GET    /v2/zombies/:id/edit(.:format) api/v2/zombies#edit
                    DELETE /v2/zombies/:id(.:format)      api/v2/zombies#destroy
 ```
 
-Before we write any of our controller code, let's write some routing specs. TODO: elaborate on routing specs.
+Before we write any controller code, let's write some routing specs. These specs will ensure that our routes are dispatching requests to the proper controller and action.
 
 Let's pick these two entries from `rake routes`:
 
@@ -69,7 +69,7 @@ Prefix Verb   URI Pattern                    Controller#Action
 
 From these entries, we can see that a GET request to the **/v1/zombies** URI should be mapped to a `ZombiesController` in `api/v1/` and its `index` action; and a GET request to **/v2/zombies**, mapped to a `ZombiesController` in `api/v2` and its `index` action.
 
-We'll translate these two requirements into our routing spec: 
+We'll translate these two requirements to our spec: 
 
 ```ruby
 # spec/routing/listing_zombies_spec.rb
@@ -114,11 +114,15 @@ end
 
 If we run our routing spec now, it should pass.
 
+We've successfully added URI versioning to our API, so that each request gets routed to the proper namespace. Now that our codebase supports multiple versions, we need to be extra careful about how we organize our code.
+
+Let's look at a couple of ways we can avoid code duplication and keep our code organized.
+
 ### API::BaseController
 
-While additional major features might be placed under new namespace versions, we should expect most of our application code to be re-used across all versions.
+While additional major features might be placed under new namespaced versions, we should expect most of our application code to be re-used across all versions.
 
-Suppose our API tracks the IP from each request using a `before_action` and we simply include its value back in the response. We've been doing this since our API version 1, and version 2 should also support it.
+Suppose our API tracks the IP from each request using a `before_action` and we simply include its value back in the response. We've been doing this since our API version 1, and version 2 should also support this.
 
 This is our **ZombiesController** for v1:
 
@@ -151,11 +155,6 @@ module API
       def index
         render text: "#{@remote_ip} using version 2", status: 200
       end
-
-      protected
-        def track_ip
-          @remote_ip = request.headers['REMOTE_ADDR']
-        end
     end
   end
 end
@@ -197,12 +196,7 @@ module API
   class BaseController < ApplicationController
     abstract!
 
-    before_action :track_ip
-
-    protected
-      def track_ip
-        @remote_ip = request.headers['REMOTE_ADDR']
-      end
+    before_action ->{ @remote_ip = request.headers['REMOTE_ADDR'] }
   end
 end
 ```
@@ -236,11 +230,13 @@ module API
 end
 ```
 
-We were able to remove duplicate code and all our tests should still pass. You can now use **API::BaseController** to place any code common to all API versions, like authentication, auditing, logging, etc.
+We were able to remove the duplicate code and all our tests should still pass. We can now use **API::BaseController** for code common to all API versions.
 
-We can use a similar approach for code that needs to be shared within only a specific version. 
+We can use a similar approach for code that needs to be shared within only a specific version.
 
-Suppose version 2 of our API needs some special logging feature for auditing reasons. We will place the code for that under a base controller that's specific used for version 2. We'll call it **API::V2::VersionController**:
+### VersionController
+
+Suppose version 2 of our API needs some special logging feature for auditing reasons. We can't place this feature on **API::BaseController** because we don't want it to run on previous API versions. We'll create a new abstract controller that's specific for version 2. Let's call it **API::V2::VersionController**:
 
 ```ruby
 # app/controllers/api/v2/version_controller.rb
@@ -259,7 +255,7 @@ module API
 end
 ```
 
-Then we'll inherit all our version 2 controllers from this one:
+Then, we'll inherit all our version 2 controllers from it:
 
 ```ruby
 module API
@@ -275,141 +271,114 @@ end
 
 ## Versioning using the Accept header
 
-Why not use version on the URI ?
 
-> Because URIs are used in the Web as the fundamental identifier by so many things — caches, spiders, forms, and so on — embedding information that’s likely to change into them make them unstable, thereby reducing their value. For example, a cache invalidates content associated with a URL when a POST request flows through it; if the URL is different because there are different versions floating around, it doesn’t work.
+Although API versioning using the URI is more common to find in the wild and it's simple to implement, some people don't consider it to be the best strategy. An argument can be made that URIs which API clients can depend on should be preserved over time, so embedding information that’s likely to change into them make them unstable and reduce their value.
 
-TODO: Elaborate; See [Github API](http://developer.github.com/changes/2014-01-07-upcoming-change-to-default-media-type/) and [Heroku](https://blog.heroku.com/archives/2014/1/8/json_schema_for_heroku_platform_api)
+An alternative to using the URI for versioning is including the version number as part of a custom media type. A couple of popular services are already doing this, like [Github](http://developer.github.com/changes/2014-01-07-upcoming-change-to-default-media-type/) and [Heroku](https://blog.heroku.com/archives/2014/1/8/json_schema_for_heroku_platform_api).
 
-Our custom media type will be `application/vnd.apocalypse[.version]+json`.
+
+Here is what our custom media type will look like: `application/vnd.apocalypse[.version]+json`.
 
 The media type name **application** tells us that the payload is to be treated as part of an application-specific interaction. The **vnd.apocalypse** part of the media type name declares that the media type is vendor-specific (vnd), and that the owner is the **apocalypse** application. The **+json** part declares JSON is the format used for the response body.
 
+While Rails does have a built in way of registering custom mime types, it doesn't offer an easy way to work with custom mime types with API versioning, so we are going to write our own solution.
 
-### Route Constraint
+### Request Specs
 
-
-
-
-### (OPTION A - Custom header)
-
-
-
-
-### (OPTION B - "Rails Registered" Custom header)
-
-Let's go to `config/initializers/mime_types.rb` and register our custom `apocalypse` media type for version 1 of our API:
+Let's change our request spec to pass our custom media type using the **Accept** header instead of URI. For the time being, our custom media type will only serve JSON responses.
 
 ```ruby
-Mime::Type.register 'application/vnd.apocalypse.v1+json', :apocalypse_v1
-```
+describe 'Listing Zombies' do
+  let(:ip) { '123.123.123' }
 
-Back in our controller, we need to add an entry to `respond_to` with our custom format. Inside of the `format.apocalypse_v1` block, we'll call our JSON serializer:
-
-```ruby
-def index
-  @zombies = Zombie.all
-
-  respond_to do |format|
-    format.apocalypse_v1 { render json: @zombies, status: 200 }
+  context 'using V1' do
+    it 'returns version one' do
+      get '/zombies', {}, { 'REMOTE_ADDR' => ip, 'HTTP_ACCEPT' => 'application/vnd.apocalypse.v1+json' }
+      expect(response).to be_success
+      expect(response.body).to eq("#{ip} Version One!")
+      expect(response.content_type).to eq(Mime::JSON)
+    end
   end
-end
-```
 
-We can now ask for our custom mime type:
-
-```
-$ curl -H "Accept: application/vnd.apocalypse.v1+json" \
-  http://api.ZombieBroadcast.com/zombies
-```
-
-And we'll get our proper response back:
-
-```
-[{"id":1,"name":"Jon","age":21,"created_at":"2013-12-13T17:00:21.925Z",
-"updated_at":"2013-12-13T17:00:21.925Z"},{"id":2,"name":"Angela",
-"age":251,"created_at":"2013-12-13T17:00:21.949Z",
-"updated_at":"2013-12-13T17:00:21.949Z"}]
-```
-
-If we look at the response Headers, we'll notice the server sent back the correct media type under the **Content-Type** Header.
-
-```
-HTTP/1.1 200 OK
-Content-Type: application/vnd.apocalypse.v1+json; charset=utf-8 # W00t
-```
-
-On the previous level, we've looked at using the `respond_to` method for detecting the correct media type request by the client. Another method we can use is `respond_with`. To use `respond_with` from our controller action, we first need to call `respond_to` from our controller class, which tells the controller which formats to respond to:
-
-```ruby
-class ZombiesController < ApplicationController
-  respond_to :apocalypse_v1
-end
-```
-
-If we needed to be able to respond to multiple formats, then we could pass multiple arguments to the `respond_to` method:
-
-```ruby
-class ZombiesController < ApplicationController
-  respond_to :apocalypse_v1, :json, :xml
-end
-```
-
-From our controller action, we call `respond_with` passing in our model or collection of models as an argument. Rails automatically figures out what format the current request expects.
-
-```ruby
-class ZombiesController < ApplicationController
-  respond_to :apocalypse_v1
-
-  def index
-    @zombies = Zombie.all
-    respond_with(@zombies)
-  end
-end
-```
-
-One last thing we need to do is add a template for the `apocalypse_v1` format. The template name needs to include the mime type as part of its extension, so for the index action we'll name it *app/views/zombies/index.apocalypse_v1.jbuilder* and we'll use jbuilder to produce a JSON response:
-
-```ruby
-# app/views/zombies/index.apocalypse_v1.jbuilder
-json.array!(@zombies) do |zombie|
-  json.extract! zombie, :name, :age
-  json.url zombie_url(zombie, format: :json)
-end
-```
-
-If we wanted to avoid using templates, we could pass a block to `respond_with`, similar to how we were doing it previously in **respond_to**:
-
-```ruby
-class ZombiesController < ApplicationController
-  respond_to :apocalypse_v1
-
-  def index
-    @zombies = Zombie.all
-    respond_with(@zombies) do |format|
-      format.apocalypse_v1 { render json: @zombies }
+  context 'using V2' do
+    it 'returns version two' do
+      get '/zombies', {}, { 'REMOTE_ADDR' => ip, 'HTTP_ACCEPT' => 'application/vnd.apocalypse.v2+json' }
+      expect(response).to be_success
+      expect(response.body).to eq("#{ip} Version Two!")
+      expect(response.content_type).to eq(Mime::JSON)
     end
   end
 end
 ```
 
+### Route Constraint
 
-If you need to POST a custom Mime Type, then you need to tell Rails how to parse its content: (TODO: elaborate more on this.)
+In our routes, we'll add a constraint that will be used to determine which API version should be used for each client request. When no specific version is requested, then we'll default to using version 2. This is what the second argument to the constructor means.
 
-> From Nate: It's actually somewhat uncommon that you'd have someone POSTing a custom format into your app.
+Because we will not be relying on Rails' default content negotiation mechanism, we'll need to set a default value for the response format with `defaults: { format: 'json' }`
 
 ```ruby
-# config/initializers/mime_type.rb
-Mime::Type.register 'application/vnd.apocalypse+json', :apocalypse_v1
-ActionDispatch::ParamsParser::DEFAULT_PARSERS[Mime::APOCALYPSE]= :json
+# config/routes.rb
+require 'api_version' # this shows up later in the slides
+
+BananaPodcast::Application.routes.draw do
+  namespace :api, path: '/', defaults: { format: 'json' } do
+    scope module: :v1, constraints: ApiVersion.new('v1') do
+      resources :zombies
+    end
+
+    scope module: :v2, constraints: ApiVersion.new('v2', true) do
+      resources :zombies
+    end
+  end
+
+end
 ```
+
+Here's what our `ApiVersion` class looks like:
+
+```ruby
+# lib/api_version.rb
+class ApiVersion
+  def initialize(version, default=false)
+    @version, @default = version, default
+  end
+
+  def matches?(request)
+    @default || check_headers(request.headers)
+  end
+
+  private
+    def check_headers(headers)
+      accept = headers['Accept']
+      accept && accept.include?("application/vnd.apocalypse.#{@version}+json")
+    end
+end
+```
+
+With these changes in place, our request specs are now passing but our routing spec is failing.
+
+WHOOPS!
+
+Because we've set the default format for json, we need to change our routing spec:
+
+```ruby
+describe 'Changing versions spec' do
+  context 'the default version' do
+    it { expect(get: '/zombies').to route_to(controller: 'api/v2/zombies', action: 'index', format: 'json') }
+  end
+end
+```
+Our `ApiVersion` class is a good start, but it can only get us so far. For a more robust solution for handling versions through the Accept header - maybe if our API needs to handle multiple formats, other than just JSON - we might want to take a look at the [versionist](https://github.com/bploetz/versionist/) gem.
+
+## Conclusion
+
+We've covered two ways of versioning our Rails APIs. Currently, there is no definitive answer as to which is THE best strategy, so it really depends on how you want to handle it. Nonetheless, as an API developer, you should avoid introducing breaking changes as much as possible so that versioning doesn't become a big issue. Make as many of your changes as backwards-compatible as possible.
+
+## Inbox
 
 **ACCEPT** -> "here is the mime type that I can understand."
 **CONTENT_TYPE** -> "here is the content type of the body I'm sending you."
-
-
-The biggest take away: try as hard as possible to not introduce breaking changes so that versioning isn’t a big issue; make as many of your changes backwards-compatible as possible.
-
 
 Inbox:
 
