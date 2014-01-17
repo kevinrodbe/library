@@ -159,11 +159,11 @@ The [HTTP protocol](http://tools.ietf.org/html/rfc2616#section-12) offers the **
 
 How does that affect us as API developers ?
 
-Luckly, if we stick with Rails' `respond_to` or/and `respond_with` then there's nothing to worry about.
+Luckly, if we stick with Rails' `respond_to` then there's nothing to worry about.
 
 API **clients**, on the other hand, should remember to never rely on URI extensions for determining format.
 
-Let's see how we can write integration tests that simulate an API client requesting a specific media type and then verify that the server responded properly.
+Let's see how we can write a request spec that simulates an API client requesting a specific media type and then verify that the server responded properly.
 
 ```ruby
 require 'spec_helper'
@@ -185,7 +185,7 @@ TODO: mention curl.
 
 For switching between different languages, the HTTP protocol offers the **Accept-Language** request header. This header field is similar to Accept, but restricts the set of natural languages that are preferred as a response to the request.
 
-Let's see how we can add support to a second language to our Rails API. We'll start with some basic integration tests.
+Let's see how we can add support to a second language to our Rails API. We'll start with a request spec.
 
 ```ruby
 # spec/requests/changing_locales_spec.rb
@@ -272,7 +272,7 @@ class ApplicationController < ActionController::Base
 end
 ```
 
-This is enough code to make our integration tests pass.
+This is enough code to make our spec pass.
 
 Response in english:
 
@@ -288,7 +288,7 @@ Response in portuguese:
 {"id":2,"name":"Angela","age":251,"warning_message":"Cuidado com Angela!"}]
 ```
 
-However, in order for your web API to suppport different languages in a way that's more closely compatible with the HTTP spec (which very few web APIs are), we will need more logic than just straight up assigning `request.env['HTTP_ACCEPT_LANGUAGE']` to `I18n.locale`. Certain things also need to be taken in consideration, like users sending a list of preferred languages instead of just one, or using different formatting options for the Header value.
+However, in order for our web API to suppport different languages in a way that's more closely compatible with the HTTP spec (which very few web APIs are), we will need more logic than just straight up assigning `request.env['HTTP_ACCEPT_LANGUAGE']` to `I18n.locale`. Certain things also need to be taken in consideration, like users sending a list of preferred languages instead of just one, or using different formatting options for the Header value.
 
 To help us with figuring all of that out, we'll use the [http_accept_language](https://github.com/iain/http_accept_language) gem. This will basically take care of everything for us.
 
