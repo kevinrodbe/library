@@ -171,7 +171,7 @@ require 'spec_helper'
 describe 'Listing Zombies' do
 
   it 'returns successful response' do
-    get api_zombies_url, {}, { 'HTTP_ACCEPT' => Mime::JSON }
+    get '/zombies', {}, { 'HTTP_ACCEPT' => Mime::JSON }
 
     expect(response.status).to eq(200)
     expect(response.content_type).to eq(Mime::JSON)
@@ -200,7 +200,7 @@ describe "Changing Locales" do
 
   context 'with locale in en' do
     it 'returns message in english' do
-      get zombies_url, {}, {'HTTP_ACCEPT_LANGUAGE' => 'en', 'HTTP_ACCEPT' => Mime::JSON }
+      get '/zombies', {}, {'HTTP_ACCEPT_LANGUAGE' => 'en', 'HTTP_ACCEPT' => Mime::JSON }
       expect(response).to be_successful
       zombies = JSON.parse(response.body, symbolize_names: true)
       expect(zombies[0][:message]).to eq("Watch out for #{zombies[0][:name]}!")
@@ -209,7 +209,7 @@ describe "Changing Locales" do
 
   context 'with locale in pt-BR' do
     it 'returns message in portuguese' do
-      get zombies_url, {}, {'HTTP_ACCEPT_LANGUAGE' => 'pt-BR', 'HTTP_ACCEPT' => Mime::JSON }
+      get '/zombies', {}, {'HTTP_ACCEPT_LANGUAGE' => 'pt-BR', 'HTTP_ACCEPT' => Mime::JSON }
       expect(response).to be_successful
       zombies = JSON.parse(response.body, symbolize_names: true)
       expect(zombies[0][:message]).to eq("Cuidado com #{zombies[0][:name]}!")
@@ -222,11 +222,13 @@ We'll remove the inline rendering from our controller so we can move the JSON pa
 
 ```ruby
 # app/controllers/api/zombies_controller.rb
-class API::ZombiesController < ApplicationController
-  def index
-    @zombies = Zombie.all
-    respond_to do |format|
-      format.json
+module API
+  class ZombiesController < ApplicationController
+    def index
+      @zombies = Zombie.all
+      respond_to do |format|
+        format.json
+      end
     end
   end
 end

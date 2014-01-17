@@ -2,26 +2,94 @@
 
 The POST HTTP verb is used to request that the server accept the entity enclosed in the request as a new representation of the resource at the specified URI. In short, we use POST to send stuff to the server.
 
-POST requests are neither safe or idempotent. Successful POST requests create new resources on the server. Submitting forms, adding an item to our shopping cart and rating a recently purchased product are all operations that generate side-effects. 
+Successful POST requests create new resources on the server, and are neither safe nor idempotent. Submitting forms, adding an item to our shopping cart and rating a recently purchased product are all operations that generate side-effects. 
 
 Sequential POST requests to the same URI are likely to change the state of the application each time, that's why sometimes you'll see warnings when refreshing or re-visiting a browser URL right after submiting a form:
 
 ![](http://i.stack.imgur.com/52vBU.png)
 
-When a POST request results in a new resource being successfully created on the server, then:
+According to the RFC, when a POST request results in a new resource being successfully created on the server, then:
 
 * The **status code** for the response should be 201 (Created).
 * The response **body** should contain a representation of the new resource.
-* The **Location** headerd should be set with the location of the new resource.
+* The **Location** header should be set with the location of the new resource.
 
-TODO: elaborate more.
+Let's translate that to code:
 
 ```ruby
-post episodes_url,
-  episode: { title: 'Bananas', description: 'Learn about bananas.' }, format: 'json'
-  
-expect(response.status).to eq(201) # proper code that indicates a new resource was created.
-expect(response.header['Location']).to eq(episode_url(Episode.last)) # location of the newly created resouce.
+class EpisodesController < ApplicationController
+
+  def create
+    episode = Episode.new(episode_params)
+
+    respond_to do |format|
+      if episode.save
+        format.json { render json: episode, status: :created, location: episode }
+      end
+    end
+  end
+end
+```
+
+The spec:
+
+```ruby
+# spec/requests/creating_episodes_spec.rb
+require 'spec_helper'
+
+describe 'Creating episodes' do
+  it 'returns JSON' do
+    post '/episodes',
+      { episode: { title: 'Bananas', description: 'Learn about bananas.' }}.to_json,
+      { 'HTTP_ACCEPT' => Mime::JSON, 'CONTENT_TYPE' => Mime::JSON.to_s }
+
+    expect(response.status).to eq(201) # proper code that indicates a new resource was created.
+    expect(response.header['Location']).to eq(episode_url(Episode.last)) # location of the newly created resouce.
+  end
+end
+```
+
+For unsuccessful POST requests, the response is a little different.
+
+Let's add a presence validation to our Episode's title:
+
+```ruby
+class Episode < ActiveRecord::Base
+  validates_presence_of :title
+end
+```
+
+And then write a request spec. This time, we check for a `422 - Unprocessable Entity` status code. This status code means the server understands the content type of the request, and the syntax of the request is correct, but it was unable to process it due to semantic errors.
+
+```ruby
+context 'invalid episodes' do
+  it 'returns error' do
+    post '/episodes',
+      { episode: { title: nil, description: 'Learn about bananas.' }}.to_json,
+      { 'HTTP_ACCEPT' => Mime::JSON, 'CONTENT_TYPE' => Mime::JSON.to_s }
+
+    expect(response.status).to eq(422)
+    expect(response.content_type).to eq(Mime::JSON)
+    # TODO: check if body is needed.
+  end
+end
+```
+
+
+And the proper controller code:
+
+```ruby
+def create
+  episode = Episode.new(episode_params)
+
+  respond_to do |format|
+    if episode.save
+      format.json { render json: episode, status: :created, location: episode }
+    else
+      format.json { render json: episode.errors, status: :unprocessable_entity }
+    end
+  end
+end
 ```
 
 
@@ -132,3 +200,5 @@ However, [Rack::Utils also includes 205 in this group](https://github.com/rack/r
 >   response MUST NOT include an entity
 
 Although browsers don't implement this, it can still be useful for AJAX requests.
+
+* Test Driving a JSON API in Rails: <http://www.commandercoriander.net/blog/2014/01/04/test-driving-a-json-api-in-rails>
