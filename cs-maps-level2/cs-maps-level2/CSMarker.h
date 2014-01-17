@@ -7,7 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <GoogleMaps/GoogleMaps.h>
 
 @interface CSMarker : NSObject
+
+@property CLLocationCoordinate2D position;
+@property (strong, nonatomic) NSString *title;
+@property (strong, nonatomic) GMSMapView *map;
+@property (strong, nonatomic) NSString *snippet;
+@property NSInteger appearAnimation;
+@property BOOL flat;
+@property (strong, nonatomic) UIImage *icon;
 
 @end
