@@ -86,6 +86,8 @@ describe 'Listing Zombies' do
 end
 ```
 
+Even if you've never written routing specs before, this syntax should be familiar. Notice that we are placing our file under the *spec/routing* directory, and we are using the `route_to` matcher, which takes options such as **controller** and **action**.
+
 Since we have not written our controller code yet, running this spec should fail.
 
 Resources defined inside our versioned namespaces are expected to have a matching controller under the same namespace. In this case, we'll need a `ZombiesController` under the *app/controllers/api/v1* directory:
@@ -274,18 +276,18 @@ end
 
 Although API versioning using the URI is more common to find in the wild and it's simple to implement, some people don't consider it to be the best strategy. An argument can be made that URIs which API clients can depend on should be preserved over time, so embedding information that’s likely to change into them make them unstable and reduce their value.
 
-An alternative to using the URI for versioning is including the version number as part of a custom media type. A couple of popular services are already doing this, like [Github](http://developer.github.com/changes/2014-01-07-upcoming-change-to-default-media-type/) and [Heroku](https://blog.heroku.com/archives/2014/1/8/json_schema_for_heroku_platform_api).
+An alternative to using the URI for versioning is including the version number as part of a custom media type. A couple of popular services already provide API versioning this way. [Github](http://developer.github.com/changes/2014-01-07-upcoming-change-to-default-media-type/), for example, uses `application/vnd.github.v3+json` and [Heroku](https://blog.heroku.com/archives/2014/1/8/json_schema_for_heroku_platform_api) which uses `application/vnd.heroku+json; version=3`.
 
 
-Here is what our custom media type will look like: `application/vnd.apocalypse[.version]+json`.
+The custom media type we'll create for our application is `application/vnd.apocalypse[.version]+json`.
 
 The media type name **application** tells us that the payload is to be treated as part of an application-specific interaction. The **vnd.apocalypse** part of the media type name declares that the media type is vendor-specific (vnd), and that the owner is the **apocalypse** application. The **+json** part declares JSON is the format used for the response body.
 
-While Rails does have a built in way of registering custom mime types, it doesn't offer an easy way to work with custom mime types with API versioning, so we are going to write our own solution.
+While Rails does have a built in way of registering custom mime types, it doesn't offer an easy way to work with API versioning as part of those media types, so we are going to write our own solution.
 
 ### Request Specs
 
-Let's change our request spec to pass our custom media type using the **Accept** header instead of URI. For the time being, our custom media type will only serve JSON responses.
+Let's change our request spec to pass our custom media type using the **Accept** request header instead of the URI. For the response format, though, our application will use JSON.
 
 ```ruby
 describe 'Listing Zombies' do
@@ -311,11 +313,12 @@ describe 'Listing Zombies' do
 end
 ```
 
+Responding with a non-standard media type wouldn't work nicely with most HTTP clients, and would require unnecessary intervention on the client side. Use of media types that are not registered with the Internet Assigned Number Authority, or [IANA](http://www.iana.org), is discouraged.
+
 ### Route Constraint
 
 In our routes, we'll add a constraint that will be used to determine which API version should be used for each client request. When no specific version is requested, then we'll default to using version 2. This is what the second argument to the constructor means.
 
-Because we will not be relying on Rails' default content negotiation mechanism, we'll need to set a default value for the response format with `defaults: { format: 'json' }`
 
 ```ruby
 # config/routes.rb
@@ -334,6 +337,8 @@ BananaPodcast::Application.routes.draw do
 
 end
 ```
+
+Because we will not be relying on Rails' default content negotiation mechanism, we'll need to set a default value for the response format with `defaults: { format: 'json' }`
 
 Here's what our `ApiVersion` class looks like:
 
@@ -373,7 +378,7 @@ Our `ApiVersion` class is a good start, but it can only get us so far. For a mor
 
 ## Conclusion
 
-We've covered two ways of versioning our Rails APIs. Currently, there is no definitive answer as to which is THE best strategy, so it really depends on how you want to handle it. Nonetheless, as an API developer, you should avoid introducing breaking changes as much as possible so that versioning doesn't become a big issue. Make as many of your changes as backwards-compatible as possible.
+We've covered two ways of versioning our Rails APIs. Currently, there is no definitive answer as to which one is THE best strategy. Nonetheless, as an API developer, we should avoid introducing breaking changes as much as possible so that versioning doesn't become a big issue.
 
 ## Inbox
 
@@ -382,10 +387,9 @@ We've covered two ways of versioning our Rails APIs. Currently, there is no defi
 
 Inbox:
 
-* Rails Routes -> [http://stackoverflow.com/questions/9627546/api-versioning-for-rails-routes]()
-* Checking version -> [http://freelancing-gods.com/posts/versioning_your_ap_is]()
-* Steve Klabnik -> [http://blog.steveklabnik.com/posts/2011-07-03-nobody-understands-rest-or-http#i_want_my_api_to_be_versioned]()
-* See [http://developer.github.com/v3/media/](http://developer.github.com/v3/media/) for example of API version in header
+* Rails Routes -> <http://stackoverflow.com/questions/9627546/api-versioning-for-rails-routes>
+* Checking version -> <http://freelancing-gods.com/posts/versioning_your_ap_is>
+* Steve Klabnik -> <http://blog.steveklabnik.com/posts/2011-07-03-nobody-understands-rest-or-http#i_want_my_api_to_be_versioned>
 * See Service-Oriented Design with Ruby on Rails page 65.
 * See [The Lie of the API](http://ruben.verborgh.org/blog/2013/11/29/the-lie-of-the-api/)
-* See [http://railscasts.com/episodes/350-rest-api-versioning?view=asciicast]()
+* See <http://railscasts.com/episodes/350-rest-api-versioning?view=asciicast>
