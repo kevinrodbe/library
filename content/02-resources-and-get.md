@@ -8,7 +8,7 @@ TODO: introduce the concept of **HEADER**.
 
 ## Resources
 
-The key abstraction of information in REST is a **resource**. Any information that can be named can be a resource: a document or image, a temporal service (e.g. "today's weather in Los Angeles"), a collection of other resources, a non-virtual object (e.g. a person), and so on. 
+The key abstraction of information in REST is a **resource**. Any information that can be named can be a resource: a document or image, a temporal service (e.g. "today's weather in Florida"), a collection of other resources, a non-virtual object (e.g. a person), and so on. 
 
 > Resources are the fundamental building blocks of web-based systems, to the extent that the Web is often referred to as being “resource-oriented.
 
@@ -171,14 +171,14 @@ This matcher is a bit more general, and it will return true for any status code 
 
 Back in our controller, we setup the proper response:
 
-TODO: change syntax to module API; class ZombiesController
-
 ```ruby
 # app/controllers/api/zombies_controller.rb
-class API::ZombiesController < ApplicationController
-  def index
-    zombies = Zombie.all
-    render json: zombies
+module API
+  class ZombiesController < ApplicationController
+    def index
+      zombies = Zombie.all
+      render json: zombies
+    end
   end
 end
 ```
@@ -187,10 +187,12 @@ Unless an error occurs, the default status code is 200. I prefer to be explicit 
 
 ```ruby
 # app/controllers/api/zombies_controller.rb
-class API::ZombiesController < ApplicationController
-  def index
-    zombies = Zombie.all
-    render json: zombies, status: 200
+module API
+  class ZombiesController < ApplicationController
+    def index
+      zombies = Zombie.all
+      render json: zombies, status: 200
+    end
   end
 end
 ```
@@ -199,10 +201,12 @@ or in a more expressive way
 
 ```ruby
 # app/controllers/api/zombies_controller.rb
-class API::ZombiesController < ApplicationController
-  def index
-    zombies = Zombie.all
-    render json: zombies, status: :ok
+module API
+  class ZombiesController < ApplicationController
+    def index
+      zombies = Zombie.all
+      render json: zombies, status: :ok
+    end
   end
 end
 ```
@@ -264,13 +268,15 @@ In the following code, we want to list all zombies whose weapons are an **axe**.
 In our controller, we access the query string from the `params` object:
 
 ```ruby
-class API::ZombiesController < ApplicationController
-  def index
-    zombies = Zombie.all # remember, starting in Rails 4 this returns a chainable scope
-    if weapon = params[:weapon]
-      zombies = zombies.where(weapon: weapon)
+module API
+  class ZombiesController < ApplicationController
+    def index
+      zombies = Zombie.all # remember, starting in Rails 4 this returns a chainable scope
+      if weapon = params[:weapon]
+        zombies = zombies.where(weapon: weapon)
+      end
+      render json: zombies, status: 200
     end
-    render json: zombies, status: 200
   end
 end
 ```
@@ -349,10 +355,12 @@ Our controller code to make the tests pass is pretty simple. Just find the Zombi
 
 ```ruby
 # app/controllers/api/zombies_controller.rb
-class API::ZombiesController < ApplicationController
-  def show
-    zombie = Zombie.find(params[:id])
-    render json: zombie, status: 200
+module API
+  class ZombiesController < ApplicationController
+    def show
+      zombie = Zombie.find(params[:id])
+      render json: zombie, status: 200
+    end
   end
 end
 ```
@@ -398,3 +406,58 @@ describe "Finding Zombies" do
   end
 end
 ```
+
+## cURL
+
+Finally, let's look at one other way we can test our web API by issuing real HTTP requests over the network and checking the response. We'll a command line networking tool called **curl**.
+
+**curl** is shipped with OS X. It should be available on most unix/gnu linux package repositories and you can also find an installer for Windows machines.
+
+Because we'll be issuing real network calls, we'll need to make sure our Rails application is running and accessible via an IP address or URL.
+
+First, a simple GET request to list all zombies:
+
+```
+$ curl http://api.banana.com:3000/zombies
+[{"id":5,"name":"Joanna","age":null,"created_at":"2014-01-17T18:40:40.195Z",
+"updated_at":"2014-01-17T18:40:40.195Z","weapon":"axe"},
+{"id":6,"name":"John","age":null,"created_at":"2014-01-17T18:40:40.218Z",
+"updated_at":"2014-01-17T18:40:40.218Z","weapon":"shotgun"}]
+```
+
+Now all zombies that use an axe as a weapon:
+
+```
+$ curl http://api.banana.com:3000/zombies?weapon=axe
+[{"id":7,"name":"Joanna","age":123,"created_at":"2014-01-17T18:42:47.026Z",
+"updated_at":"2014-01-17T18:42:47.026Z","weapon":"axe"}]
+```
+
+Now just a specific zombie:
+
+```
+$ curl http://api.banana.com:3000/zombies/7
+{"id":7,"name":"Joanna","age":123,"created_at":"2014-01-17T18:42:47.026Z",
+"updated_at":"2014-01-17T18:42:47.026Z","weapon":"axe"}
+```
+
+We can also ask curl to only show response headers, with the `-I` option:
+
+```
+$ curl -I http://api.banana.com:3000/zombies/7
+HTTP/1.1 200 OK
+X-Frame-Options: SAMEORIGIN
+X-XSS-Protection: 1; mode=block
+X-Content-Type-Options: nosniff
+X-UA-Compatible: chrome=1
+Content-Type: application/json; charset=utf-8
+ETag: "d8d0d08eb205a5fc46794b29d470396c"
+Cache-Control: max-age=0, private, must-revalidate
+Set-Cookie: request_method=HEAD; path=/
+X-Request-Id: 52c8162f-2407-4e70-a69f-2d10665029a5
+X-Runtime: 0.380513
+Connection: close
+Server: thin 1.5.0 codename Knife
+```
+
+As we move along, we'll be looking at some other options we can pass to curl, but for now this should be enough to get through the next set of challenges as we reach the end of this level.
