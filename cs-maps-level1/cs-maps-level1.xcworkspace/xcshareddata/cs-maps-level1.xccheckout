@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>7DC2CD09-22B8-48BD-A13B-DC94BF1A1023</string>
+	<key>IDESourceControlProjectName</key>
+	<string>cs-maps-level1</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>546416FC-6B20-4896-A2D7-3CDA83D9E01B</key>
+		<string>ssh://github.com/codeschool/GoogleMapsCourseContent</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>cs-maps-level1/cs-maps-level1.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>546416FC-6B20-4896-A2D7-3CDA83D9E01B</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>ssh://github.com/codeschool/GoogleMapsCourseContent</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>546416FC-6B20-4896-A2D7-3CDA83D9E01B</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>546416FC-6B20-4896-A2D7-3CDA83D9E01B</string>
+			<key>IDESourceControlWCCName</key>
+			<string>GoogleMapsCourseContent</string>
+		</dict>
+	</array>
+</dict>
+</plist>
