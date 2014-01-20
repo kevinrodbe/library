@@ -41,7 +41,7 @@ The default media type is `text/html`, which serves responses in HTML format.
 If a client wants to request `application/json` instead, a media type that serves JSON format, then they simply add `.json` to the URI:
 
 ```ruby
-api.ZombieBroadcast.com/zombies.json
+localhost:3000/zombies.json
 ```
 
 But before our API is actually able to generate proper JSON responses, we need to add JSON support to our **ZombiesController**. One way we can do that is by using the `respond_to` method from our controller action.
@@ -74,7 +74,7 @@ Content-Type: application/json; charset=utf-8
 Now if an API client wants `application/xml`, a media type that serves XML, they add an `.xml` extension to our URI:
 
 ```ruby
-api.ZombieBroadcast.com/zombies.xml
+localhost:3000/zombies.xml
 ```
 
 In our controller, we add an entry for the XML format:
@@ -163,57 +163,80 @@ Luckly, if we stick with Rails' `respond_to` then there's nothing to worry about
 
 API **clients**, on the other hand, should remember to never rely on URI extensions for determining format.
 
-Let's see how we can write a request spec that simulates an API client requesting a specific media type and then verify that the server responded properly.
+Let's see how we can write an integration test that simulates an API client requesting a specific media type and then verify that the server responded properly.
 
 ```ruby
-require 'spec_helper'
+# test/integration/listing_zombies_test.rb
+require 'test_helper'
 
-describe 'Listing Zombies' do
-
-  it 'returns successful response' do
+class ListingZombiesTest < ActionDispatch::IntegrationTest
+  test 'returns zombies in JSON' do
     get '/zombies', {}, { 'HTTP_ACCEPT' => Mime::JSON }
 
-    expect(response.status).to eq(200)
-    expect(response.content_type).to eq(Mime::JSON)
+    assert_equal 200, response.status
+    assert_equal Mime::JSON, response.content_type
+  end
+
+  test 'returns zombies in XML' do
+    get '/zombies', {}, { 'HTTP_ACCEPT' => Mime::XML }
+
+    assert_equal 200, response.status
+    assert_equal Mime::XML, response.content_type
   end
 end
 ```
 
-TODO: mention curl.
+We can also use **curl** to verify the proper response format. 
+
+We've learned that the `-I` option tells curl to display response headers. We can combine that with `-H` to send along specific headers in the request - in this case, the **Accept** header.
+
+With our Rails application running under <http://localhost:3000>, we can run the following for JSON:
+
+```
+$ curl -IH "Accept: application/json" localhost:3000/zombies
+HTTP/1.1 200 OK 
+Content-Type: application/json; charset=utf-8
+```
+
+and then for XML:
+
+```
+$ curl -IH "Accept: application/xml" localhost:3000/zombies
+HTTP/1.1 200 OK 
+Content-Type: application/xml; charset=utf-8
+```
 
 ## Language
 
 For switching between different languages, the HTTP protocol offers the **Accept-Language** request header. This header field is similar to Accept, but restricts the set of natural languages that are preferred as a response to the request.
 
-Let's see how we can add support to a second language to our Rails API. We'll start with a request spec.
+Let's see how we can add support to a second language to our Rails API. We'll start with an integration test.
 
 ```ruby
-# spec/requests/changing_locales_spec.rb
-describe "Changing Locales" do
-  before(:all) do
-    Zombie.create!(name: 'Joanna')
+# test/integration/changing_locales_spec.rb
+require 'test_helper'
+
+class ChangingLocalesTest < ActionDispatch::IntegrationTest
+  setup do
+    Zombie.create!(name: 'Joanna', age: 251)
   end
 
-  after(:all) do
+  teardown do
     Zombie.destroy_all
   end
 
-  context 'with locale in en' do
-    it 'returns message in english' do
-      get '/zombies', {}, {'HTTP_ACCEPT_LANGUAGE' => 'en', 'HTTP_ACCEPT' => Mime::JSON }
-      expect(response).to be_successful
-      zombies = JSON.parse(response.body, symbolize_names: true)
-      expect(zombies[0][:message]).to eq("Watch out for #{zombies[0][:name]}!")
-    end
+  test 'returns list of zombies in english' do
+    get '/zombies', {}, {'HTTP_ACCEPT_LANGUAGE' => 'en', 'HTTP_ACCEPT' => Mime::JSON }
+    assert 200, response.status
+    zombies = json(response.body)
+    assert_equal "Watch out for #{zombies[0][:name]}!", zombies[0][:message]
   end
 
-  context 'with locale in pt-BR' do
-    it 'returns message in portuguese' do
-      get '/zombies', {}, {'HTTP_ACCEPT_LANGUAGE' => 'pt-BR', 'HTTP_ACCEPT' => Mime::JSON }
-      expect(response).to be_successful
-      zombies = JSON.parse(response.body, symbolize_names: true)
-      expect(zombies[0][:message]).to eq("Cuidado com #{zombies[0][:name]}!")
-    end
+  test 'return list of zombies in portuguese' do
+    get '/zombies', {}, {'HTTP_ACCEPT_LANGUAGE' => 'pt-BR', 'HTTP_ACCEPT' => Mime::JSON }
+    assert 200, response.status
+    zombies = json(response.body)
+    assert_equal "Cuidado com #{zombies[0][:name]}!", zombies[0][:message]
   end
 end
 ```
@@ -221,7 +244,7 @@ end
 We'll remove the inline rendering from our controller so we can move the JSON parsing logic to a view template.
 
 ```ruby
-# app/controllers/api/zombies_controller.rb
+# app/controllers/zombies_controller.rb
 module API
   class ZombiesController < ApplicationController
     def index
@@ -237,7 +260,7 @@ end
 In our template, we'll add an entry for **message**. The value for this entry will be internationalized, so we'll use the `I18n.t` method to lookup the corresponding value for the **warning_message** key and pass a value for the *name* placeholder.
 
 ```ruby
-# app/views/api/zombies/index.json.jbuilder
+# app/views/zombies/index.json.jbuilder
 json.array!(@zombies) do |zombie|
   json.extract! zombie, :id, :name, :age
   json.message I18n.t('warning_message', name: zombie.name)
@@ -260,7 +283,7 @@ pt-BR:
   warning_message: 'Cuidado com %{name}!'
 ```
 
-One quick way to switch between locales based on header is by adding a **before_action** to our ApplicationController:
+A simple way to switch between locales based on a request header is by adding a **before_action** to our ApplicationController and inspecting the corresponding header from there:
 
 ```ruby
 class ApplicationController < ActionController::Base
@@ -279,15 +302,13 @@ This is enough code to make our spec pass.
 Response in english:
 
 ```
-[{"id":1,"name":"Jon","age":21,"warning_message":"Watch out for Jon!"},
-{"id":2,"name":"Angela","age":251,"warning_message":"Watch out for Angela!"}]
+[{"id":2,"name":"Joanna","age":251,"warning_message":"Watch out for Joanna!"}]
 ```
 
 Response in portuguese:
 
 ```
-[{"id":1,"name":"Jon","age":21,"warning_message":"Cuidado com Jon!"},
-{"id":2,"name":"Angela","age":251,"warning_message":"Cuidado com Angela!"}]
+[{"id":2,"name":"Joanna","age":251,"warning_message":"Cuidado com Joanna!"}]
 ```
 
 However, in order for our web API to suppport different languages in a way that's more closely compatible with the HTTP spec (which very few web APIs are), we will need more logic than just straight up assigning `request.env['HTTP_ACCEPT_LANGUAGE']` to `I18n.locale`. Certain things also need to be taken in consideration, like users sending a list of preferred languages instead of just one, or using different formatting options for the Header value.

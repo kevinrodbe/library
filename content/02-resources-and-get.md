@@ -113,61 +113,56 @@ An API for an ecommerce application might need to track unique views for each pr
 
 To better understand how Rails implements REST, let's write some basic API integration tests which will represent client interactions with our API.
 
-So, integration tests... you mean Capybara ? 
+So, integration tests... you mean Capybara ?
 
 Well, Capybara is **not** the best option when it comes to API testing because its DSL mimics the language an actual user would use when interacting with the **browser**. When it comes to web APIs, actions like *click_link*, *fill_in*, *select_from* and others are not part of our domain.
 
 > Do not test APIs with Capybara. It wasn’t designed for it. 
 - Jonas Nicklas, the creator of Capybara.
 
-So we'll stick with RSpec request specs using rspec-rails:
+So we'll stick with MiniTest, used by Rails' `ActiveSupport::TestCase`
 
-```
-group :test, :development do
-  gem 'rspec-rails', '2.14.0'
-end
-```
-
-We run `bundle` to resolve our dependencies and `rails g rspec:install` to create our `spec/spec_helper.rb` for us. 
-
-To create our first integration test, or request spec, we run `rails g integration_test listing_zombies` which creates the **spec/requests/listing_zombies_spec.rb** file.
+To create our first integration test we run `rails g integration_test listing_zombies` which creates the **test/integration/listing_zombies_test.rb** file.
 
 Let's replace the content of that file with the following:
 
 ```ruby
-# spec/requests/listing_zombies_spec.rb
-describe "Listing Zombies" do
+require 'test_helper'
 
-  describe "GET /zombies" do
-    it "responds with success" do
-      get zombies_url
-      expect(response.status).to be(200)
-    end
+class ListingZombies < ActionDispatch::IntegrationTest
+  setup do
+    host! 'api.example.com'
   end
 
+  test 'returns list of all zombies' do
+    get '/zombies'
+    assert_equal 200, response.status
+  end
 end
 ```
 
 The status code for a successful response from a GET request is typically **200**. We'll look more into the different types of status codes later, but the **200** class of status code indicates the client's request was successfully received, understood, and accepted.
 
-Another way we can write our example is using a more general matcher, `be_success` or `be_successful`:
+Another way we can write our asserting is by calling utility methods added by `Rack::Test`
 
 ```ruby
-# spec/requests/listing_zombies_spec.rb
-describe "Listing Zombies" do
+require 'test_helper'
 
-  describe "GET /zombies" do
-    it "responds with success" do
-      get zombies_url
-      expect(response).to be_success
-      expect(response).to be_successful
-    end
+class ListingZombies < ActionDispatch::IntegrationTest
+  setup do
+    host! 'api.example.com'
   end
 
+  test 'returns list of all zombies' do
+    get '/zombies'
+    assert_equal 200, response.status
+    assert response.success?
+    assert response.successful?
+  end
 end
 ```
 
-This matcher is a bit more general, and it will return true for any status code >= 200 and < 300.
+The difference between `success?` and `successful?` is that the latter is a bit more general, and it will return true for any status code >= 200 and < 300.
 
 Back in our controller, we setup the proper response:
 
@@ -213,20 +208,21 @@ end
 
 which translates to a 200 status code.
 
-Lastly, successful GET requests are expected to include the resource in the response body. We are already doing that by rendering the `zombies` in JSON format. Let's add a simple expectation to verify that.
+Lastly, successful GET requests are expected to include the resource in the response body. We are already doing that by rendering the `zombies` in JSON format. Let's add a simple assertion to verify that.
 
 ```ruby
-# spec/requests/listing_zombies_spec.rb
-describe "Listing Zombies" do
+require 'test_helper'
 
-  describe "GET /zombies" do
-    it "responds with success" do
-      get zombies_url
-      expect(response).to be(200)
-      expect(response.body).not_to be_empty
-    end
+class ListingZombies < ActionDispatch::IntegrationTest
+  setup do
+    host! 'api.example.com'
   end
 
+  test 'returns list of all zombies' do
+    get '/zombies'
+    assert_equal 200, response.status
+    refute_empty response.body
+  end
 end
 ```
 
@@ -286,28 +282,24 @@ In our test code, we want to start by creating two zombies with two different we
 The last step is verifying that our action only returns zombies that use that weapon. In order to do that, we need to parse the response using `JSON.parse`.
 
 ```ruby
-# spec/request/listing_zombies_spec.rb
-require 'spec_helper'
+require 'test_helper'
 
-describe "Listing Zombies" do
+class ListingZombies < ActionDispatch::IntegrationTest
+  setup do
+    host! 'api.example.com'
+  end
 
-  describe "GET /zombies" do
+  test 'returns zombies filtered by weapon' do
+    john = Zombie.create!(name: 'John', weapon: 'axe')
+    joanna = Zombie.create!(name: 'Joanna', weapon: 'shotgun')
 
-    context 'filtering by weapon' do
+    get '/zombies?weapon=axe'
+    assert_equal 200, response.status
 
-      it 'returns zombies with specified weapon' do
-        Zombie.create!(name: 'Joanna', weapon: 'axe')
-        Zombie.create!(name: 'John', weapon: 'shotgun')
-
-        get api_zombies_url(weapon: 'axe') # becomes http://api.example.com/zombies?weapon=axe
-        expect(response.status).to be(200)
-
-        zombies = JSON.parse(response.body, symbolize_names: true)
-        names = zombies.collect { |z| z[:name] }
-        expect(names).to include('Joanna')
-        expect(names).to_not include('John')
-      end
-    end
+    zombies = JSON.parse(response.body, symbolize_names: true)
+    names = zombies.collect { |z| z[:name] }
+    assert_includes names, 'John'
+    refute_includes names, 'Joanna'
   end
 end
 ```
@@ -329,25 +321,23 @@ We've seen how to list zombies. Now, let's see how to fetch a specific Zombie ba
 First, the test code:
 
 ```ruby
-require 'spec_helper'
+require 'test_helper'
 
-describe "Finding Zombies" do
+class ListingZombies < ActionDispatch::IntegrationTest
+  setup do
+    host! 'api.example.com'
+  end
 
-  describe "GET /zombies/:id" do
-    it 'finds a zombie from its id' do
-      zombie = Zombie.create!(name: 'Joanna')
+  test 'returns zombie by id' do
+    zombie = Zombie.create!(name: 'Joanna', weapon: 'axe')
+    get "/zombies/#{zombie.id}" # we could also use api_zombies_url(zombie) here
+    assert_equal 200, response.status
 
-      get api_zombie_url(zombie) # becomes http://api.example.com/zombies/1
-      expect(response.status).to be(200)
-
-      zombie_response = JSON.parse(response.body, symbolize_names: true)
-      expect(zombie_response[:name]).to eq(zombie.name)
-    end
+    zombie_response = JSON.parse(response.body, symbolize_names: true)
+    assert_equal zombie.name, zombie_response[:name]
   end
 end
 ```
-
-The route helper `api_zombie_url(zombie)` gets translated to the URI `http://api.example.com/zombies/:id` which is routed to the `API::Zombies#show` controller action.
 
 We have two assertions. The first one checks for the 200 status code, meaning the response is successful, and the other one verifies the proper Zombie was returned by checking its name. 
 
@@ -367,49 +357,50 @@ end
 
 ## Extracting a helper method
 
-We'll be doing a lot of JSON parsing in our integration tests. Manually calling `JSON.parse(response.body, symbolize_names: true)` every time we need to parse a response to JSON can quickly become tedious, so let's see how we can extract that to an RSpec helper method.
+We'll be doing a lot of JSON parsing in our integration tests. Manually calling `JSON.parse(response.body, symbolize_names: true)` every time we need to parse a response to JSON can quickly become tedious, so let's see how we can extract that to a MiniTest helper method.
 
-We can define helper methods in a module and include them in our integration tests using RSpec's **config.include** option. Let's create a new file under *spec/support/request_helpers.rb* and add our new module:
+We can define helper methods in our `test/test_helper.rb` file.
 
 ```ruby
-# spec/support/request_helpers.rb
-module RequestHelpers
+ENV["RAILS_ENV"] ||= "test"
+require File.expand_path('../../config/environment', __FILE__)
+require 'rails/test_help'
+require 'minitest/pride' # require this to display colored output
+
+class ActiveSupport::TestCase
+  ActiveRecord::Migration.check_pending!
+  fixtures :all
+
   def json(body)
     JSON.parse(body, symbolize_names: true)
   end
 end
-
-RSpec.configure do |config|
-  config.include RequestHelpers, type: :request
-end
 ```
 
-The `type: :request` option ensures that our **RequestHelpers** module is only mixed into request type specs.
-
-Back in our request specs we can replace our call to `JSON.parse` with our `json` helper method:
+Now back in our test file we can replace calls to `JSON.parse` with our new `json` helper method:
 
 ```ruby
-require 'spec_helper'
+require 'test_helper'
 
-describe "Finding Zombies" do
+class ListingZombies < ActionDispatch::IntegrationTest
+  setup do
+    host! 'api.example.com'
+  end
 
-  describe "GET /zombies/:id" do
-    it 'finds a zombie from its id' do
-      zombie = Zombie.create!(name: 'Joanna')
+  test 'returns zombie by id' do
+    zombie = Zombie.create!(name: 'Joanna', weapon: 'axe')
+    get "/zombies/#{zombie.id}"
+    assert_equal 200, response.status
 
-      get api_zombie_url(zombie)
-      expect(response.status).to be(200)
-
-      zombie_response = json(response.body)
-      expect(zombie_response[:name]).to eq(zombie.name)
-    end
+    zombie_response = json(response.body)
+    assert_equal zombie.name, zombie_response[:name]
   end
 end
 ```
 
 ## cURL
 
-Finally, let's look at one other way we can test our web API by issuing real HTTP requests over the network and checking the response. We'll a command line networking tool called **curl**.
+Finally, let's look at one other way we can test our web API by issuing real HTTP requests over the network and checking the response. We'll use a command line networking tool called **curl**.
 
 **curl** is shipped with OS X. It should be available on most unix/gnu linux package repositories and you can also find an installer for Windows machines.
 
@@ -428,7 +419,7 @@ $ curl http://api.banana.com:3000/zombies
 Now all zombies that use an axe as a weapon:
 
 ```
-$ curl http://api.banana.com:3000/zombies?weapon=axe
+$ curl http://api.zombies-rails.com:3000/zombies?weapon=axe
 [{"id":7,"name":"Joanna","age":123,"created_at":"2014-01-17T18:42:47.026Z",
 "updated_at":"2014-01-17T18:42:47.026Z","weapon":"axe"}]
 ```
@@ -436,7 +427,7 @@ $ curl http://api.banana.com:3000/zombies?weapon=axe
 Now just a specific zombie:
 
 ```
-$ curl http://api.banana.com:3000/zombies/7
+$ curl http://api.zombies-rails.com:3000/zombies/7
 {"id":7,"name":"Joanna","age":123,"created_at":"2014-01-17T18:42:47.026Z",
 "updated_at":"2014-01-17T18:42:47.026Z","weapon":"axe"}
 ```
@@ -444,7 +435,7 @@ $ curl http://api.banana.com:3000/zombies/7
 We can also ask curl to only show response headers, with the `-I` option:
 
 ```
-$ curl -I http://api.banana.com:3000/zombies/7
+$ curl -I http://api.zombies-rails.com:3000/zombies/7
 HTTP/1.1 200 OK
 X-Frame-Options: SAMEORIGIN
 X-XSS-Protection: 1; mode=block
