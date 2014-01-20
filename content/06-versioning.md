@@ -14,8 +14,8 @@ There are multiple strategies to API versioning and we are going to be looking a
 The simplest and most straight forward way to version our API is to add the version to the URI:
 
 ```
-api.ZombieApocalypse.com/v1/zombies
-api.ZombieApocalypse.com/v2/humans
+api.rails-zombies.com/v1/zombies
+api.rails-zombies.com/v2/humans
 ```
 
 Including the API version in the URI makes it easy to see which version is being used just by looking at it. It also allows us to test our API using the browser, which is pretty handy.
@@ -57,7 +57,7 @@ edit_api_v2_zombie GET    /v2/zombies/:id/edit(.:format) api/v2/zombies#edit
                    DELETE /v2/zombies/:id(.:format)      api/v2/zombies#destroy
 ```
 
-Before we write any controller code, let's write some routing specs. These specs will ensure that our routes are dispatching requests to the proper controller and action.
+Before we write any controller code, let's write some route tests. These tests will ensure that our routes are dispatching requests to the proper controller and action.
 
 Let's pick these two entries from `rake routes`:
 
@@ -69,26 +69,24 @@ Prefix Verb   URI Pattern                    Controller#Action
 
 From these entries, we can see that a GET request to the **/v1/zombies** URI should be mapped to a `ZombiesController` in `api/v1/` and its `index` action; and a GET request to **/v2/zombies**, mapped to a `ZombiesController` in `api/v2` and its `index` action.
 
-We'll translate these two requirements to our spec: 
+We'll bring these two into our tests: 
 
 ```ruby
-# spec/routing/listing_zombies_spec.rb
-require 'spec_helper'
+# test/integration/routes_tests.rb
+require 'test_helper'
 
-describe 'Listing Zombies' do
-  context 'for API version 1' do
-    it { expect(get: '/v1/zombies').to route_to(controller: 'api/v1/zombies', action: 'index') }
-  end
-
-  context 'for API version 2' do
-    it { expect(get: '/v2/zombies').to route_to(controller: 'api/v2/zombies', action: 'index') }
+class RoutesTest < ActionDispatch::IntegrationTest
+  test 'routes version' do
+    assert_generates '/v1/zombies', { controller: 'api/v1/zombies', action: 'index' }
+    assert_generates '/v2/zombies', { controller: 'api/v2/zombies', action: 'index' }
   end
 end
+
 ```
 
-Even if you've never written routing specs before, this syntax should be familiar. Notice that we are placing our file under the *spec/routing* directory, and we are using the `route_to` matcher, which takes options such as **controller** and **action**.
+The `assert_generates` method asserts that the provided options can be used to generate the provided path.
 
-Since we have not written our controller code yet, running this spec should fail.
+Since we have not written our controller code yet, running this test should fail.
 
 Resources defined inside our versioned namespaces are expected to have a matching controller under the same namespace. In this case, we'll need a `ZombiesController` under the *app/controllers/api/v1* directory:
 
@@ -114,7 +112,7 @@ module API
 end
 ```
 
-If we run our routing spec now, it should pass.
+If we run our routes test now, it should pass.
 
 We've successfully added URI versioning to our API, so that each request gets routed to the proper namespace. Now that our codebase supports multiple versions, we need to be extra careful about how we organize our code.
 
@@ -137,7 +135,7 @@ module API
       before_action ->{ @remote_ip = request.headers['REMOTE_ADDR'] }
 
       def index
-        render text: "#{@remote_ip} using version 1", status: 200
+        render text: "#{@remote_ip} Version One!", status: 200
       end
     end
   end
@@ -155,40 +153,42 @@ module API
       before_action ->{ @remote_ip = request.headers['REMOTE_ADDR'] }
 
       def index
-        render text: "#{@remote_ip} using version 2", status: 200
+        render text: "#{@remote_ip} Version Two!", status: 200
       end
     end
   end
 end
 ```
 
-In the previous example, we repeat the exact same `before_action` on both controllers.
+In the previous example, we are repeating the exact same `before_action` on both controllers.
 
-Before we refactor our code to something DRYer, let's write a request spec to make sure we don't break things.
+Before we refactor our code to something DRYer, let's write an integration test to make sure we don't break things.
 
 ```ruby
-describe 'Listing Zombies' do
-  let(:ip) { '123.123.123.123' }
+# test/integration/changing_api_versions_test.rb
+require 'test_helper'
 
-  context 'using V1' do
-    it 'returns version one' do
-      get '/v1/zombies', {}, { 'REMOTE_ADDR' => ip }
-      expect(response).to be_success
-      expect(response.body).to eq("#{ip} using version 1")
-    end
+class ChangingApiVersionsTest < ActionDispatch::IntegrationTest
+  setup do
+    @ip = '123.123.12.12'
   end
 
-  context 'using V2' do
-    it 'returns version two' do
-      get '/v2/zombies', {}, { 'REMOTE_ADDR' => ip }
-      expect(response).to be_success
-      expect(response.body).to eq("#{ip} using version 2")
-    end
+  test '/v1 returns version 1' do
+    get '/v1/zombies', {}, { 'REMOTE_ADDR' => @ip }
+    assert_equal 200, response.status
+    assert_equal "#{@ip} Version One!", response.body
+  end
+
+  test '/v2 returns version 2' do
+    get '/v2/zombies', {}, { 'REMOTE_ADDR' => @ip }
+    assert_equal 200, response.status
+    assert_equal "#{@ip} Version Two!", response.body
   end
 end
+
 ```
 
-Running the previous spec should pass.
+Running the previous test should pass.
 
 To reduce the unnecessary duplication, we'll extract the common code out to an **API::BaseController** class.
 
@@ -290,30 +290,32 @@ While Rails does have a built in way of registering custom mime types, it doesn'
 Let's change our request spec to pass our custom media type using the **Accept** request header instead of the URI. For the response format, though, our application will use JSON.
 
 ```ruby
-describe 'Listing Zombies' do
-  let(:ip) { '123.123.123' }
+# test/integration/changing_api_versions_test.rb
+require 'test_helper'
 
-  context 'using V1' do
-    it 'returns version one' do
-      get '/zombies', {}, { 'REMOTE_ADDR' => ip, 'HTTP_ACCEPT' => 'application/vnd.apocalypse.v1+json' }
-      expect(response).to be_success
-      expect(response.body).to eq("#{ip} Version One!")
-      expect(response.content_type).to eq(Mime::JSON)
-    end
+class ChangingApiVersionsTest < ActionDispatch::IntegrationTest
+
+  setup do
+    @ip = '123.123.12.12'
   end
 
-  context 'using V2' do
-    it 'returns version two' do
-      get '/zombies', {}, { 'REMOTE_ADDR' => ip, 'HTTP_ACCEPT' => 'application/vnd.apocalypse.v2+json' }
-      expect(response).to be_success
-      expect(response.body).to eq("#{ip} Version Two!")
-      expect(response.content_type).to eq(Mime::JSON)
-    end
+  test 'returns version one via Accept header' do
+    get '/zombies', {}, { 'REMOTE_ADDR' => @ip, 'HTTP_ACCEPT' => 'application/vnd.apocalypse.v1+json' }
+    assert_equal 200, response.status
+    assert_equal "#{@ip} Version One!", response.body
+    assert_equal Mime::JSON, response.content_type
+  end
+
+  test 'returns version two via Accept header' do
+    get '/zombies', {}, { 'REMOTE_ADDR' => @ip, 'HTTP_ACCEPT' => 'application/vnd.apocalypse.v2+json' }
+    assert_equal 200, response.status
+    assert_equal "#{@ip} Version Two!", response.body
+    assert_equal Mime::JSON, response.content_type
   end
 end
 ```
 
-Responding with a non-standard media type wouldn't work nicely with most HTTP clients, and would require unnecessary intervention on the client side. Use of media types that are not registered with the Internet Assigned Number Authority, or [IANA](http://www.iana.org), is discouraged.
+Responding with a non-standard media type, like our custom `application/vnd.apocalypse[.version]+json` type, wouldn't work nicely with most HTTP clients, and would require unnecessary intervention on the client side. Use of media types that are not registered with the Internet Assigned Number Authority, or [IANA](http://www.iana.org), is discouraged.
 
 ### Route Constraint
 
@@ -361,22 +363,19 @@ class ApiVersion
 end
 ```
 
-With these changes in place, our request specs are now passing but our routing spec is failing.
-
-WHOOPS!
-
-Because we've set the default format for json, we need to change our routing spec:
+One last thing we need to do is to go back and change our route test. Because we are no longer using the URI for versioning, we'll simply change our route tests to verify that `/zombies` routes to the correct default version:
 
 ```ruby
-describe 'Changing versions spec' do
-  context 'the default version' do
-    it { expect(get: '/zombies').to route_to(controller: 'api/v2/zombies', action: 'index', format: 'json') }
+require 'test_helper'
+
+class RoutesTest < ActionDispatch::IntegrationTest
+  test 'defaults to v2' do
+    assert_generates '/zombies', { controller: 'api/v2/zombies', action: 'index' }
   end
 end
 ```
-Our `ApiVersion` class is a good start, but it can only get us so far. For a more robust solution for handling versions through the Accept header - maybe if our API needs to handle multiple formats, other than just JSON - we might want to take a look at the [versionist](https://github.com/bploetz/versionist/) gem.
 
-## Conclusion
+Our `ApiVersion` class is a good start, but it can only get us so far. For a more robust solution for handling versions through the Accept header - maybe if our API needs to handle multiple formats, other than just JSON - we might want to take a look at the [versionist](https://github.com/bploetz/versionist/) gem.
 
 We've covered two ways of versioning our Rails APIs. Currently, there is no definitive answer as to which one is THE best strategy. Nonetheless, as an API developer, we should avoid introducing breaking changes as much as possible so that versioning doesn't become a big issue.
 
