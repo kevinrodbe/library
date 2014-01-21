@@ -274,7 +274,7 @@ end
 ## Versioning using the Accept header
 
 
-Although API versioning using the URI is more common to find in the wild and it's simple to implement, some people don't consider it to be the best strategy. An argument can be made that URIs which API clients can depend on should be preserved over time, so embedding information that’s likely to change into them make them unstable and reduce their value.
+Although API versioning using the URI is more common to find in the wild and it's simple to implement, some people don't consider it to be the best strategy. An argument can be made that URIs which API clients can depend on should be preserved over time, and the API version should be indicated elsewhere.
 
 An alternative to using the URI for versioning is including the version number as part of a custom media type. A couple of popular services already provide API versioning this way. [Github](http://developer.github.com/changes/2014-01-07-upcoming-change-to-default-media-type/), for example, uses `application/vnd.github.v3+json` and [Heroku](https://blog.heroku.com/archives/2014/1/8/json_schema_for_heroku_platform_api) which uses `application/vnd.heroku+json; version=3`.
 
@@ -285,9 +285,9 @@ The media type name **application** tells us that the payload is to be treated a
 
 While Rails does have a built in way of registering custom mime types, it doesn't offer an easy way to work with API versioning as part of those media types, so we are going to write our own solution.
 
-### Request Specs
+### Tests
 
-Let's change our request spec to pass our custom media type using the **Accept** request header instead of the URI. For the response format, though, our application will use JSON.
+Let's change our tests to pass our new custom media type using the **Accept** request header.
 
 ```ruby
 # test/integration/changing_api_versions_test.rb
@@ -315,7 +315,7 @@ class ChangingApiVersionsTest < ActionDispatch::IntegrationTest
 end
 ```
 
-Responding with a non-standard media type, like our custom `application/vnd.apocalypse[.version]+json` type, wouldn't work nicely with most HTTP clients, and would require unnecessary intervention on the client side. Use of media types that are not registered with the Internet Assigned Number Authority, or [IANA](http://www.iana.org), is discouraged.
+For the response format our application will use JSON. Responding with a non-standard media type, like our custom `application/vnd.apocalypse[.version]+json` type, wouldn't work nicely with most HTTP clients, and would require unnecessary intervention on the client side. Use of media types that are not registered with the Internet Assigned Number Authority, or [IANA](http://www.iana.org), is discouraged.
 
 ### Route Constraint
 
