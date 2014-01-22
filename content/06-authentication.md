@@ -5,10 +5,12 @@ All of the following strategies are supported by Rails out of the box. See [Acti
 We are going to be looking at three different authentication strategies:
 
 * Token based
-* HTTP Basic Auth
-* HTTP Digest Auth
+* [HTTP Basic Auth](http://guides.rubyonrails.org/action_controller_overview.html#http-authentications)
+* [HTTP Digest Auth](http://guides.rubyonrails.org/action_controller_overview.html#http-authentications)
 
 ## Token
+
+[Demo app](https://github.com/codeschool/BananaPodcast/tree/token_based_authentication)
 
 The token based authentication is when the API client includes an application provided API token for each request. A lot of popular services offer token based authentication for connecting with their API, like HipChat, Campfire, Backpack, Last.fm and many others.
 
@@ -70,7 +72,7 @@ class User < ActiveRecord::Base
 end
 ```
 
-Back in our `ApplicationController`, we'll create a *before_action* that authenticates the user. We'll read from the **USER_AUTH_TOKEN** header and use the value to look the user up.
+For simplicity, we'll assume all requests to our application will need to be authenticated so we'll edit our `ApplicationController`. We'll create a *before_action* that authenticates the user. We'll read from the **USER_AUTH_TOKEN** header and use the value to look the user up.
 
 ```ruby
 # app/controllers/application_controller.rb
@@ -111,15 +113,84 @@ class PaymentsController < ApplicationController
 end
 ```
 
-
-
+The token based authentication we've just seen is simple to implement, but other than using an HTTP header, we are not properly following the HTTP protocol. We are going to look at two other options that come built into Rails.
 
 ## HTTP Basic Auth
+
+[Demo app](https://github.com/codeschool/BananaPodcast/tree/http_basic_auth)
     
 * HTTP Basic Auth (see **Rest in Practice** page 517)
     * Native HTTP Basic Authentication
     * caveat, *Although the username and password are never sent in plain text, the base64-encoded text is easily intercepted and decoded*. Solution is to use HTTPS.
     * Rails support out of the box
+
+> When a consumer attempts to access a privileged resource, credentials must be provided in an Authorization header, or the consumer will be refused access. Ian Robinson. “REST in Practice.”
+
+```ruby
+class ApplicationController < ActionController::Base
+  protect_from_forgery with: :exception
+  before_action :authenticate_user
+
+  protected
+
+    def authenticate_user
+      current_user || render_unauthorized
+    end
+
+    def current_user
+      @current_user ||= begin
+                          authenticate_with_http_basic do |username, password|
+                            user = User.find_by(username: username)
+                            user && user.authenticate(password)
+                          end
+                        end
+    end
+
+    def render_unauthorized
+      head 401
+    end
+end
+```
+
+```ruby
+require 'test_helper'
+
+class ListingPaymentsTest < ActionDispatch::IntegrationTest
+  setup do
+    password = 'secret'
+    @user = User.create!(username: 'foobar',
+                         password: password, password_confirmation: password)
+    @user.payments.create!(amount: 99.99)
+  end
+
+  teardown do
+    User.destroy_all
+  end
+
+  test 'valid username and password' do
+    auth = ActionController::HttpAuthentication::Basic.encode_credentials(@user.username, @user.password)
+    get '/payments', {}, { 'HTTP_AUTHORIZATION' =>  auth }
+    assert_equal 200, response.status
+  end
+
+  test 'missing credentials' do
+    get '/payments', {}, {}
+    assert_equal 401, response.status
+  end
+
+  test 'invalid username' do
+    auth = ActionController::HttpAuthentication::Basic.encode_credentials('', @user.password)
+    get '/payments', {}, { 'HTTP_AUTHORIZATION' =>  auth }
+    assert_equal 401, response.status
+  end
+
+  test 'invalid password' do
+    auth = ActionController::HttpAuthentication::Basic.encode_credentials(@user.username, '')
+    get '/payments', {}, { 'HTTP_AUTHORIZATION' =>  auth }
+    assert_equal 401, response.status
+  end
+end
+```
 
 ## HTTP Digest Auth
 
