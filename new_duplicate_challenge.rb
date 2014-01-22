@@ -26,7 +26,7 @@ if decision.starts_with?("y")
 
   FileUtils.mv "#{destination}/#{source_name}", "#{destination}/#{destination_name}"
 
-  FileUtils.mv "#{destination}/#{destination}/#{source_name}Tests", "#{destination}/#{destination}/#{destination_name}Tests"
+  FileUtils.mv "#{destination}/#{source_name}Tests", "#{destination}/#{destination_name}Tests"
 
   FileUtils.mv "#{destination}/#{source_name}.xcodeproj", "#{destination}/#{destination_name}.xcodeproj"
 
