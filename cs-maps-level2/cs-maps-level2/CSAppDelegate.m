@@ -7,6 +7,9 @@
 //
 
 #import "CSAppDelegate.h"
+
+#import <GoogleMaps/GoogleMaps.h>
+
 #import "CSMapVC.h"
 
 @implementation CSAppDelegate

@@ -8,7 +8,11 @@
 
 #import "CSMapVC.h"
 
+#import <GoogleMaps/GoogleMaps.h>
+
 @interface CSMapVC ()
+
+@property(strong, nonatomic) GMSMapView *mapView;
 
 @end
 
@@ -22,7 +26,7 @@
                                                             bearing:0
                                                        viewingAngle:0];
   
-  self.mapView = [GMSMapView mapWithFrame:CGRectZero camera:camera];
+  self.mapView = [GMSMapView mapWithFrame:self.view.bounds camera:camera];
   
   self.mapView.mapType = kGMSTypeHybrid;
   
@@ -34,11 +38,6 @@
   self.mapView.padding = UIEdgeInsetsMake(25, 25, 25, 25);
   
   [self.view addSubview:self.mapView];
-}
-
-- (void)viewWillLayoutSubviews {
-  [super viewWillLayoutSubviews];
-  self.mapView.frame = self.view.bounds;
 }
 
 - (BOOL)prefersStatusBarHidden
