@@ -8,10 +8,8 @@
 
 #import "CSMarker.h"
 
-#define kDoubleEpsilon (0.00001)
-
 static BOOL doubleCloseTo(double a, double b){
-  if (fabs(a-b) < kDoubleEpsilon) {
+  if (fabs(a-b) < 0.00001) {
     return YES;
   }else{
     return NO;
@@ -22,7 +20,9 @@ static BOOL doubleCloseTo(double a, double b){
 
 - (BOOL)isEqual:(id)object
 {
-  if(doubleCloseTo(self.position.latitude, [(CSMarker *)object position].latitude) && doubleCloseTo(self.position.longitude, [(CSMarker *)object position].longitude)) {
+  CSMarker *obj = object;
+  if(doubleCloseTo(self.position.latitude, obj.position.latitude) &&
+     doubleCloseTo(self.position.longitude, obj.position.longitude)) {
     return YES;
   }
   

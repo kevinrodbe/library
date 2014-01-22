@@ -41,10 +41,10 @@
 
   [self.view addSubview:self.mapView];
 
-  [self setupMarkerData];
+  [self setupMarkers];
 }
 
-- (void)setupMarkerData {
+- (void)setupMarkers {
   GMSMarker *marker1 = [[GMSMarker alloc] init];
   marker1.position = CLLocationCoordinate2DMake(28.5441, -81.37301);
   marker1.map = nil;

@@ -195,8 +195,6 @@
 }
 
 - (void)downloadMarkers:(id)sender {
-
-  // define the API URL
   NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://jonfriskics.com/mapsapi/v1/getPoints/?type=lakes"]];
 
   NSURLSessionDataTask *task = [self.markerSession dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *e) {
@@ -204,14 +202,14 @@
     NSArray *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
     
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-      [self triageDownloadedMarkerData:json];
+      [self doSomethingWithMarkerData:json];
     }];
   }];
 
   [task resume];
 }
 
-- (void)triageDownloadedMarkerData:(NSArray *)json {
+- (void)doSomethingWithMarkerData:(NSArray *)json {
   // get a mutable copy of all of the markers
   NSMutableArray *mutableArray = [[NSMutableArray alloc] initWithArray:self.markers];
 
