@@ -18,7 +18,7 @@
 
 @property(strong, nonatomic) GMSMapView *mapView;
 
-@property(copy, nonatomic) NSArray *markers;
+@property(copy, nonatomic) NSSet *markers;
 
 @property(strong, nonatomic) NSURLSession *markerSession;
 
@@ -123,8 +123,8 @@
 }
 
 - (void)doSomethingWithMarkerData:(NSArray *)json {
-  NSMutableArray *mutableArray =
-      [[NSMutableArray alloc] initWithArray:self.markers];
+  NSMutableSet *mutableSet =
+      [[NSMutableSet alloc] initWithSet:self.markers];
 
   for (NSDictionary *mark in json) {
 
@@ -139,15 +139,10 @@
 
     marker.map = nil;
 
-    if ([self.markers containsObject:marker]) {
-      NSLog(@"set already contains %@", marker);
-    } else {
-      NSLog(@"added %@ to set", marker);
-      [mutableArray addObject:marker];
-    }
+    [mutableSet addObject:marker];
   }
 
-  self.markers = [mutableArray copy];
+  self.markers = [mutableSet copy];
 
   [self drawMarkers];
 }
@@ -173,9 +168,13 @@
     NSDictionary *json = (NSDictionary *)
     [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-      NSMutableArray *mutableMarkers = [self.markers mutableCopy];
-      NSUInteger index = [mutableMarkers indexOfObject:marker];
-      [mutableMarkers[index] setUserData:@{@"distance" : json[@"rows"][0][@"elements"][0][@"distance"][@"text"]}];
+      NSMutableSet *mutableMarkers = [self.markers mutableCopy];
+      CSMarker *m = [mutableMarkers member:marker];
+      
+      [mutableMarkers removeObject:m];
+      m.userData = @{@"distance" : json[@"rows"][0][@"elements"][0][@"distance"][@"text"]};
+      [mutableMarkers addObject:m];
+      
       self.markers = [mutableMarkers copy];
       
       /* TODO: ask if there's a better way than this.

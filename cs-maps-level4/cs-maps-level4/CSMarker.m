@@ -18,6 +18,11 @@ static BOOL doubleCloseTo(double a, double b){
 
 @implementation CSMarker
 
+- (NSUInteger)hash
+{
+  return [[NSNumber numberWithDouble:self.position.latitude] hash] ^ [[NSNumber numberWithDouble:self.position.longitude] hash];
+}
+
 - (BOOL)isEqual:(id)object
 {
   CSMarker *obj = object;
