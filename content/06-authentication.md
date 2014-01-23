@@ -12,21 +12,9 @@ We are going to be looking at three different authentication strategies:
 
 [Demo app](https://github.com/codeschool/BananaPodcast/tree/http_basic_auth)
 
-Pros:
-
-  * Part of the HTTP standard - [RFC2617](http://www.ietf.org/rfc/rfc2617.txt)
-  * Rails support out of the box.
-  * Leverage existing user credentials.
-
-Cons:
-
-  * Although the username and password are never sent in plain text, the base64-encoded text is easily intercepted and decoded. Use of HTTPS is highly recommended.
-  * Your application might not have users with username and password. Some services workaround this by passing a dummy username, like 'xxxx', and then a password.
-
-
 The HTTP Basic Auth is part of the standard and it's supported by Rails out of the box. When using Basic Auth, access credentials must be provided in an **Authorization** header.
 
-Using curl, we can pass credentials using the `-u` option, and curl automatically converts them into the proper Basic Auth header format. 
+Using curl, we can pass credentials using the `-u` option, and curl automatically converts them into the proper Basic Auth header format. Basic Auth expects a username and password.
 
 ```
 $ curl -Iu 'carlos:secret' http://localhost:3000/episodes
