@@ -1,12 +1,13 @@
 # Authentication
 
-All of the following strategies are supported by Rails out of the box. See [ActionController::HttpAuthentication](https://github.com/rails/rails/blob/master/actionpack/lib/action_controller/metal/http_authentication.rb).
+*TODO: elaborate intro.*
 
-We are going to be looking at three different authentication strategies:
+> With the growing use of distributed web services and cloud computing, clients need to allow other parties access to the resources they control. / http://tools.ietf.org/html/draft-hammer-http-token-auth-01
+
+We are going to be looking at two different authentication strategies:
 
 * [HTTP Basic Auth](http://guides.rubyonrails.org/action_controller_overview.html#http-authentications)
-* Token based
-* [HTTP Digest Auth](http://guides.rubyonrails.org/action_controller_overview.html#http-authentications) *(might leave this one out...)*
+* [Token based Auth](http://api.rubyonrails.org/classes/ActionController/HttpAuthentication/Token.html)
 
 ## HTTP Basic Auth
 
@@ -14,15 +15,7 @@ We are going to be looking at three different authentication strategies:
 
 The HTTP Basic Auth is part of the standard and it's supported by Rails out of the box. When using Basic Auth, access credentials must be provided in an **Authorization** header.
 
-Using curl, we can pass credentials using the `-u` option, and curl automatically converts them into the proper Basic Auth header format. Basic Auth expects a username and password.
-
-```
-$ curl -Iu 'carlos:secret' http://localhost:3000/episodes
-HTTP/1.1 200 OK
-Content-Type: application/json; charset=utf-8
-```
-
-The Authorization header format for Basic Auth is composed of the word *Basic* followed by a base64 encoded version of our credentials:
+The Authorization header format for Basic Auth is composed of the word *Basic* followed by a base64 encoded version of our username and password:
 
 ```
 Authorization: Basic Y2Fpa2U6c2VjcmV0
@@ -58,9 +51,9 @@ class ListingPaymentsTest < ActionDispatch::IntegrationTest
 end
 ```
 
-We use the `encode_credentials` method from `ActionController::HttpAuthentication::Basic` to take care of the encoding and formatting for us.
+We use the `encode_credentials` method from `ActionController::HttpAuthentication::Basic` to handle the encoding and formatting for us.
 
-In our `EpisodesController`, we'll create a *before_action* to check the users' credentials using Basic Auth:
+In our `EpisodesController`, we create a *before_action* to check the users' credentials using Basic Auth:
 
 ```ruby
 # app/controllers/episodes_controller.rb
@@ -81,9 +74,28 @@ class EpisodesController < ApplicationController
 end
 ```
 
-We call the built-in `authenticate_or_request_with_http_basic` method, which reads the `username` and `password` from the **Authorization** header and passes them to the block given. Inside that block, we'll look up the user by the username, and authenticate the user. If the block returns false or nil, then the request is halted and our application immediatelly responds with a `401 - Unauthorized`.
+We call the built-in `authenticate_or_request_with_http_basic` method, which reads the `username` and `password` from the **Authorization** header and passes them to the block given. Inside that block, we'll look up the user by the username, and authenticate the user. If the block returns false, the request is halted and our application immediatelly responds with a `401 - Unauthorized`.
 
-One limitation we might come across is the fact that this method doesn't allow for much customization. For example, it always responds with the Content-Type set to HTML regardless of the mime type requested by the API client. There's also no easy way to add a custom error message if we wanted to.
+Using **curl**, we can test our Basic Auth authentication using the `-u` option:
+
+```
+$ curl -Iu 'carlos:secret' http://localhost:3000/episodes
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+```
+
+curl automatically converts our credentials to the proper Basic Auth header format.
+
+
+One limitation we might come across is the fact that this method doesn't allow for much customization. For example, it always responds with the Content-Type set to HTML regardless of the mime type requested by the API client. 
+
+```
+$ curl -Iu 'carlos:fakesecret' http://localhost:3000/episodes.json
+HTTP/1.1 401 Unauthorized 
+Content-Type: text/html; charset=utf-8
+```
+
+There's also no easy way to add a custom error message to the response body if we wanted to.
 
 Another method we can use instead is the `authenticate_with_http_basic`:
 
@@ -136,124 +148,37 @@ Let's look at another API authentication strategy that can help prevent this ris
 
 [Demo app](https://github.com/codeschool/BananaPodcast/tree/token_based_authentication)
 
-The token based authentication is when the API client includes an application provided API token for each request. A lot of popular services offer token based authentication for connecting with their API, like HipChat, Campfire, Backpack, Last.fm and many others.
+A token based authentication is when the API client uses a token for making authenticated HTTP requests. A lot of popular services offer token based authentication for connecting with their API, like HipChat, Campfire, Backpack, Last.fm and many others. It's not yet a standard, but there is an official draft that specifies the scheme.
 
 Pros:
 
   * More convenient, as you can easily expire or regenerate tokens without affecting the user's account password.
   * If compromised, vulnerability limited to API, not the user's master account
-  * You can have multiple keys per account (e.g. users can have "test" and "production" keys side by side.)
+  * We could have multiple tokens for a user, which they can use to grant access to different API clients.
+  * For each token, different access rules can be implemented.
+  * Draft <http://tools.ietf.org/html/draft-hammer-http-token-auth-01>
 
-Getting a token usually means visiting your profile settings page on the service's website and requesting an access key - or they might already have one generated for you.
+Getting an API token usually means visiting your profile settings page on the service's website and requesting an access key. Some might already have a key generated for you.
 
 ![](https://www.evernote.com/shard/s37/sh/70286f99-4f35-45f3-acb1-c796eed11de7/9b1d50385934d58541afa47d95654bdb/deep/0/Backpack--Your-user-settings.png)
 
+The Authorization header format for Token based authentication looks like so:
 
-### Manual Implementation
+```
+Authorization Token token=123123123
+```
 
-*(Might not even include this one...)*
-
-On a token based authentication, there are two ways that APIs accept these tokens: either through a request header or as a query string parameter. Using a request header should be preferred over passing the token in the URL, since it helps prevent users from sharing URLs with access credentials in them.
-
-Let's look at an example of passing a token using an HTTP header. We'll start with the integration tests.
-
-First, we'll create a user record and then some payments for that user. We'll set the **USER_AUTH_TOKEN** with the user's authentication token. The name for the header can be anything we want, but we need make sure it doesn't conflict with one of the standard headers.
+Similar to the previous built-in Basic Auth method, Rails also offers the `authenticate_or_request_with_http_token` method. This method automatically checks the **Authorization** request header for a token and passes it as an argument to the given block:
 
 ```ruby
-# test/integration/listing_payments_test.rb
-require 'test_helper'
-
-class ListingPaymentsTest < ActionDispatch::IntegrationTest
-  setup do
-    @user = User.create!(email: 'foo@bar.com')
-    @user.payments.create!(amount: 99.99)
-  end
-
-  teardown do
-    User.destroy_all
-  end
-
-  test 'valid authentication' do
-    get '/payments', {}, { 'USER_AUTH_TOKEN' => @user.auth_token }
-    assert_equal 200, response.status
-  end
-
-  test 'invalid authentication' do
-    get '/payments', {}, { 'USER_AUTH_TOKEN' => @user.auth_token + 'fake' }
-    assert_equal 401, response.status
-  end
+authenticate_or_request_with_http_token do |token, options|
+  # authenticate user...
 end
 ```
 
-For valid authentication requests, we'll respond with a `200 - OK` status code. Invalid authentication requests will get a `401 - Unauthorized` status code.
+Inside that block, we implement our authentication strategy. Our application responds with a `401 Unauthorized` if the block returns false.
 
-In our User model, we'll use a *before_create* callback to generate the token. It's super important to ensure the token is unique in the users table. We'll place the token generation code inside a while loop, and keep regenerating it in case it already exists.
-
-```ruby
-# app/models/user.rb
-class User < ActiveRecord::Base
-  has_many :payments, dependent: :destroy
-  before_create :set_auth_token
-
-  private
-
-    def set_auth_token
-      return if auth_token.present?
-
-      begin
-        self.auth_token = SecureRandom.base64(15)
-      end while self.class.exists?(auth_token: self.auth_token)
-    end
-end
-```
-
-For simplicity, we'll assume all requests to our application will need to be authenticated so we'll edit our `ApplicationController`. We'll create a *before_action* that authenticates the user. We'll read from the **USER_AUTH_TOKEN** header and use the value to look the user up.
-
-```ruby
-# app/controllers/application_controller.rb
-class ApplicationController < ActionController::Base
-  protect_from_forgery with: :exception
-  before_action :authenticate_user
-
-  protected
-    def authenticate_user
-      current_user || render_unauthorized
-    end
-
-    def current_user
-      @current_user ||= User.find_by(auth_token: auth_token)
-    end
-
-    def auth_token
-      request.headers['USER_AUTH_TOKEN']
-    end
-
-    def render_unauthorized
-      head 401
-    end
-end
-```
-
-If a user is found for the given token, then `current_user` returns the user object, which is evaluated to truthy; if not, then we'll simply respond with a 401 status code and no content.
-
-Finally, our `PaymentsController` uses `current_user` to fetch its payment records. Then, it renders them as JSON and responds with a 200 status code.
-
-```ruby
-# app/controllers/episodes_controller.rb
-class Episodes < ApplicationController
-  def index
-    episodes = Episode.all
-    render json: payments, status: 200
-  end
-end
-```
-
-### Rails' Built-in
-
-Advantages of using the `authenticate_or_request_with_http_token` method built into Rails:
-
-* Automatically checks the **Authorization** request header for a token.
-* Responds with a `401 Unauthorized` if block returns false
+Let's look at how our integration tests look like using the token based authentication.
 
 ```ruby
 # test/integration/listing_episodes.rb
@@ -270,7 +195,7 @@ class ListingEpisodesTest < ActionDispatch::IntegrationTest
 
   # Show this example first
   test 'valid authentication with manual token' do
-    get '/episodes', {}, { 'Accept' => Mime::JSON, 'Authorization' => @auth_header }
+    get '/episodes', {}, { 'Authorization' => @auth_header }
     assert_equal 200, response.status
     assert_equal Mime::JSON, response.content_type
   end
@@ -289,13 +214,16 @@ class ListingEpisodesTest < ActionDispatch::IntegrationTest
 end
 ```
 
-Back in our controller we call the `authenticate_or_request_with_http_token` method, which takes a block and passes two arguments to it. We only really care about the first one, the token, which we'll use to look the user up.
+Back in our `EpisodesController` we call the `authenticate_or_request_with_http_token` method. For the time being, we only care about the first argument, which is the token we'll use to look the user up.
 
 ```ruby
-# app/application_controller.rb
-class ApplicationController < ActionController::Base
-  protect_from_forgery with: :exception
+class EpisodesController < ApplicationController
   before_action :authenticate
+
+  def index
+    episodes = Episode.all
+    render json: episodes, status: 200
+  end
 
   protected
     def authenticate
@@ -306,39 +234,31 @@ class ApplicationController < ActionController::Base
 end
 ```
 
-If a user is not found and the block returns nil, then the `authenticate_or_request_with_http_token` returns a `401 Unauthorized` response.
+If a user is not found and the block returns false, our application immediately responds with a `401 Unauthorized` status code.
 
-Caveat is that it doesn't give you much room for customization. Once it fails, it responds right away with a 401 status code and using an HTML format. If we need to 
+In case we need more flexibility in the way we respond, we can use the `authenticate_with_http_token` method instead and build the response ourselves:
 
 ```ruby
-class ApplicationController < ActionController::Base
-  protect_from_forgery with: :exception
+class EpisodesController < ApplicationController
   before_action :authenticate
+
+  def index
+    render json: [], status: 200
+  end
 
   protected
     def authenticate
-      token_and_opts = ActionController::HttpAuthentication::Token.token_and_options(request)
-      # [<token>, {<opts>}]
-      user = User.find_by(auth_token: token_and_opts.first)
-      unless user
-        render json: 'Bad credentials', status: 401 and return false
+      authenticate_token || render_unauthorized
+    end
+
+    def authenticate_token
+      authenticate_with_http_token do |token, options|
+        User.find_by(auth_token: token)
       end
     end
+
+    def render_unauthorized
+      render json: 'Bad credentials', status: 401
+    end
 end
-
-
 ```
-
-## HTTP Digest Auth
-
-* HTTP Digest Auth (see **Rest in Practice** page 519)
-    * From the [http://www.ietf.org/rfc/rfc2617.txt](RFC) *unlike Basic,this verification can be done without sending the password in the clear*
-    * Rails support out of the box
-
-
-I've decided not to include SSO for now due to its complexity and because most public API services provide some sort of token-based solutions.
-
-
-## Inbox
-
-<http://stackoverflow.com/questions/4968009/api-design-http-basic-authentication-vs-api-token>
