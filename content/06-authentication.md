@@ -1,6 +1,7 @@
 # Authentication
 
-*TODO: elaborate intro.*
+TODO: elaborate intro.
+TODO: Mention and implement the [WWW-Authenticate Response Header](http://tools.ietf.org/html/draft-hammer-http-token-auth-01#section-4) for custom responses.
 
 > With the growing use of distributed web services and cloud computing, clients need to allow other parties access to the resources they control. / http://tools.ietf.org/html/draft-hammer-http-token-auth-01
 
@@ -236,7 +237,42 @@ end
 
 If a user is not found and the block returns false, our application immediately responds with a `401 Unauthorized` status code.
 
-In case we need more flexibility in the way we respond, we can use the `authenticate_with_http_token` method instead and build the response ourselves:
+It is very important that the auth_token is unique across all users. In our User model, we use a *before_create* callback to generate the token. The token generation code is placed inside a while loop - in case `SecureRandom` generates a token that's already being used, we'll just keep looping until it generates one that's unique.
+
+```ruby
+class User < ActiveRecord::Base
+  before_create :set_auth_token
+
+  private
+    def set_auth_token
+      return if auth_token.present?
+
+      begin
+        self.auth_token = SecureRandom.hex
+      end while self.class.exists?(auth_token: self.auth_token)
+    end
+end
+```
+
+If we wanted to take itw one step further, we could also add an unique constraint on the auth_token on the database.
+
+Using curl, we can test our Token based authentication by passing a valid token in the Authorization header:
+
+```
+$ curl -IH "Authorization: Token token=16d7d6089b8fe0c5e19bfe10bb156832" http://localhost:3000/episodes
+HTTP/1.1 200 OK 
+Content-Type: application/json; charset=utf-8
+```
+
+However, the `authenticate_or_request_with_http_token` method has the same limitations as the basic auth one, in that it doesn't allow for easy customization and always returns HTML.
+
+```
+$ curl -IH "Authorization: Token token=fake" http://localhost:3000/episodes.json
+HTTP/1.1 401 Unauthorized 
+Content-Type: text/html; charset=utf-8
+```
+
+In case we need more flexibility in the way our API responds, we can use the `authenticate_with_http_token` method instead and build the response ourselves:
 
 ```ruby
 class EpisodesController < ApplicationController
@@ -261,4 +297,12 @@ class EpisodesController < ApplicationController
       render json: 'Bad credentials', status: 401
     end
 end
+```
+
+And now we have a custom response:
+
+```ruby
+$ curl -IH "Authorization: Token token=fake" http://localhost:3000/episodes/1.json
+HTTP/1.1 401 Unauthorized 
+Content-Type: application/json; charset=utf-8
 ```
