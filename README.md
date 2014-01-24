@@ -27,6 +27,10 @@ Following the *Zombie Apocalypse Broadcast* theme, here's an idea for a demo web
 
 * [The Lie of the API](http://ruben.verborgh.org/blog/2013/11/29/the-lie-of-the-api/)
 
+## TODOs
+
+* Mention status codes at the end of each level.
+
 ## Bad Examples
 
 ```

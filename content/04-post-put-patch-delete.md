@@ -107,7 +107,7 @@ In order to help API clients, the response body should also include the errors t
 
 ## PUT / PATCH
 
-The PUT and PATCH methods in Rails are used for updating existing resources. Both are routed `update` action on the resources' corresponding controller.
+The PUT and PATCH methods in Rails are used for updating existing resources. Both are routed to the `update` action on the resources' corresponding controller.
 
 According to the HTTP spec, the PUT method should be used when replacing a existing resource with another one provided in the request. However, when we update records in our Rails apps we are only partially changing an existing resource, like changing a user's name, email or password. This is exactly what the PATCH method is for.
 
@@ -228,41 +228,11 @@ TODO: elaborate options to the head method.
 
 Content below serves as reference.
 
-### Status Codes (merge this into previous chapters)
-
-See [Rack::Utils](https://github.com/rack/rack/blob/master/lib/rack/utils.rb#L542-L601)
+[Rack::Utils](https://github.com/rack/rack/blob/master/lib/rack/utils.rb#L542-L601)
 
 > It is bad form to return 200 and then the response just says 'request failed' - Jon Frikics
 
 Our previous spec:
-
-```ruby
-# spec/requests/zombies_spec.rb
-describe "Listing Zombies" do
-  describe "GET /zombies" do
-    it "responds with success" do
-      get zombies_path
-      expect(response.status).to be(200)
-    end
-  end
-end
-```
-
-Can be written in a more expressive way:
-
-
-```ruby
-# spec/requests/zombies_spec.rb
-describe "Listing Zombies" do
-  describe "GET /zombies" do
-    it "responds with success" do
-      get zombies_path
-      expect(response.status).to be_successful
-    end
-  end
-end
-```
-
 
 ## Successful
 
@@ -277,41 +247,13 @@ end
 * Respond with error message
     * Should contain information so the client can fix
 
-
-
-## Scaffold status codes.
-
-For testing, see [http://matthewlehner.net/rails-api-testing-guidelines/]().
-
-Use:
-
-  * RSpec
-  * jbuilder (for now, because it's out of the box)
-  * scaffold (to show what Rails gives us for free)
-
-
-## Creating a Resource
-
-Full list of status and helper methods: [https://github.com/rack/rack/blob/master/lib/rack/response.rb#L115-L131]()
-
+For testing, see <http://matthewlehner.net/rails-api-testing-guidelines/>
+Full list of status and helper methods: <https://github.com/rack/rack/blob/master/lib/rack/response.rb#L115-L131>
 
 * [GUID](http://en.wikipedia.org/wiki/Globally_unique_identifier)
     * Using the uuid datatype with the PostgreSQL adapter
     * https://coderwall.com/p/n_0awq
     * Gotcha: http://rny.io/rails/postgresql/2013/07/27/use-uuids-in-rails-4-with-postgresql.html
-
-### Valid Response
-
-> If the POST request succeeds, the server creates an order resource. It then generates an HTTP response with a status code of 201 Created, a Location header containing the newly created order’s URI, and confirmation of the new order’s state in the response body - Excerpt From: Ian Robinson. “REST in Practice.” iBooks.)
-
-> The Location header that identifies the URI of the newly created order resource is important. Once the client has the URI of its order resource, it can then interact with it via HTTP using GET, PUT, and DELETE. - Excerpt From: Ian Robinson. “REST in Practice.” iBooks.
-
-
-### Invalid Response
-
-* Client's fault (400)
-* Server's error (500)
-
 
 ## Status with no Message Body
 
