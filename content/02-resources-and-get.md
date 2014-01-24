@@ -148,9 +148,9 @@ GET /zombies
 HTTP/1.1 200 OK # 200 status code
 ```
 
-The first digit of the status code defines the class of response. The 200 class means the action was successfully received, understood, and accepted by the server.
+The first digit of the status code defines the class of response. The 200 class means the action was successfully received, understood, and accepted by the server. We are going to be looking at other successful status codes when we talk about other HTTP methods.
 
-Another way we can write our asserting is by calling utility methods added by `Rack::Test`
+Another way we can write our assertion is by calling utility methods added by `Rack::Test`
 
 ```ruby
 require 'test_helper'
@@ -185,7 +185,9 @@ module API
 end
 ```
 
-Unless an error occurs, the default status code is 200. I prefer to be explicit when it comes to status codes, and we can do that by passing the status as a hash option.
+Under the hood, `render json: zombies` calls the `to_json` method on `zombies` and responds with a JSON string. The `to_json` is built into Rails.
+
+Unless an error occurs, the default status code is 200. I prefer to be explicit when it comes to status codes, and we can do that by passing the status as a hash option:
 
 ```ruby
 # app/controllers/api/zombies_controller.rb
@@ -199,7 +201,7 @@ module API
 end
 ```
 
-or in a more expressive way
+We can also use the `:ok` symbol instead of a number:
 
 ```ruby
 # app/controllers/api/zombies_controller.rb
@@ -262,7 +264,7 @@ In REST, most URIs will not depend on query strings but there are some situation
 
 Let's look at an example of a filter.
 
-In the following code, we want to list all zombies whose weapons are an **axe**. We will pass the weapon name as a query string, which looks like this:
+In the following code, we want to list all zombies whose weapons are an **axe**. We will pass the weapon name as a query string:
 
 ```
 /zombies?weapon=axe
@@ -284,9 +286,9 @@ module API
 end
 ```
 
-In our test code, we want to start by creating two zombies with two different weapons. Then, we want to issue a GET request to our zombies endpoint passing in the **weapon** query string.
+In our test code, we start by creating two zombies with two different weapons. Then, we want to issue a GET request to our zombies endpoint passing in the **weapon** query string.
 
-The last step is verifying that our action only returns zombies that use that weapon. In order to do that, we need to parse the response using `JSON.parse`.
+The last step is verifying that our action only returns zombies that use that weapon. In order to do that, we need to parse the `response.body` using `JSON.parse`.
 
 ```ruby
 require 'test_helper'
@@ -407,7 +409,7 @@ end
 
 ## cURL
 
-Finally, let's look at one other way we can test our web API by issuing real HTTP requests over the network and checking the response. We'll use a command line networking tool called **curl**.
+Finally, let's look how we can test our web API by issuing real HTTP requests over the network and checking the response. We'll use a command line networking tool called **curl**.
 
 **curl** is shipped with OS X. It should be available on most unix/gnu linux package repositories and you can also find an installer for Windows machines.
 
@@ -441,7 +443,7 @@ $ curl http://api.cs-zombies-dev.com:3000/zombies/7
 
 Alongside the status code, responses also send back **Headers**.
 
-Headers are like labels that we stick on an envelope. They include additional information that API clients can use to make decisions.
+Headers are like labels that we stick on an envelope. They include additional information that API clients can use to help with further access to the corresponding resource.
 
 > Headers are like labels that we stick on an envelope to ensure that it’s delivered to the right place and to set processing context for the contents - REST in Practice.
 

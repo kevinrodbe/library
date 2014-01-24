@@ -58,7 +58,7 @@ def index
 end
 ```
 
-Under the hood, `render json: zombies` calls the `to_json` method on `zombies` and responds with a JSON string:
+We've learned that `render json: zombies` calls the `to_json` method on `zombies`, so here's what the JSON response body looks like:
 
 ```
 [{"id":1,"name":"Jon","age":123,"created_at":"2013-12-12T20:01:24.586Z",
