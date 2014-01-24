@@ -138,23 +138,24 @@ It's a good practice to limit your API end points to only those that will actua
 
 ## CONSTRAINTS and NAMESPACE
 
-**Main website**: ZombieBroadcast.com, serves users with a browser and a mouse.
-
-**API root**: api.ZombieBroadcast.com, serves other applications.
-
-Giving our API its own subdomain is a good approach for a couple reasons.
+On Rails projects serve a web version and a web API at the same time, it's common to start off with a single codebase for both. Giving our API its own subdomain is a good approach for a couple reasons.
 
 First, it allows us to decouple our public facing website from our backend API and deploy them to different servers. If for some reason our website server goes down, then our API will not be affected. 
 
-The other benefit is the ability to scale our applications individually. If our API starts getting lots of access, we can load balance traffic at the DNS level, which is a way faster alternative than doing it from our app servers. 
+The other benefit is the ability to scale our applications individually. If our API starts getting lots of access, we can load balance traffic at the DNS level, which is a way faster alternative than doing it from our app servers.
 
-On most projects, I've found that it's easier to start with a single Rails codebase for both the backend API and the web client. Assuming our API root is located at [api.zombiebroadcast.com](), let's see how we can organize our routes and ensure that access to our API comes strictly from the **api** subdomain.
+Assuming our API is accessible at [api.cs-zombies.com](), let's see how we can organize our routes and ensure that access to our API comes strictly from the **api** subdomain.
+
+So basically:
+
+  * Main website: <http://cs-zombies.com>, serves users with a browser and a mouse.
+  * API: <http://api.cs-zombies.com>, serves other applications.
 
 ### CONSTRAINTS
 
 ```ruby
-resources :zombies, constraints: { subdomain: 'api' } # i.e., api.ZombieBroadcast.com/zombies
-resources :humans, constraints: { subdomain: 'api' } # i.e., api.ZombieBroadcast.com/humans
+resources :zombies, constraints: { subdomain: 'api' } # i.e., api.zombies-dev.com/zombies
+resources :humans, constraints: { subdomain: 'api' } # i.e., api.zombies-dev.com/humans
 ```
 
 or
@@ -168,11 +169,23 @@ end
 
 In order to run this locally you will need to do one of the followings:
 
-  * Edit /etc/hosts
+  * Edit /etc/hosts or c:\WINDOWS\system32\drivers\etc\hosts
   * Use [POW](http://pow.cx)
   * Access your app through a service like http://lvh.me
 
-TODO: describe editing /etc/hosts.
+### Editing /etc/hosts
+
+Out of the previous options, I prefer editing the /etc/hosts file. This saves me from installing yet another dependency (POW) or depending on an internet connection (lvh.me).
+
+A convention I like to use is to add a '-dev' suffix to the domain name. So we'll edit our /etc/hosts and add the following entries:
+
+```
+# /etc/hosts
+127.0.0.1	cs-zombies-dev.com
+127.0.0.1	api.cs-zombies-dev.com
+```
+
+On UNIX, /etc/hosts is a system file so you will need root access - or use the `sudo` command if your OS supports it.
 
 From Jacob:
 
@@ -217,11 +230,13 @@ This means we'll need to place our API controllers under the `app/controllers/ap
 
 ```ruby
 # app/controllers/api
-class Api::ZombiesController < ApplicationController
+module Api
+  class ZombiesController < ApplicationController
+  end
 end
 ```
 
-Notice we now have **api** both in our URI and as our subdomain, i.e. [api.ZombieBroadcast/api/zombies]() and [api.ZombieBroadcast/api/humans](). 
+Notice we now have **api** both in our URI and as our subdomain, i.e. [api.cs-zombies-dev.com/api/zombies]() and [api.cs-zombies-dev.com/api/humans](). 
 
 We can remove this duplication by overriding the **path** option in our namespace and setting it to either `nil` or `'/'`. I personally prefer `'/'`, so let's go with that for now:
 

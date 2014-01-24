@@ -4,13 +4,9 @@
 
 This level covers Resources and the GET HTTP verb.
 
-TODO: introduce the concept of **HEADER**.
-
-> Headers are like labels that we stick on an envelope to ensure that it’s delivered to the right place and to set processing context for the contents - REST in Practice.
-
 ## Resources
 
-The key abstraction of information in REST is a **resource**. Any information that can be named can be a resource: a document or image, a temporal service (e.g. "today's weather in Florida"), a collection of other resources, a non-virtual object (e.g. a person), and so on. 
+The key abstraction of information in REST APIs is a **resource**. Any information that can be named can be a resource: a document or image, a temporal service (e.g. "today's weather in Florida"), a collection of other resources, a non-virtual object (e.g. a person), and so on. 
 
 > Resources are the fundamental building blocks of web-based systems, to the extent that the Web is often referred to as being “resource-oriented.
 
@@ -64,14 +60,14 @@ By using the `resources` method in the `config/routes.rb` file, Rails automatica
 
 ```
      Prefix Verb   URI Pattern                 Controller#Action
-    zombies GET    /zombies(.:format)          zombies#index
-            POST   /zombies(.:format)          zombies#create
- new_zombie GET    /zombies/new(.:format)      zombies#new
-edit_zombie GET    /zombies/:id/edit(.:format) zombies#edit
-     zombie GET    /zombies/:id(.:format)      zombies#show
-            PATCH  /zombies/:id(.:format)      zombies#update
-            PUT    /zombies/:id(.:format)      zombies#update
-            DELETE /zombies/:id(.:format)      zombies#destroy
+    zombies GET    /zombies(.:format)          api/zombies#index
+            POST   /zombies(.:format)          api/zombies#create
+ new_zombie GET    /zombies/new(.:format)      api/zombies#new
+edit_zombie GET    /zombies/:id/edit(.:format) api/zombies#edit
+     zombie GET    /zombies/:id(.:format)      api/zombies#show
+            PATCH  /zombies/:id(.:format)      api/zombies#update
+            PUT    /zombies/:id(.:format)      api/zombies#update
+            DELETE /zombies/:id(.:format)      api/zombies#destroy
 ```
 
 Now let's see how to properly build our API in order to respond to client actions on those resources. We'll start with the GET method.
@@ -88,14 +84,16 @@ The GET method means
 These are the two GET routes we'll implement for our zombies resources:
  
 ```
-    zombies GET    /zombies(.:format)          zombies#index
-     zombie GET    /zombies/:id(.:format)      zombies#show
+    zombies GET    /zombies(.:format)          api/zombies#index
+     zombie GET    /zombies/:id(.:format)      api/zombies#show
 ```
 
 The routes to `/zombies/new` and `/zombies/:id/edit` return HTML forms for both creating new resources and for updating existing ones. Since we won't be serving any HTML from our web API, we'll exclude `new` and `edit`.
 
 ```ruby
-resources :zombies, except: [:new, :edit]
+namespace :api, path: '/', constraints: { subdomain: 'api' } do
+  resources :zombies, except: [:new, :edit]
+end
 ```
 
 Two important characteristics about the GET method:
@@ -143,7 +141,14 @@ class ListingZombies < ActionDispatch::IntegrationTest
 end
 ```
 
-The status code for a successful response from a GET request is typically **200**. We'll look more into the different types of status codes later, but the **200** class of status code indicates the client's request was successfully received, understood, and accepted.
+Every HTTP response includes a status code, which is a 3-digit integer result code of the attempt to understand and satisfy the request.
+
+```
+GET /zombies
+HTTP/1.1 200 OK # 200 status code
+```
+
+The first digit of the status code defines the class of response. The 200 class means the action was successfully received, understood, and accepted by the server.
 
 Another way we can write our asserting is by calling utility methods added by `Rack::Test`
 
@@ -411,7 +416,7 @@ Because we'll be issuing real network calls, we'll need to make sure our Rails a
 First, a simple GET request to list all zombies:
 
 ```
-$ curl http://api.banana.com:3000/zombies
+$ curl http://api.cs-zombies-dev.com:3000/zombies
 [{"id":5,"name":"Joanna","age":null,"created_at":"2014-01-17T18:40:40.195Z",
 "updated_at":"2014-01-17T18:40:40.195Z","weapon":"axe"},
 {"id":6,"name":"John","age":null,"created_at":"2014-01-17T18:40:40.218Z",
@@ -421,7 +426,7 @@ $ curl http://api.banana.com:3000/zombies
 Now all zombies that use an axe as a weapon:
 
 ```
-$ curl http://api.zombies-rails.com:3000/zombies?weapon=axe
+$ curl http://api.cs-zombies-dev.com:3000/zombies?weapon=axe
 [{"id":7,"name":"Joanna","age":123,"created_at":"2014-01-17T18:42:47.026Z",
 "updated_at":"2014-01-17T18:42:47.026Z","weapon":"axe"}]
 ```
@@ -429,15 +434,21 @@ $ curl http://api.zombies-rails.com:3000/zombies?weapon=axe
 Now just a specific zombie:
 
 ```
-$ curl http://api.zombies-rails.com:3000/zombies/7
+$ curl http://api.cs-zombies-dev.com:3000/zombies/7
 {"id":7,"name":"Joanna","age":123,"created_at":"2014-01-17T18:42:47.026Z",
 "updated_at":"2014-01-17T18:42:47.026Z","weapon":"axe"}
 ```
 
-We can also ask curl to only show response headers, with the `-I` option:
+Alongside the status code, responses also send back **Headers**.
+
+Headers are like labels that we stick on an envelope. They include additional information that API clients can use to make decisions.
+
+> Headers are like labels that we stick on an envelope to ensure that it’s delivered to the right place and to set processing context for the contents - REST in Practice.
+
+We can ask curl to show response headers with the `-I` option:
 
 ```
-$ curl -I http://api.zombies-rails.com:3000/zombies/7
+$ curl -I http://api.cs-zombies-dev.com:3000/zombies/7
 HTTP/1.1 200 OK
 X-Frame-Options: SAMEORIGIN
 X-XSS-Protection: 1; mode=block
