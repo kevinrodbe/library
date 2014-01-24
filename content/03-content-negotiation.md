@@ -1,5 +1,7 @@
 # Content Negotiation
 
+[Demo app](https://github.com/codeschool/BananaPodcast/tree/content_negotiation)
+
 Web APIs need to be flexible and cater to different types of clients. Content Negotiation is the process in which an API client and the API server determine the best representation for a given response when there are multiple representations available. (From [Content Negotiation](http://en.wikipedia.org/wiki/Content_negotiation))
 
 When navigating web pages we don't typically worry about content negotiation because, as users, we delegate most of this task to the browser. It tells the server, on our behalf, what representation it accepts. 

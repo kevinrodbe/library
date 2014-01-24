@@ -11,6 +11,8 @@ There are multiple strategies to API versioning and we are going to be looking a
 
 ## Versioning using the URI
 
+[Demo app](https://github.com/codeschool/BananaPodcast/tree/uri_version)
+
 The simplest and most straight forward way to version our API is to add the version to the URI:
 
 ```
@@ -273,6 +275,7 @@ end
 
 ## Versioning using the Accept header
 
+[Demo app](https://github.com/codeschool/BananaPodcast/tree/accept_header_version)
 
 Although API versioning using the URI is more common to find in the wild and it's simple to implement, some people don't consider it to be the best strategy. An argument can be made that URIs which API clients can depend on should be preserved over time, and the API version should be indicated elsewhere.
 

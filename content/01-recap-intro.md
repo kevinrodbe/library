@@ -1,5 +1,7 @@
 # Rails APIs and REST
 
+[Demo app](https://github.com/codeschool/BananaPodcast/tree/resources_and_get)
+
 This is a course about building Web APIs in Rails - more specifically REST web APIs in Rails. 
 
 > REST stands for Representational State Transfer, and it's an architectural style for distributed hypermedia systems. 
