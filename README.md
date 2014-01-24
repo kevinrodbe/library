@@ -26,7 +26,7 @@ Following the *Zombie Apocalypse Broadcast* theme, here's an idea for a demo web
 3. [Content Negotiation](content/03-content-negotiation.md) (complete)
 4. [POST, PUT/PATCH, DELETE](content/04-post-put-patch-delete-head.md) (in progress)
 5. [Versioning](content/05-versioning.md) (complete)
-6. [Authentication](content/06-authentication.md) (pending)
+6. [Authentication](content/06-authentication.md) (complete)
 
 ## TODOS
 
