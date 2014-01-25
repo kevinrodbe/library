@@ -6,7 +6,7 @@ This level covers Resources and the GET HTTP verb.
 
 ## Resources
 
-The key abstraction of information in REST APIs is a **resource**. Any information that can be named can be a resource: a document or image, a temporal service (e.g. "today's weather in Florida"), a collection of other resources, a non-virtual object (e.g. a person), and so on. 
+The key abstraction of information in REST APIs is a **resource**. Any information that can be named can be a resource: a document or image, a temporal service (e.g. "today's weather in Florida"), a collection of other resources, a non-virtual object (e.g. a person), and so on.
 
 > Resources are the fundamental building blocks of web-based systems, to the extent that the Web is often referred to as being “resource-oriented.
 
@@ -79,10 +79,10 @@ From the [RFC](http://tools.ietf.org/search/rfc2616#section-9.3):
 
 The GET method means
 
-> retrieve whatever information is identified by the URI. 
+> retrieve whatever information is identified by the URI.
 
 These are the two GET routes we'll implement for our zombies resources:
- 
+
 ```
     zombies GET    /zombies(.:format)          api/zombies#index
      zombie GET    /zombies/:id(.:format)      api/zombies#show
@@ -117,7 +117,7 @@ So, integration tests... you mean Capybara ?
 
 Well, Capybara is **not** the best option when it comes to API testing because its DSL mimics the language an actual user would use when interacting with the **browser**. When it comes to web APIs, actions like *click_link*, *fill_in*, *select_from* and others are not part of our domain.
 
-> Do not test APIs with Capybara. It wasn’t designed for it. 
+> Do not test APIs with Capybara. It wasn’t designed for it.
 - Jonas Nicklas, the creator of Capybara.
 
 So we'll stick with MiniTest, used by Rails' `ActiveSupport::TestCase`
@@ -148,7 +148,19 @@ GET /zombies
 HTTP/1.1 200 OK # 200 status code
 ```
 
-The first digit of the status code defines the class of response. The 200 class means the action was successfully received, understood, and accepted by the server. We are going to be looking at other successful status codes when we talk about other HTTP methods.
+The first digit of the status code defines the class of response. The 200 class means the action was successfully received, understood, and accepted by the server.
+
+TODO: Add "If an error occurred.. 404 or 500"
+
+Knowing the correct status code for each situation is crucial for writing good web APIS. It's good to memorize the most important, which we'll go over in a little bit.
+
+<http://envylabs.com/http-status-codes>
+
+* 100
+* 200
+* 300
+* 400
+* 500
 
 Another way we can write our assertion is by calling utility methods added by `Rack::Test`
 
@@ -348,7 +360,7 @@ class ListingZombies < ActionDispatch::IntegrationTest
 end
 ```
 
-We have two assertions. The first one checks for the 200 status code, meaning the response is successful, and the other one verifies the proper Zombie was returned by checking its name. 
+We have two assertions. The first one checks for the 200 status code, meaning the response is successful, and the other one verifies the proper Zombie was returned by checking its name.
 
 Our controller code to make the tests pass is pretty simple. Just find the Zombie and return its JSON representation along with the 200 status code.
 
