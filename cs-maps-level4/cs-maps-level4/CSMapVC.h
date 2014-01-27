@@ -10,4 +10,6 @@
 
 @interface CSMapVC : UIViewController
 
+extern const NSString *DIRECTIONS_API_URL;
+
 @end

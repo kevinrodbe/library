@@ -35,6 +35,8 @@
 		AB772CD518848DB700490D48 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB772CD418848DB700490D48 /* SystemConfiguration.framework */; };
 		AB772CD818848DD400490D48 /* CSMapVC.m in Sources */ = {isa = PBXBuildFile; fileRef = AB772CD718848DD400490D48 /* CSMapVC.m */; };
 		AB772CDB1884B4D500490D48 /* CSMarker.m in Sources */ = {isa = PBXBuildFile; fileRef = AB772CDA1884B4D500490D48 /* CSMarker.m */; };
+		ABD8F7FF1892C49D00A34C62 /* CSDirectionsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD8F7FE1892C49D00A34C62 /* CSDirectionsVC.m */; };
+		ABD8F8021892EAE200A34C62 /* CSDirectionsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = ABD8F8011892EAE200A34C62 /* CSDirectionsCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -82,6 +84,10 @@
 		AB772CD718848DD400490D48 /* CSMapVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSMapVC.m; sourceTree = "<group>"; };
 		AB772CD91884B4D500490D48 /* CSMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSMarker.h; sourceTree = "<group>"; };
 		AB772CDA1884B4D500490D48 /* CSMarker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSMarker.m; sourceTree = "<group>"; };
+		ABD8F7FD1892C49D00A34C62 /* CSDirectionsVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSDirectionsVC.h; sourceTree = "<group>"; };
+		ABD8F7FE1892C49D00A34C62 /* CSDirectionsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSDirectionsVC.m; sourceTree = "<group>"; };
+		ABD8F8001892EAE200A34C62 /* CSDirectionsCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSDirectionsCell.h; sourceTree = "<group>"; };
+		ABD8F8011892EAE200A34C62 /* CSDirectionsCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSDirectionsCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -172,6 +178,10 @@
 				AB772C9B18848D4500490D48 /* CSAppDelegate.m */,
 				AB772CD618848DD400490D48 /* CSMapVC.h */,
 				AB772CD718848DD400490D48 /* CSMapVC.m */,
+				ABD8F7FD1892C49D00A34C62 /* CSDirectionsVC.h */,
+				ABD8F7FE1892C49D00A34C62 /* CSDirectionsVC.m */,
+				ABD8F8001892EAE200A34C62 /* CSDirectionsCell.h */,
+				ABD8F8011892EAE200A34C62 /* CSDirectionsCell.m */,
 				AB772CD91884B4D500490D48 /* CSMarker.h */,
 				AB772CDA1884B4D500490D48 /* CSMarker.m */,
 				AB772C9D18848D4500490D48 /* Images.xcassets */,
@@ -312,6 +322,8 @@
 				AB772C9C18848D4500490D48 /* CSAppDelegate.m in Sources */,
 				AB772CDB1884B4D500490D48 /* CSMarker.m in Sources */,
 				AB772C9818848D4500490D48 /* main.m in Sources */,
+				ABD8F8021892EAE200A34C62 /* CSDirectionsCell.m in Sources */,
+				ABD8F7FF1892C49D00A34C62 /* CSDirectionsVC.m in Sources */,
 				AB772CD818848DD400490D48 /* CSMapVC.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
