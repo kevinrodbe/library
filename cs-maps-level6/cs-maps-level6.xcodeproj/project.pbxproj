@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AB5DC7CD1896A6FF00A4869C /* orlando.gpx in Resources */ = {isa = PBXBuildFile; fileRef = AB5DC7CC1896A6FF00A4869C /* orlando.gpx */; };
 		AB683090189603D10036CD52 /* orange.txt in Resources */ = {isa = PBXBuildFile; fileRef = AB68308F189603D10036CD52 /* orange.txt */; };
 		AB68309318961AFA0036CD52 /* CSStreetViewVC.m in Sources */ = {isa = PBXBuildFile; fileRef = AB68309218961AFA0036CD52 /* CSStreetViewVC.m */; };
 		AB772C8C18848D4500490D48 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB772C8B18848D4500490D48 /* Foundation.framework */; };
@@ -52,6 +53,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AB5DC7CC1896A6FF00A4869C /* orlando.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = orlando.gpx; sourceTree = "<group>"; };
 		AB68308F189603D10036CD52 /* orange.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = orange.txt; sourceTree = "<group>"; };
 		AB68309118961AFA0036CD52 /* CSStreetViewVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSStreetViewVC.h; sourceTree = "<group>"; };
 		AB68309218961AFA0036CD52 /* CSStreetViewVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CSStreetViewVC.m; sourceTree = "<group>"; };
@@ -201,6 +203,7 @@
 		AB772C9218848D4500490D48 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				AB5DC7CC1896A6FF00A4869C /* orlando.gpx */,
 				AB772C9318848D4500490D48 /* cs-maps-level6-Info.plist */,
 				AB772C9418848D4500490D48 /* InfoPlist.strings */,
 				AB772C9718848D4500490D48 /* main.m */,
@@ -306,6 +309,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AB5DC7CD1896A6FF00A4869C /* orlando.gpx in Resources */,
 				AB772CBD18848D7000490D48 /* GoogleMaps.bundle in Resources */,
 				AB772C9618848D4500490D48 /* InfoPlist.strings in Resources */,
 				AB683090189603D10036CD52 /* orange.txt in Resources */,

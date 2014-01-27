@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AB5DC7C91896A60D00A4869C /* orlando.gpx in Resources */ = {isa = PBXBuildFile; fileRef = AB5DC7C81896A60D00A4869C /* orlando.gpx */; };
 		AB772C8C18848D4500490D48 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB772C8B18848D4500490D48 /* Foundation.framework */; };
 		AB772C8E18848D4500490D48 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB772C8D18848D4500490D48 /* CoreGraphics.framework */; };
 		AB772C9018848D4500490D48 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB772C8F18848D4500490D48 /* UIKit.framework */; };
@@ -50,6 +51,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AB5DC7C81896A60D00A4869C /* orlando.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = orlando.gpx; path = ../orlando.gpx; sourceTree = "<group>"; };
 		AB772C8818848D4500490D48 /* cs-maps-level4.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "cs-maps-level4.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB772C8B18848D4500490D48 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		AB772C8D18848D4500490D48 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -193,6 +195,7 @@
 		AB772C9218848D4500490D48 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				AB5DC7C81896A60D00A4869C /* orlando.gpx */,
 				AB772C9318848D4500490D48 /* cs-maps-level4-Info.plist */,
 				AB772C9418848D4500490D48 /* InfoPlist.strings */,
 				AB772C9718848D4500490D48 /* main.m */,
@@ -301,6 +304,7 @@
 				AB772CBD18848D7000490D48 /* GoogleMaps.bundle in Resources */,
 				AB772C9618848D4500490D48 /* InfoPlist.strings in Resources */,
 				AB772C9E18848D4500490D48 /* Images.xcassets in Resources */,
+				AB5DC7C91896A60D00A4869C /* orlando.gpx in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

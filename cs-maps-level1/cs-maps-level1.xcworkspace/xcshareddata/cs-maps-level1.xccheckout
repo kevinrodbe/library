@@ -5,7 +5,7 @@
 	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
 	<false/>
 	<key>IDESourceControlProjectIdentifier</key>
-	<string>7DC2CD09-22B8-48BD-A13B-DC94BF1A1023</string>
+	<string>39034586-DA7D-49B5-B64F-5E1571B963E7</string>
 	<key>IDESourceControlProjectName</key>
 	<string>cs-maps-level1</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
@@ -14,11 +14,11 @@
 		<string>ssh://github.com/codeschool/GoogleMapsCourseContent</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>cs-maps-level1/cs-maps-level1.xcodeproj/project.xcworkspace</string>
+	<string>cs-maps-level1/cs-maps-level1.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>546416FC-6B20-4896-A2D7-3CDA83D9E01B</key>
-		<string>../../..</string>
+		<string>../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>ssh://github.com/codeschool/GoogleMapsCourseContent</string>

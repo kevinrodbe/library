@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AB5DC7D31896A74F00A4869C /* orlando.gpx in Resources */ = {isa = PBXBuildFile; fileRef = AB5DC7D21896A74F00A4869C /* orlando.gpx */; };
 		AB772BF41884408700490D48 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB772BF31884408700490D48 /* Foundation.framework */; };
 		AB772BF61884408700490D48 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB772BF51884408700490D48 /* CoreGraphics.framework */; };
 		AB772BF81884408700490D48 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB772BF71884408700490D48 /* UIKit.framework */; };
@@ -47,6 +48,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AB5DC7D21896A74F00A4869C /* orlando.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = orlando.gpx; sourceTree = "<group>"; };
 		AB772BF01884408700490D48 /* cs-maps-level1.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "cs-maps-level1.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB772BF31884408700490D48 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		AB772BF51884408700490D48 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -178,6 +180,7 @@
 		AB772BFA1884408700490D48 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				AB5DC7D21896A74F00A4869C /* orlando.gpx */,
 				AB772BFB1884408700490D48 /* cs-maps-level1-Info.plist */,
 				AB772BFC1884408700490D48 /* InfoPlist.strings */,
 				AB772BFF1884408700490D48 /* main.m */,
@@ -283,6 +286,7 @@
 				AB772C25188440C900490D48 /* GoogleMaps.bundle in Resources */,
 				AB772BFE1884408700490D48 /* InfoPlist.strings in Resources */,
 				AB772C061884408700490D48 /* Images.xcassets in Resources */,
+				AB5DC7D31896A74F00A4869C /* orlando.gpx in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -514,6 +518,7 @@
 				AB772C1E1884408700490D48 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		AB772C1F1884408700490D48 /* Build configuration list for PBXNativeTarget "cs-maps-level1Tests" */ = {
 			isa = XCConfigurationList;
@@ -522,6 +527,7 @@
 				AB772C211884408700490D48 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

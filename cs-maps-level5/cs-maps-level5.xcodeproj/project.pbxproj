@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AB5DC7CB1896A6E500A4869C /* orlando.gpx in Resources */ = {isa = PBXBuildFile; fileRef = AB5DC7CA1896A6E500A4869C /* orlando.gpx */; };
 		AB683090189603D10036CD52 /* orange.txt in Resources */ = {isa = PBXBuildFile; fileRef = AB68308F189603D10036CD52 /* orange.txt */; };
 		AB772C8C18848D4500490D48 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB772C8B18848D4500490D48 /* Foundation.framework */; };
 		AB772C8E18848D4500490D48 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB772C8D18848D4500490D48 /* CoreGraphics.framework */; };
@@ -51,6 +52,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AB5DC7CA1896A6E500A4869C /* orlando.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = orlando.gpx; sourceTree = "<group>"; };
 		AB68308F189603D10036CD52 /* orange.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = orange.txt; sourceTree = "<group>"; };
 		AB772C8818848D4500490D48 /* cs-maps-level5.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "cs-maps-level5.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB772C8B18848D4500490D48 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -196,6 +198,7 @@
 		AB772C9218848D4500490D48 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				AB5DC7CA1896A6E500A4869C /* orlando.gpx */,
 				AB772C9318848D4500490D48 /* cs-maps-level5-Info.plist */,
 				AB772C9418848D4500490D48 /* InfoPlist.strings */,
 				AB772C9718848D4500490D48 /* main.m */,
@@ -301,6 +304,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AB5DC7CB1896A6E500A4869C /* orlando.gpx in Resources */,
 				AB772CBD18848D7000490D48 /* GoogleMaps.bundle in Resources */,
 				AB772C9618848D4500490D48 /* InfoPlist.strings in Resources */,
 				AB683090189603D10036CD52 /* orange.txt in Resources */,
