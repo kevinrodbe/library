@@ -2,9 +2,9 @@
 
 Once our API is deployed to production and clients start relying on it, any change or new feature that needs to be introduced will need to be done so in a way that doesn't disrupt existing clients.
 
-Versioning our API helps prevent major changes from breaking existing API clients. Every time a new, backwards-incompatible change needs to be made, we create a new API version and add the change only to this new version. This way, old clients relying in previous versions are not be affected.
+Versioning our API helps prevent major changes from breaking existing API clients. Every time a new, backwards-incompatible change needs to be made, we create a new API version and add the change only to this new version. This way, old clients relying in previous versions are not affected.
 
-There are multiple strategies to API versioning and we are going to be looking at the two most popular:
+There are multiple strategies to API versioning. We are going to be looking at the two most popular:
 
   * Using the URI
   * Using the **Accept** header
@@ -16,8 +16,8 @@ There are multiple strategies to API versioning and we are going to be looking a
 The simplest and most straight forward way to version our API is to add the version to the URI:
 
 ```
-api.rails-zombies.com/v1/zombies
-api.rails-zombies.com/v2/humans
+api.cs-zombies.com/v1/zombies
+api.cs-zombies.com/v2/humans
 ```
 
 Including the API version in the URI makes it easy to see which version is being used just by looking at it. It also allows us to test our API using the browser, which is pretty handy.

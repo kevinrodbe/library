@@ -16,9 +16,9 @@ This is the repo for the Rails API Course. Code examples can be found on the [Ba
 5. [Versioning](content/05-versioning.md) (complete)
 6. [Authentication](content/06-authentication.md) (complete)
 
-## Demo app
+## Challenge App
 
-Following the *Zombie Apocalypse Broadcast* theme, here's an idea for a demo web API:
+Following the *Zombie Apocalypse Broadcast* theme, here's an idea for the app used for the challenges.
 
 1. Get a list of infected humans. (**GET** to /infected_humans or /humans?status=infected)
 2. For each human, find the medical kit they need. (we can follow **hyperlink** for medical kit)
@@ -31,11 +31,4 @@ Following the *Zombie Apocalypse Broadcast* theme, here's an idea for a demo web
 
 * Mention status codes at the end of each level.
 
-## Bad Examples
 
-```
-GET /zombies/1/delete
-GET /zombies/create?name=John
-```
-
-It's technically valid, but it's not following the proper semantics.
