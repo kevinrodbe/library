@@ -6,7 +6,7 @@ The POST HTTP verb is used to request that the server accept the entity enclosed
 
 Successful POST requests create new resources on the server, and are neither safe nor idempotent. Submitting forms, adding an item to our shopping cart and rating a recently purchased product are all operations that generate side-effects. 
 
-Sequential POST requests to the same URI are likely to change the state of the application each time, that's why sometimes you'll see warnings when refreshing or re-visiting a browser URL right after submiting a form:
+Sequential POST requests to the same URI are likely to change the state of the application each time, that's why sometimes we'll see warnings when refreshing or re-visiting a browser URL right after submiting a form:
 
 ![](http://i.stack.imgur.com/52vBU.png)
 
@@ -23,11 +23,8 @@ class EpisodesController < ApplicationController
 
   def create
     episode = Episode.new(episode_params)
-
-    respond_to do |format|
-      if episode.save
-        format.json { render json: episode, status: :created, location: episode }
-      end
+    if episode.save
+      render json: episode, status: :created, location: episode
     end
   end
 end
@@ -43,7 +40,7 @@ class CreatingEpisodesTest < ActionDispatch::IntegrationTest
   test 'creates episodes' do
     post '/episodes',
       { episode: { title: 'Bananas', description: 'Learn about bananas.' }}.to_json,
-      { 'HTTP_ACCEPT' => Mime::JSON, 'CONTENT_TYPE' => Mime::JSON.to_s }
+      { 'Accept' => Mime::JSON, 'Content-Type' => Mime::JSON.to_s }
 
     assert_equal 201, response.status
     assert_equal Mime::JSON, response.content_type
@@ -57,6 +54,20 @@ end
 ```
 
 > The action performed by the POST method might not result in a resource that can be identified by a URI. In this case, either 200 (OK) or 204 (No Content) is the appropriate response status, depending on whether or not the response includes an entity that describes the result.
+
+So for successful responses that don't include an entity, we can return a `204 - No Content` instead:
+
+```ruby
+class EpisodesController < ApplicationController
+
+  def create
+    episode = Episode.new(episode_params)
+    if episode.save
+      render nothing: true, status: 204, location: episode# :no_content
+    end
+  end
+end
+```
 
 For unsuccessful POST requests, the response is a little different.
 
@@ -77,7 +88,7 @@ class CreatingEpisodesTest < ActionDispatch::IntegrationTest
   test 'does not create invalid episodes' do
     post '/episodes',
       { episode: { title: nil, description: 'Learn about bananas.' }}.to_json,
-      { 'HTTP_ACCEPT' => Mime::JSON, 'CONTENT_TYPE' => Mime::JSON.to_s }
+      { 'Accept' => Mime::JSON, 'Content-Type' => Mime::JSON.to_s }
 
     assert_equal 422, response.status
     assert_equal Mime::JSON, response.content_type
@@ -92,13 +103,10 @@ Here's the controller code that makes the tests pass:
 ```ruby
 def create
   episode = Episode.new(episode_params)
-
-  respond_to do |format|
-    if episode.save
-      format.json { render json: episode, status: :created, location: episode }
-    else
-      format.json { render json: episode.errors, status: :unprocessable_entity }
-    end
+  if episode.save
+    render json: episode, status: :created, location: episode
+  else
+    render json: episode.errors, status: :unprocessable_entity
   end
 end
 ```
@@ -140,10 +148,8 @@ Controller code:
 ```ruby
 def update
   episode = Episode.find(params[:id])
-  respond_to do |format|
-    if episode.update(episode_params)
-      format.json { render json: episode, status: 200 }
-    end
+  if episode.update(episode_params)
+    render json: episode, status: 200
   end
 end
 ```
@@ -173,8 +179,6 @@ class Episode < ActiveRecord::Base
 end
 ```
 
-TODO: include `204 No Content`.
-
 ## DELETE
 
 The DELETE method is used to delete the resource identified by the URI. 
@@ -183,7 +187,7 @@ According to the rfc, *the client cannot be guaranteed that the operation has be
 
 A successful response SHOULD be 200 (OK) if the response includes an entity describing the status, 202 (Accepted) if the action has not yet been enacted, or 204 (No Content) if the action has been enacted but the response does not include an entity.
 
-Let's write a simple test that deletes an existing episode and checks for a `204` status code. For the time being, we will not care about a response body.
+Let's write a simple test that deletes an existing episode and checks for a `204 - No Content` status code. For the time being, we will not care about a response body.
 
 ```ruby
 require 'test_helper'
@@ -206,11 +210,11 @@ Back in our `EpisodesController`, the simplest code to make the tests pass invol
 def destroy
   episode = Episode.find(params[:id])
   episode.destroy
-  render nothing: true, status: 204 # :no_content
+  render nothing: true, status: 204
 end
 ```
 
-or we can call the `head` method to create a response consisting solely of HTTP headers. This provides additional flexibility and makes it explicit that we are only generating HTTP headers.
+An alternative to using `render nothing: true` is calling the `head` method, which creates a response consisting solely of HTTP headers. This provides additional flexibility and makes it explicit that we are only generating HTTP headers.
 
 ```ruby
 class EpisodesController < ApplicationController
@@ -222,30 +226,23 @@ class EpisodesController < ApplicationController
 end
 ```
 
-TODO: elaborate options to the head method.
+Just like the `status` method, the `head` method can also take a symbol as an argument:
+
+```ruby
+class EpisodesController < ApplicationController
+  def destroy
+    episode = Episode.find(params[:id])
+    episode.destroy!
+    head :no_content
+  end
+end
+```
 
 ## INBOX
 
 Content below serves as reference.
 
 [Rack::Utils](https://github.com/rack/rack/blob/master/lib/rack/utils.rb#L542-L601)
-
-> It is bad form to return 200 and then the response just says 'request failed' - Jon Frikics
-
-Our previous spec:
-
-## Successful
-
-* Respond with 201
-* Respond with LOCATION set
-* When no response body is needed, respond with head :created or head :ok
-    * "netflix" feature that synchronizes time elapsed.
-
-## Unsuccessful
-
-* Respond with error status code
-* Respond with error message
-    * Should contain information so the client can fix
 
 For testing, see <http://matthewlehner.net/rails-api-testing-guidelines/>
 Full list of status and helper methods: <https://github.com/rack/rack/blob/master/lib/rack/response.rb#L115-L131>
@@ -254,24 +251,5 @@ Full list of status and helper methods: <https://github.com/rack/rack/blob/maste
     * Using the uuid datatype with the PostgreSQL adapter
     * https://coderwall.com/p/n_0awq
     * Gotcha: http://rny.io/rails/postgresql/2013/07/27/use-uuids-in-rails-4-with-postgresql.html
-
-## Status with no Message Body
-
-From the [RFC](http://www.ietf.org/rfc/rfc2616.txt): 
-
-> For response messages, whether or not a message-body is included with a message is dependent on both the request method and the response status code (section 6.1.1). All responses to the HEAD request method MUST NOT include a message-body, even though the presence of entity- header fields might lead one to believe they do. All 1xx (informational), 204 (no content), and 304 (not modified) responses MUST NOT include a message-body. All other responses do include a message-body, although it MAY be of zero length.)
-
-However, [Rack::Utils also includes 205 in this group](https://github.com/rack/rack/blob/master/lib/rack/utils.rb#L604). This is still compliant with the RFC, which states that *(...) The response MUST NOT include an entity*.
-
-> 205 Reset Content
-
->   The server has fulfilled the request and the user agent SHOULD reset
->   the document view which caused the request to be sent. This response
->   is primarily intended to allow input for actions to take place via
->   user input, followed by a clearing of the form in which the input is
->   given so that the user can easily initiate another input action. The
->   response MUST NOT include an entity
-
-Although browsers don't implement this, it can still be useful for AJAX requests.
 
 * Test Driving a JSON API in Rails: <http://www.commandercoriander.net/blog/2014/01/04/test-driving-a-json-api-in-rails>

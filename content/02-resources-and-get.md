@@ -482,7 +482,7 @@ As we move along, we'll be looking at some other options we can pass to curl, bu
 
 ## Inbox
 
-Content below might not be included
+**Content below might not be included**
 
 Unsuccessful GET requests are responded with either a 404 or a 500.
 
