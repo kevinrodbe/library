@@ -150,11 +150,10 @@ HTTP/1.1 200 OK # 200 status code
 
 The first digit of the status code defines the class of response. The 200 class means the action was successfully received, understood, and accepted by the server.
 
-TODO: Add "If an error occurred.. 404 or 500"
+Knowing the correct status code for each situation is crucial for writing good web APIS. It's good to memorize the most important, which we'll cover in this course.
 
-Knowing the correct status code for each situation is crucial for writing good web APIS. It's good to memorize the most important, which we'll go over in a little bit.
-
-<http://envylabs.com/http-status-codes>
+*TODO: talk to Dan Denney about this..*
+<http://codeschool.com/http-status-codes>
 
 * 100
 * 200
@@ -479,3 +478,30 @@ Server: thin 1.5.0 codename Knife
 ```
 
 As we move along, we'll be looking at some other options we can pass to curl, but for now this should be enough to get through the next set of challenges as we reach the end of this level.
+
+
+## Inbox
+
+Content below might not be included
+
+Unsuccessful GET requests are responded with either a 404 or a 500.
+
+The `404 - Not Found` is used when the client was able to communicate with server, but the server hasn't found anything under the given URI.
+
+```ruby
+GET /cookies
+HTTP/1.1 404 Not Found
+```
+
+Rails automatically handles requests to invalid URIs by returning a `404 - Not Found`.
+
+The `500 - Internal Server Error` means something went wrong on the server side and it's the own server's fault for not being able to handle it gracefully.
+
+```ruby
+GET /zombies/189319
+HTTP/1.1 500 Internal Server Error
+```
+
+Rails also automatically rescues from errors in your application, and responds with a 500 status code. You what the web version of the 500 page looks like:
+
+![](https://www.evernote.com/shard/s37/sh/0b1bc13b-2d74-4b0a-bc2f-5264509f285d/caa29363f39e4a6a3f300ff967aabd75/deep/0/We're-sorry,-but-something-went-wrong-\(500\).png)
