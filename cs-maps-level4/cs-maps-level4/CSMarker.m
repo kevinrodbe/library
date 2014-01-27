@@ -8,30 +8,20 @@
 
 #import "CSMarker.h"
 
-static BOOL doubleCloseTo(double a, double b){
-  if (fabs(a-b) < 0.00001) {
-    return YES;
-  }else{
-    return NO;
-  }
-}
-
 @implementation CSMarker
 
 - (NSUInteger)hash
 {
-  return [[NSNumber numberWithDouble:self.position.latitude] hash] ^ [[NSNumber numberWithDouble:self.position.longitude] hash];
+  return [self.objectID hash];
 }
 
 - (BOOL)isEqual:(id)object
 {
-  CSMarker *obj = object;
-  if(doubleCloseTo(self.position.latitude, obj.position.latitude) &&
-     doubleCloseTo(self.position.longitude, obj.position.longitude)) {
-    return YES;
-  }
+  if(![object isKindOfClass:[CSMarker class]]) return NO;
   
-  return NO;
+  CSMarker *otherMarker = (CSMarker *)object;
+  
+  return self.objectID == otherMarker.objectID || [self.objectID isEqual:otherMarker.objectID];
 }
 
 @end
