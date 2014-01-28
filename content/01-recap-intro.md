@@ -2,11 +2,34 @@
 
 [Demo app](https://github.com/codeschool/BananaPodcast/tree/resources_and_get)
 
-This is a course about building Web APIs in Rails - more specifically REST web APIs in Rails. 
+This is a course about building Web APIs in Rails.
+
+## Introducing the Problem
+
+Let's look at an example of an internet music streaming service. Using a web app, you can do things like browse through artists, listen to songs and create playlists.
+
+When you go out for a run, or when you get into your car, you want to listen to the playlists you've just created though the web app. You pull our your phone and using a mobile app you can access those same playlists.
+
+```
+    Web Client
+                \
+                  \
+                    \
+                      \   Web
+                      /   API
+                    /
+                  /
+Mobile Client   /
+```
+
+
+*TODO: elaborate*
+
+## Describe REST
+
+But what does REST mean ?
 
 > REST stands for Representational State Transfer, and it's an architectural style for distributed hypermedia systems. 
-
-But what exactly does this mean ?
 
 The web is a distributed system, which clients interact with by means of exchanging representation of **resources**. By following a strict set of operations, REST allows building a service infrastructure that can support different types of applications.
 
