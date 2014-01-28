@@ -12,7 +12,7 @@ Imagine an internet music streaming service. Using their **web** application, we
 
 **\<insert web page picture\>**
 
-Say we go out for a run, or we get into your car, and we want to be able to listen to the playlists we've just created though the web app. We pull out our phone and, using the service's **mobile** app, we can access those same playlists.
+Say we go out for a run, or we get into our car, and we want to be able to listen to the playlists we've just created though the web app. We pull out our phone and, using the service's **mobile** app, we can access those same playlists.
 
 **\<insert mobile phone picture\>**
 
@@ -204,7 +204,7 @@ or
 resources :zombies, except: [:update, :destroy]
 ```
 
-It's a good practice to limit your API end points to only those that will actually be used by our clients.
+It's a good practice to limit our API end points to only those that will actually be used by our clients.
 
 
 ## CONSTRAINTS and NAMESPACE
@@ -238,11 +238,11 @@ constraints(subdomain: 'api') do
 end
 ```
 
-In order to run this locally you will need to do one of the followings:
+In order to run this locally we will need to do one of the followings:
 
   * Edit /etc/hosts or c:\WINDOWS\system32\drivers\etc\hosts
   * Use [POW](http://pow.cx)
-  * Access your app through a service like http://lvh.me
+  * Access our app through a service like http://lvh.me
 
 ### Editing /etc/hosts
 
@@ -256,7 +256,7 @@ A convention I like to use is to add a '-dev' suffix to the domain name. So we'l
 127.0.0.1	api.cs-zombies-dev.com
 ```
 
-On UNIX, /etc/hosts is a system file so you will need root access - or use the `sudo` command if your OS supports it.
+On UNIX, /etc/hosts is a system file so we will need root access - or use the `sudo` command if the OS supports it.
 
 From Jacob:
 
