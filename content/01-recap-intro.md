@@ -64,11 +64,18 @@ And then pick another one:
   => OK song 19, song 20, song 21
 ```
 
-*TODO: elaborate*
+And if we try and fetch a playlist that doesn't exist, we get an error message back:
 
-## Describe REST
+```
+  READ /playlists/fake123
+  => ERROR invalid playlist
+```
 
-But what does REST mean ?
+Notice there's a pattern here ? When communicating with our API, we are always issuing a **command** (CREATE, READ) to be performed on a certain **thing** (/playlists), which generates a **response** (OK, ERROR). Based on previous **responses**, we can issue further **commands**.
+
+It turns out that this is so common that there is a name for it: REST.
+
+## REST
 
 > REST stands for Representational State Transfer, and it's an architectural style for distributed hypermedia systems. 
 
