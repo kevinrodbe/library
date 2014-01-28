@@ -2,26 +2,67 @@
 
 [Demo app](https://github.com/codeschool/BananaPodcast/tree/resources_and_get)
 
-This is a course about building Web APIs in Rails.
+The topic of API development, like many others in the software industry, has common practices and opinions.
+
+There are things we are going to see in this course that are unquestionably correct. Decisions that are obviously right. At the same time, we will see one or two ways of doing something and the trade-offs involved. If you have any questions or comments, visit our forum at <http://discuss.codeschool.com>.
 
 ## Introducing the Problem
 
-Let's look at an example of an internet music streaming service. Using a web app, you can do things like browse through artists, listen to songs and create playlists.
+Imagine an internet music streaming service. Using their **web** application, we can do things like browse through artists, listen to songs and create playlists.
 
-When you go out for a run, or when you get into your car, you want to listen to the playlists you've just created though the web app. You pull our your phone and using a mobile app you can access those same playlists.
+**\<insert web page picture\>**
+
+Say we go out for a run, or we get into your car, and we want to be able to listen to the playlists we've just created though the web app. We pull out our phone and, using the service's **mobile** app, we can access those same playlists.
+
+**\<insert mobile phone picture\>**
+
+Notice we are talking about two different programs, with completely independent code bases, most likely built on different technology stacks. They communicate through a shared back channel, which allows them to exchange information with each other.
 
 ```
     Web Client
                 \
                   \
                     \
-                      \   Web
+                      \   Web (include picture of a brain)
                       /   API
                     /
                   /
 Mobile Client   /
 ```
 
+This back channel is the brain of our music service. It encapsulates all of the business logic and the data store, and exposes endpoints that multiple clients can use to send messages back and forth. These endpoints compose the application's API.
+
+## What the heck is an API ?
+
+API stands for Application Programming Interface, and it's the interface we use to make different programs talk to each other. Let's see one way we could communicate with our API in the previous scenario.
+
+First, our web application sends a message to our API saying we want to create a new playlist with three songs.
+
+```
+  CREATE /playlists song 1, song 2, song 3
+  => OK playlist 13 was created.
+```
+
+Later, our mobile app asks for this playlist.
+
+```
+  READ /playlists/13
+  => OK song 1, song 2, song3
+```
+
+We might have multiple playlists, so we could ask to list all of them
+
+```
+  READ /playlists
+  => OK playlist 11, playlist 12, playlist 13
+```
+
+And then pick another one:
+
+```
+  READ /playlists/11
+  => OK song 19, song 20, song 21
+```
 
 *TODO: elaborate*
 
