@@ -171,7 +171,7 @@ AbstractController::ActionNotFound (The action 'show' could not be found for API
 ```
 
 
-What we really want is to be able to say that our API does not support the `/zombie/:id` URI altogether.
+What we really want, though, is to be able to say that our API does not support the `/zombie/:id` URI altogether.
 
 The `resources` method takes an options hash as its second argument. Two options that we can use to control which actions we want to allow on the resources are `only` and `except`.
 
@@ -227,7 +227,7 @@ or
 resources :zombies, except: [:update, :destroy]
 ```
 
-It's a good practice to limit our API end points to only those that will actually be used by our clients.
+Using `:only` and `:except` to generate only the routes that we actually need can cut down on our application's memory use and speed up the routing process.
 
 
 ## CONSTRAINTS and NAMESPACE
