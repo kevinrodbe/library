@@ -160,17 +160,40 @@ edit_zombie GET    /zombies/:id/edit(.:format) zombies#edit
             DELETE /zombies/:id(.:format)      zombies#destroy
 ```
 
-Suppose we want to limit the actions that can be performed on the zombies resources. The `resources` method takes an options hash as its second argument. Two options that we can use to control which actions we want to allow on the resources are `only` and `except`.
+Suppose we wanted to limit the actions that can be performed on the zombies resources. We could simply not implement those actions in our controller, like for example a `show` action. If we did this, then requests to the URI routed to `Zombies#show` would raise an `AbstractController::ActionNotFound` error.
+
+
+```
+Started GET "/zombies/1" for 127.0.0.1 at 2014-01-29 13:22:15 -0500
+
+AbstractController::ActionNotFound (The action 'show' could not be found for API::ZombiesController):
+...
+```
+
+
+What we really want is to be able to say that our API does not support the `/zombie/:id` URI altogether.
+
+The `resources` method takes an options hash as its second argument. Two options that we can use to control which actions we want to allow on the resources are `only` and `except`.
 
 ```ruby
 resources :zombies, only: :index
 ```
 
-With the previous code, when we run `rake routes` we now see a different output:
+With this code, when we run `rake routes` we now see a different output:
 
 ```
     Prefix Verb URI Pattern        Controller#Action
    zombies GET /zombies(.:format) zombies#index
+```
+
+And if we tried making a request to a URI that doesn't exist, then a different error message would be displayed in the log:
+
+```
+Started GET "/zombies/1" for 127.0.0.1 at 2014-01-29 13:36:53 -0500
+  ActiveRecord::SchemaMigration Load (11.9ms)  SELECT "schema_migrations".* FROM "schema_migrations"
+
+ActionController::RoutingError (No route matches [GET] "/zombies/1"):
+...
 ```
 
 If instead we wanted to prevent our API from exposing the endpoint that destroys zombie resources, we could use `except`:
@@ -225,8 +248,8 @@ So basically:
 ### CONSTRAINTS
 
 ```ruby
-resources :zombies, constraints: { subdomain: 'api' } # i.e., api.zombies-dev.com/zombies
-resources :humans, constraints: { subdomain: 'api' } # i.e., api.zombies-dev.com/humans
+resources :zombies, constraints: { subdomain: 'api' } # i.e., api.cs-zombies-dev.com/zombies
+resources :humans, constraints: { subdomain: 'api' } # i.e., api.cs-zombies-dev.com/humans
 ```
 
 or
