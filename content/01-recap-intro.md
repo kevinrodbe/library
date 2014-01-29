@@ -287,7 +287,7 @@ From Jacob:
 
 ### NAMESPACE
 
-Since our codebase is also serving a web version of our application, we need to be extra careful with organizing our file structure. Specially our controllers. We don't want to mix controllers that serve our API with ones that serve our website, so we are going to create a different namespace for the API controllers.
+Since our codebase is also serving a web version of our application, we need to be extra careful with organizing our files. Some applications offer a different feature set on the web than they do on the API. Depending on the size of the project, there might be different teams working on each version. For these reasons, we don't want to mix controllers that serve our API with ones that serve our website, so we are going to create a different namespace for the API controllers.
 
 ```ruby
 constraints subdomain: 'api' do
