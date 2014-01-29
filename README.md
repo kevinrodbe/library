@@ -10,9 +10,9 @@ This is the repo for the Rails API Course. Code examples can be found on the [Ba
 ## Table of Contents
 
 1. [Route Constraints + Namespace](content/01-recap-intro.md) (complete)
-2. [Resources and the GET method](content/02-resources-and-get.md) (pending HEADER)
+2. [Resources and the GET method](content/02-resources-and-get.md) (complete)
 3. [Content Negotiation](content/03-content-negotiation.md) (complete)
-4. [POST, PUT/PATCH, DELETE](content/04-post-put-patch-delete.md) (in progress)
+4. [POST, PUT/PATCH, DELETE](content/04-post-put-patch-delete.md) (complete)
 5. [Versioning](content/05-versioning.md) (complete)
 6. [Authentication](content/06-authentication.md) (complete)
 
