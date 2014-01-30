@@ -18,18 +18,13 @@
 
 const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/directions/json";
 
-@interface CSMapVC ()<GMSMapViewDelegate>
+@interface CSMapVC () <GMSMapViewDelegate>
 
 @property(strong, nonatomic) GMSMapView *mapView;
-
 @property(copy, nonatomic) NSSet *markers;
-
 @property(strong, nonatomic) NSURLSession *markerSession;
-
 @property(strong, nonatomic) CSMarker *userCreatedMarker;
-
 @property(strong, nonatomic) UIButton *directionsButton;
-
 @property(copy, nonatomic) NSArray *steps;
 
 @end
@@ -40,22 +35,22 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
   [super viewDidLoad];
   GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:28.5382
                                                           longitude:-81.3687
-                                                               zoom:16
+                                                               zoom:14
                                                             bearing:0
                                                        viewingAngle:0];
-
+  
   self.mapView = [GMSMapView mapWithFrame:self.view.bounds camera:camera];
   self.mapView.delegate = self;
-
-  self.mapView.mapType = kGMSTypeHybrid;
-
+  
+  [self.mapView setMinZoom:10 maxZoom:18];
+  
+  self.mapView.mapType = kGMSTypeNormal;
+  
   self.mapView.myLocationEnabled = YES;
-
+  
   self.mapView.settings.compassButton = YES;
   self.mapView.settings.myLocationButton = YES;
-
-  self.mapView.padding = UIEdgeInsetsMake(25, 25, 25, 25);
-
+  
   [self.view addSubview:self.mapView];
 
   // TODO: replace this with a button image when the asset is ready to go
@@ -63,9 +58,19 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
   loadNewMarkers.frame = CGRectMake(25, 25, 45, 45);
   [loadNewMarkers setTitle:@"load" forState:UIControlStateNormal];
   [loadNewMarkers addTarget:self
-                     action:@selector(downloadMarkers:)
+                     action:@selector(downloadMarkerData:)
            forControlEvents:UIControlEventTouchUpInside];
   [self.view addSubview:loadNewMarkers];
+  
+  self.directionsButton = [UIButton buttonWithType:UIButtonTypeSystem];
+  self.directionsButton.frame = CGRectMake(20, 400, 280, 30);
+  self.directionsButton.backgroundColor = [UIColor whiteColor];
+  [self.directionsButton setTitle:@"directions" forState:UIControlStateNormal];
+  [self.directionsButton addTarget:self
+                            action:@selector(directionsTapped:)
+                  forControlEvents:UIControlEventTouchUpInside];
+  [self.view addSubview:self.directionsButton];
+  self.directionsButton.alpha = 0.0;
 
   NSURLSessionConfiguration *config =
       [NSURLSessionConfiguration defaultSessionConfiguration];
@@ -75,24 +80,26 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
   self.markerSession = [NSURLSession sessionWithConfiguration:config];
 }
 
+
 - (void)drawMarkers {
-  for (CSMarker *marker in self.markers) {
-    if (marker.map == nil) {
+  for(CSMarker *marker in self.markers) {
+    if(marker.map == nil) {
       marker.map = self.mapView;
     }
   }
   if (self.userCreatedMarker != nil && self.userCreatedMarker.map == nil) {
     self.userCreatedMarker.map = self.mapView;
     self.mapView.selectedMarker = self.userCreatedMarker;
-    GMSCameraUpdate *cameraUpdate =
-        [GMSCameraUpdate setTarget:self.userCreatedMarker.position];
+    GMSCameraUpdate *cameraUpdate = [GMSCameraUpdate setTarget:self.userCreatedMarker.position];
     [self.mapView animateWithCameraUpdate:cameraUpdate];
   }
 }
 
+
 - (BOOL)prefersStatusBarHidden {
   return YES;
 }
+
 
 - (UIView *)mapView:(GMSMapView *)mapView markerInfoWindow:(GMSMarker *)marker {
   UIView *infoWindow = [[UIView alloc] init];
@@ -117,34 +124,31 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
   return infoWindow;
 }
 
-- (void)downloadMarkers:(id)sender {
-  NSURLRequest *request = [NSURLRequest
-      requestWithURL:
-          [NSURL
-              URLWithString:
-                  @"http://jonfriskics.com/mapsapi/v1/getPoints/?type=lakes"]];
 
-  NSURLSessionDataTask *task = [self.markerSession dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *e) {
-
-    NSArray *json =
-        [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-
-    [[NSOperationQueue mainQueue]
-        addOperationWithBlock:^{ [self doSomethingWithMarkerData:json]; }];
+- (void)downloadMarkerData:(id)sender {
+  NSURL *lakesURL = [NSURL URLWithString:@"http://jonfriskics.com/mapsapi/v1/getPoints/?type=lakes"];
+  
+  NSURLSessionDataTask *task = [self.markerSession dataTaskWithURL:lakesURL completionHandler:^(NSData *data, NSURLResponse *response, NSError *e) {
+    
+    NSArray *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+    
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+      [self createMarkerObjectsWithJson:json];
+    }];
+    
   }];
-
+  
   [task resume];
 }
 
-- (void)doSomethingWithMarkerData:(NSArray *)json {
+
+- (void)createMarkerObjectsWithJson:(NSArray *)json {
   NSMutableSet *mutableSet = [[NSMutableSet alloc] initWithSet:self.markers];
 
   for (NSDictionary *mark in json) {
-
     CSMarker *marker = [[CSMarker alloc] init];
 
     marker.objectID = [mark[@"id"] stringValue];
-
     marker.appearAnimation = [mark[@"appearAnimation"] integerValue];
     marker.position = CLLocationCoordinate2DMake([mark[@"lat"] doubleValue],
                                                  [mark[@"lng"] doubleValue]);
@@ -163,87 +167,71 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
 }
 
 - (BOOL)mapView:(GMSMapView *)mapView didTapMarker:(GMSMarker *)marker {
-  NSLog(@"%s", __PRETTY_FUNCTION__);
-  
-  NSURLRequest *request = [NSURLRequest
-      requestWithURL:
-          [NSURL URLWithString:
-                     [NSString stringWithFormat:
-                                   @"http://maps.googleapis.com/maps/api/"
-                                    "distancematrix/"
-                                    "json?origins=%f,%f&destinations=%f,%f&"
-                                    "mode=driving&sensor=false",
-                                   self.mapView.myLocation.coordinate.latitude,
-                                   self.mapView.myLocation.coordinate.longitude,
-                                   marker.position.latitude,
-                                   marker.position.longitude]]];
-
-  NSURLSessionDataTask *task = [self.markerSession  dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *e) {
-    NSDictionary *json = (NSDictionary *)
-        [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-    [[NSOperationQueue mainQueue]
-        addOperationWithBlock:^{
-          NSMutableSet *mutableMarkers = [self.markers mutableCopy];
-          CSMarker *m = [mutableMarkers member:marker];
-          if([mutableMarkers containsObject:marker]) {
-            [mutableMarkers removeObject:m];
-            m.userData = @{
-                           @"distance" :
-                             json[@"rows"][0][@"elements"][0][@"distance"][@"text"]
-                           };
-            [mutableMarkers addObject:m];
-            
-            self.markers = [mutableMarkers copy];
-            
-            /* TODO: ask if there's a better way than this.
-             *       this is forcing the info window to re-open, and it seems kind
-             * of hacky
-             */
-          }
-          [mapView setSelectedMarker:marker];
-        }];
-  }];
-
-  [task resume];
-
   if (mapView.myLocation != nil) {
+    NSURL *distanceURL = [NSURL URLWithString:
+                          [NSString stringWithFormat:
+                           @"http://maps.googleapis.com/maps/api/""distancematrix/""json?origins=%f,%f&destinations=%f,%f&""mode=driving&sensor=false",
+                           self.mapView.myLocation.coordinate.latitude,
+                           self.mapView.myLocation.coordinate.longitude,
+                           marker.position.latitude,
+                           marker.position.longitude]];
 
-    NSURLRequest *request2 = [NSURLRequest
-                             requestWithURL:
-                             [NSURL URLWithString:
-                              [NSString stringWithFormat:
-                               @"%@?origin=%f,%f&destination=%f,%f&sensor=false",
-                               DIRECTIONS_API_URL,
-                               mapView.myLocation.coordinate.latitude,
-                               mapView.myLocation.coordinate.longitude,
-                               marker.position.latitude, marker.position.longitude ]]];
-    NSLog(@"request2: %@",[[request2 URL] absoluteString]);
-    NSURLSessionDataTask *task2 = [self.markerSession  dataTaskWithRequest:request2 completionHandler:^(NSData *data, NSURLResponse *response, NSError *e) {
+    NSURLSessionDataTask *distanceTask = [self.markerSession dataTaskWithURL:distanceURL completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+
+      NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+
+      [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        
+        NSMutableSet *mutableMarkers = [self.markers mutableCopy];
+        
+        CSMarker *m = [mutableMarkers member:marker];
+        
+        if([mutableMarkers containsObject:marker]) {
+          [mutableMarkers removeObject:m];
+          m.userData = @{ @"distance" : json[@"rows"][0][@"elements"][0][@"distance"][@"text"] };
+          [mutableMarkers addObject:m];
+
+          self.markers = [mutableMarkers copy];
+          /* TODO: ask if there's a better way than this.
+           *       this is forcing the info window to re-open, and it seems kind
+           * of hacky
+           */
+          [mapView setSelectedMarker:marker];
+         }
+      }];
+
+    }];
+    
+    [distanceTask resume];
+
+
+    NSURL *directionsURL = [NSURL URLWithString:
+                            [NSString stringWithFormat:
+                             @"%@?origin=%f,%f&destination=%f,%f&sensor=false",
+                             DIRECTIONS_API_URL,
+                             mapView.myLocation.coordinate.latitude,
+                             mapView.myLocation.coordinate.longitude,
+                             marker.position.latitude, marker.position.longitude ]];
+    
+    NSURLSessionDataTask *directionsTask = [self.markerSession dataTaskWithURL:directionsURL completionHandler:^(NSData *data, NSURLResponse *response, NSError *e) {
 
       NSError *error = nil;
       NSDictionary *json =
-          [NSJSONSerialization JSONObjectWithData:data
-                                          options:NSJSONReadingMutableContainers
-                                            error:&error];
-      self.steps = json[@"routes"][0][@"legs"][0][@"steps"];
+      [NSJSONSerialization JSONObjectWithData:data
+                                      options:NSJSONReadingMutableContainers
+                                        error:&error];
       
-      [[NSOperationQueue mainQueue]
-       addOperationWithBlock:^{
-         if(self.directionsButton == nil) {
-           self.directionsButton = [UIButton buttonWithType:UIButtonTypeSystem];
-           self.directionsButton.frame = CGRectMake(20, 400, 280, 30);
-           self.directionsButton.backgroundColor = [UIColor whiteColor];
-           [self.directionsButton setTitle:@"directions" forState:UIControlStateNormal];
-           [self.directionsButton addTarget:self
-                      action:@selector(directionsTapped:)
-            forControlEvents:UIControlEventTouchUpInside];
-           [self.view addSubview:self.directionsButton];
-         }
-       }];
+      if(!error) {
+        self.steps = json[@"routes"][0][@"legs"][0][@"steps"];
+        [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+          self.directionsButton.alpha = 1.0;
+        }];
+      }
     }];
-    [task2 resume];
+    
+    [directionsTask resume];
   }
-
+  
   return NO;
 }
 
@@ -255,57 +243,49 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
   [self presentViewController:directionsVC
                      animated:YES
                    completion:^{
-                     [sender removeFromSuperview];
+                     self.directionsButton.alpha = 0.0;
                      self.steps = nil;
                      self.mapView.selectedMarker = nil;
                    }];
 }
 
-- (void)mapView:(GMSMapView *)mapView
-    didLongPressAtCoordinate:(CLLocationCoordinate2D)coordinate {
 
+- (void)mapView:(GMSMapView *)mapView didLongPressAtCoordinate:(CLLocationCoordinate2D)coordinate {
+  
   if (self.userCreatedMarker != nil) {
     self.userCreatedMarker.map = nil;
     self.userCreatedMarker = nil;
   }
-
+  
   GMSGeocoder *geocoder = [GMSGeocoder geocoder];
   [geocoder reverseGeocodeCoordinate:coordinate completionHandler:^(GMSReverseGeocodeResponse *response, NSError *error) {
     CSMarker *marker = [[CSMarker alloc] init];
     marker.position = coordinate;
     marker.appearAnimation = kGMSMarkerAnimationPop;
     marker.map = nil;
-
+    
     marker.title = response.firstResult.addressLine1;
     marker.snippet = response.firstResult.addressLine2;
-
+    
     self.userCreatedMarker = marker;
-
+    
     [self drawMarkers];
   }];
 }
 
 
-- (void)mapView:(GMSMapView *)mapView
-    didTapInfoWindowOfMarker:(GMSMarker *)marker {
-  [self directionsTapped:nil];
-}
-
-// TODO: Move this to Level 6
 - (void)mapView:(GMSMapView *)mapView didTapAtCoordinate:(CLLocationCoordinate2D)coordinate
 {
-  if(self.directionsButton != nil) {
-    [self.directionsButton removeFromSuperview];
-    self.directionsButton = nil;
+  if(self.directionsButton.alpha > 0.0) {
+    self.directionsButton.alpha = 0.0;
   }
 }
 
-// TODO: Move this to Level 6
+
 - (void)mapView:(GMSMapView *)mapView willMove:(BOOL)gesture
 {
-  if(self.directionsButton != nil) {
-    [self.directionsButton removeFromSuperview];
-    self.directionsButton = nil;
+  if(self.directionsButton.alpha > 0.0) {
+    self.directionsButton.alpha = 0.0;
   }
   self.mapView.selectedMarker = nil;
 }
