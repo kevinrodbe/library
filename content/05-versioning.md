@@ -26,7 +26,7 @@ To add support for versioned URIs in our Rails app, we first add a **namespace**
 
 ```ruby
 # config/routes.rb
-namespace :api, path: '/', constraints: { subdomain: 'api' } do
+namespace :api, path: '/' do
   namespace :v1 do
     resources :zombies
   end
@@ -86,7 +86,7 @@ end
 
 ```
 
-The `assert_generates` method asserts that the provided options can be used to generate the provided path.
+The `assert_generates` method asserts that the provided options can be used to generate the expected path.
 
 Since we have not written our controller code yet, running this test should fail.
 
@@ -114,7 +114,7 @@ module API
 end
 ```
 
-If we run our routes test now, it should pass.
+If we run our routes test now, they should pass.
 
 We've successfully added URI versioning to our API, so that each request gets routed to the proper namespace. Now that our codebase supports multiple versions, we need to be extra careful about how we organize our code.
 
@@ -137,7 +137,7 @@ module API
       before_action ->{ @remote_ip = request.headers['REMOTE_ADDR'] }
 
       def index
-        render text: "#{@remote_ip} Version One!", status: 200
+        render json: "#{@remote_ip} Version One!", status: 200
       end
     end
   end
@@ -155,7 +155,7 @@ module API
       before_action ->{ @remote_ip = request.headers['REMOTE_ADDR'] }
 
       def index
-        render text: "#{@remote_ip} Version Two!", status: 200
+        render json: "#{@remote_ip} Version Two!", status: 200
       end
     end
   end
@@ -215,7 +215,7 @@ module API
   module V1
     class ZombiesController < BaseController # instead of ApplicationController
       def index
-        render text: "#{@remote_ip} using version 1", status: 200
+        render json: "#{@remote_ip} using version 1", status: 200
       end
     end
   end
@@ -227,7 +227,7 @@ module API
   module V2
     class ZombiesController < BaseController # instead of ApplicationController
       def index
-        render text: "#{@remote_ip} using version 2", status: 200
+        render json: "#{@remote_ip} using version 2", status: 200
       end
     end
   end
@@ -266,7 +266,7 @@ module API
   module V2
     class ZombiesController < VersionController
       def index
-        render text: "#{@remote_ip} Version Two!"
+        render json: "#{@remote_ip} Version Two!"
       end
     end
   end
@@ -303,14 +303,14 @@ class ChangingApiVersionsTest < ActionDispatch::IntegrationTest
   end
 
   test 'returns version one via Accept header' do
-    get '/zombies', {}, { 'REMOTE_ADDR' => @ip, 'HTTP_ACCEPT' => 'application/vnd.apocalypse.v1+json' }
+    get '/zombies', {}, { 'REMOTE_ADDR' => @ip, 'Accept' => 'application/vnd.apocalypse.v1+json' }
     assert_equal 200, response.status
     assert_equal "#{@ip} Version One!", response.body
     assert_equal Mime::JSON, response.content_type
   end
 
   test 'returns version two via Accept header' do
-    get '/zombies', {}, { 'REMOTE_ADDR' => @ip, 'HTTP_ACCEPT' => 'application/vnd.apocalypse.v2+json' }
+    get '/zombies', {}, { 'REMOTE_ADDR' => @ip, 'Accept' => 'application/vnd.apocalypse.v2+json' }
     assert_equal 200, response.status
     assert_equal "#{@ip} Version Two!", response.body
     assert_equal Mime::JSON, response.content_type
