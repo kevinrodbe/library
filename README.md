@@ -29,6 +29,6 @@ Following the *Zombie Apocalypse Broadcast* theme, here's an idea for the app us
 
 ## TODOs
 
-* Mention status codes at the end of each level.
+* Add summary of status codes.
 
 
