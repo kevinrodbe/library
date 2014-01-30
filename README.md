@@ -6,6 +6,7 @@ This is the repo for the Rails API Course. Code examples can be found on the [Ba
 
 * Rails For Zombies 1
 * Rails For Zombies 2
+* Rails Testing For Zombies
 
 ## Table of Contents
 
