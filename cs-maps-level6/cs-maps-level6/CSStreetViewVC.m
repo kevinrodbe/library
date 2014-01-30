@@ -6,6 +6,8 @@
 //  Copyright (c) 2013 Jon Friskics. All rights reserved.
 //
 
+// TODO: check panorama before showing it.  nil stuff
+
 #import "CSStreetViewVC.h"
 
 @interface CSStreetViewVC ()
@@ -34,20 +36,26 @@
   NSLog(@"%@ is being presented in streetViewVC: %d",[self class],[self isBeingPresented]);
   
   GMSPanoramaCamera *camera = [GMSPanoramaCamera cameraWithHeading:180 pitch:0 zoom:1 FOV:90];
-  GMSPanoramaView *panoView =
-  [GMSPanoramaView panoramaWithFrame:CGRectZero
-                      nearCoordinate:self.coord];
+  GMSPanoramaService *service = [[GMSPanoramaService alloc] init];
+  [service requestPanoramaNearCoordinate:self.coord callback:^(GMSPanorama *panorama, NSError *error) {
+    if(panorama != nil) {
+      GMSPanoramaView *panoView = [[GMSPanoramaView alloc] init];
+      panoView.camera = camera;
+      panoView.panorama = panorama;
+      self.view = panoView;
+
+      UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
+      button.backgroundColor = [UIColor blueColor];
+      button.frame = CGRectMake(40, 40, 80, 40);
+      [button setTitle:@"close" forState:UIControlStateNormal];
+      [button addTarget:self action:@selector(closeStreetView:) forControlEvents:UIControlEventTouchUpInside];
+      [self.view addSubview:button];
+    } else {
+      NSLog(@"panorama is nil");
+      [self closeStreetView:nil];
+    }
+  }];
   
-  panoView.camera = camera;
-  
-  self.view = panoView;
-  
-  UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
-  button.backgroundColor = [UIColor blueColor];
-  button.frame = CGRectMake(40, 40, 80, 40);
-  [button setTitle:@"close" forState:UIControlStateNormal];
-  [button addTarget:self action:@selector(closeStreetView:) forControlEvents:UIControlEventTouchUpInside];
-  [self.view addSubview:button];
 }
 
 - (void)closeStreetView:(id)sender

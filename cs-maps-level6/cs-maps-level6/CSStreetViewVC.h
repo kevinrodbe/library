@@ -11,6 +11,6 @@
 
 @interface CSStreetViewVC : UIViewController
 
-@property (nonatomic) CLLocationCoordinate2D coord;
+@property (assign, nonatomic) CLLocationCoordinate2D coord;
 
 @end
