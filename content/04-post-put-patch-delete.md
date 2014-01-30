@@ -48,7 +48,6 @@ class CreatingEpisodesTest < ActionDispatch::IntegrationTest
     episode = json(response.body)
 
     assert_equal episode_url(episode[:id]), response.location
-    assert Episode.new(episode).valid?
   end
 end
 ```
@@ -207,10 +206,12 @@ end
 Back in our `EpisodesController`, the simplest code to make the tests pass involves fetching the given episode from the database, deleting it and then rendering nothing at all:
 
 ```ruby
-def destroy
-  episode = Episode.find(params[:id])
-  episode.destroy
-  render nothing: true, status: 204
+class EpisodesController < ApplicationController
+  def destroy
+    episode = Episode.find(params[:id])
+    episode.destroy!
+    render nothing: true, status: 204
+  end
 end
 ```
 
