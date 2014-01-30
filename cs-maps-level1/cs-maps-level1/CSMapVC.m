@@ -20,28 +20,28 @@
 
 - (void)viewDidLoad {
   [super viewDidLoad];
+
   GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:28.5382
                                                           longitude:-81.3687
-                                                               zoom:10
+                                                               zoom:14
                                                             bearing:0
                                                        viewingAngle:0];
-  
+
   self.mapView = [GMSMapView mapWithFrame:self.view.bounds camera:camera];
   
-  self.mapView.mapType = kGMSTypeHybrid;
-  
+  [self.mapView setMinZoom:10 maxZoom:18];
+
+  self.mapView.mapType = kGMSTypeNormal;
+
   self.mapView.myLocationEnabled = YES;
-  
+
   self.mapView.settings.compassButton = YES;
   self.mapView.settings.myLocationButton = YES;
-  
-  self.mapView.padding = UIEdgeInsetsMake(25, 25, 25, 25);
-  
+
   [self.view addSubview:self.mapView];
 }
 
-- (BOOL)prefersStatusBarHidden
-{
+- (BOOL)prefersStatusBarHidden {
   return YES;
 }
 
