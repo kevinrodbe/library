@@ -232,7 +232,7 @@ Using `:only` and `:except` to generate only the routes that we actually need ca
 
 ## CONSTRAINTS and NAMESPACE
 
-On Rails projects serve a web version and a web API at the same time, it's common to start off with a single codebase for both. Giving our API its own subdomain is a good approach for a couple reasons.
+On applications that serve both a web version and a web API at the same time, it's common to start off with a single codebase for both. Separating the URI entry points by giving our API its own subdomain is a good approach for a couple reasons.
 
 First, it allows us to decouple our public facing website from our backend API and deploy them to different servers. If for some reason our website server goes down, then our API will not be affected. 
 
@@ -391,3 +391,5 @@ end
 ```
 
 Much better now.
+
+Using different namespaces when a single codebase serves both a web version and a web API is a good practice. However, if all our Rails app does is serve a web API, then we can still deploy it to its own api subdomain, but using namespaces is not necessary.
