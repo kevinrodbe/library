@@ -173,14 +173,14 @@ require 'test_helper'
 
 class ListingZombiesTest < ActionDispatch::IntegrationTest
   test 'returns zombies in JSON' do
-    get '/zombies', {}, { 'HTTP_ACCEPT' => Mime::JSON }
+    get '/zombies', {}, { 'Accept' => Mime::JSON }
 
     assert_equal 200, response.status
     assert_equal Mime::JSON, response.content_type
   end
 
   test 'returns zombies in XML' do
-    get '/zombies', {}, { 'HTTP_ACCEPT' => Mime::XML }
+    get '/zombies', {}, { 'Accept' => Mime::XML }
 
     assert_equal 200, response.status
     assert_equal Mime::XML, response.content_type
@@ -228,14 +228,14 @@ class ChangingLocalesTest < ActionDispatch::IntegrationTest
   end
 
   test 'returns list of zombies in english' do
-    get '/zombies', {}, {'HTTP_ACCEPT_LANGUAGE' => 'en', 'HTTP_ACCEPT' => Mime::JSON }
+    get '/zombies', {}, {'Accept-Language' => 'en', 'Accept' => Mime::JSON }
     assert 200, response.status
     zombies = json(response.body)
     assert_equal "Watch out for #{zombies[0][:name]}!", zombies[0][:message]
   end
 
   test 'return list of zombies in portuguese' do
-    get '/zombies', {}, {'HTTP_ACCEPT_LANGUAGE' => 'pt-BR', 'HTTP_ACCEPT' => Mime::JSON }
+    get '/zombies', {}, {'Accept-Language' => 'pt-BR', 'Accept' => Mime::JSON }
     assert 200, response.status
     zombies = json(response.body)
     assert_equal "Cuidado com #{zombies[0][:name]}!", zombies[0][:message]
@@ -243,23 +243,35 @@ class ChangingLocalesTest < ActionDispatch::IntegrationTest
 end
 ```
 
-We'll remove the inline rendering from our controller so we can move the JSON parsing logic to a view template.
+A simple way to switch between locales based on a request header is by adding a **before_action** to our `ApplicationController` and inspecting the corresponding header from there:
+
+```ruby
+class ApplicationController < ActionController::Base
+  protect_from_forgery with: :exception
+  before_action :set_locale
+
+  protected
+    def set_locale
+      I18n.locale = request.env['Accept-Language']
+    end
+end
+```
+
+Next, we'll remove the inline rendering from our `ZombiesController` so we can move the JSON serialization logic to a view template.
 
 ```ruby
 # app/controllers/zombies_controller.rb
-module API
-  class ZombiesController < ApplicationController
-    def index
-      @zombies = Zombie.all
-      respond_to do |format|
-        format.json
-      end
+class ZombiesController < ApplicationController
+  def index
+    @zombies = Zombie.all
+    respond_to do |format|
+      format.json
     end
   end
 end
 ```
 
-In our template, we'll add an entry for **message**. The value for this entry will be internationalized, so we'll use the `I18n.t` method to lookup the corresponding value for the **warning_message** key and pass a value for the *name* placeholder.
+In our template, we'll add an entry for **message**. The value for this entry will be internationalized. We'll use the `I18n.t` method to lookup the corresponding value for the **warning_message** key and pass a value for the *name* placeholder.
 
 ```ruby
 # app/views/zombies/index.json.jbuilder
@@ -285,20 +297,6 @@ pt-BR:
   warning_message: 'Cuidado com %{name}!'
 ```
 
-A simple way to switch between locales based on a request header is by adding a **before_action** to our ApplicationController and inspecting the corresponding header from there:
-
-```ruby
-class ApplicationController < ActionController::Base
-  protect_from_forgery with: :exception
-  before_action :set_locale
-
-  protected
-    def set_locale
-      I18n.locale = request.env['HTTP_ACCEPT_LANGUAGE']
-    end
-end
-```
-
 This is enough code to make our spec pass.
 
 Response in english:
@@ -313,7 +311,7 @@ Response in portuguese:
 [{"id":2,"name":"Joanna","age":251,"warning_message":"Cuidado com Joanna!"}]
 ```
 
-However, in order for our web API to suppport different languages in a way that's more closely compatible with the HTTP spec (which very few web APIs are), we will need more logic than just straight up assigning `request.env['HTTP_ACCEPT_LANGUAGE']` to `I18n.locale`. Certain things also need to be taken in consideration, like users sending a list of preferred languages instead of just one, or using different formatting options for the Header value.
+However, in order for our web API to suppport different languages in a way that's more closely compatible with the HTTP spec (which very few web APIs are), we will need more logic than just straight up assigning `request.env['Accept-Language']` to `I18n.locale`. Certain things also need to be taken in consideration, like users sending a list of preferred languages instead of just one, or using different formatting options for the Header value.
 
 To help us with figuring all of that out, we'll use the [http_accept_language](https://github.com/iain/http_accept_language) gem. This will basically take care of everything for us.
 
