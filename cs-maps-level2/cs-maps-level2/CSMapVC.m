@@ -13,7 +13,7 @@
 @interface CSMapVC () <GMSMapViewDelegate>
 
 @property(strong, nonatomic) GMSMapView *mapView;
-@property(copy, nonatomic) NSArray *markers;
+@property(copy, nonatomic) NSSet *markers;
 
 @end
 
@@ -23,26 +23,27 @@
   [super viewDidLoad];
   GMSCameraPosition *camera = [GMSCameraPosition cameraWithLatitude:28.5382
                                                           longitude:-81.3687
-                                                               zoom:16
+                                                               zoom:14
                                                             bearing:0
                                                        viewingAngle:0];
 
   self.mapView = [GMSMapView mapWithFrame:self.view.bounds camera:camera];
   self.mapView.delegate = self;
-
-  self.mapView.mapType = kGMSTypeHybrid;
-
+  
+  [self.mapView setMinZoom:10 maxZoom:18];
+  
+  self.mapView.mapType = kGMSTypeNormal;
+  
   self.mapView.myLocationEnabled = YES;
-
+  
   self.mapView.settings.compassButton = YES;
   self.mapView.settings.myLocationButton = YES;
-
-  self.mapView.padding = UIEdgeInsetsMake(25, 25, 25, 25);
-
+  
   [self.view addSubview:self.mapView];
 
   [self setupMarkers];
 }
+
 
 - (void)setupMarkers {
   GMSMarker *marker1 = [[GMSMarker alloc] init];
@@ -69,10 +70,11 @@
   marker3.appearAnimation = kGMSMarkerAnimationPop;
   marker3.icon = [UIImage imageNamed:@"pin"];
 
-  self.markers = @[ marker1, marker2, marker3 ];
+  self.markers = [NSSet setWithObjects:marker1, marker2, marker3, nil];
   
   [self drawMarkers];
 }
+
 
 - (void)drawMarkers {
   for(GMSMarker *marker in self.markers) {
@@ -82,9 +84,11 @@
   }
 }
 
+
 - (BOOL)prefersStatusBarHidden {
   return YES;
 }
+
 
 - (UIView *)mapView:(GMSMapView *)mapView
     markerInfoWindow:(GMSMarker *)marker
@@ -108,5 +112,6 @@
   
   return infoWindow;
 }
+
 
 @end
