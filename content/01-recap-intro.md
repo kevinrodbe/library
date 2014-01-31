@@ -386,7 +386,9 @@ Now back to our controller, we can change it to use **API** all in caps:
 
 ```ruby
 # app/controllers/api
-class API::ZombiesController < ApplicationController
+module API
+  class ZombiesController < ApplicationController
+  end
 end
 ```
 
