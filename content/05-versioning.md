@@ -1,6 +1,6 @@
 ## API Versioning and Custom Media Type
 
-Once our API is deployed to production and clients start relying on it, any change or new feature that needs to be introduced will need to be done so in a way that doesn't disrupt existing clients.
+Once our API is deployed to production and clients start relying on it, any change that needs to be introduced will need to be done so in a way that doesn't disrupt existing clients.
 
 Versioning our API helps prevent major changes from breaking existing API clients. Every time a new, backwards-incompatible change needs to be made, we create a new API version and add the change only to this new version. This way, old clients relying in previous versions are not affected.
 
@@ -88,7 +88,7 @@ The `assert_generates` method asserts that the provided options can be used to g
 
 Since we have not written our controller code yet, running this test should fail.
 
-Resources defined inside our versioned namespaces are expected to have a matching controller under the same namespace. In this case, we'll need a `ZombiesController` under the *app/controllers/api/v1* directory:
+Resources defined inside our versioned namespaces are expected to have a matching controller under the same namespace. In this case, we'll need a `ZombiesController` under the *app/controllers/v1* directory:
 
 ```ruby
 # app/controllers/v1/zombies_controller.rb
@@ -127,6 +127,7 @@ This is our **ZombiesController** for v1:
 module V1
   class ZombiesController < ApplicationController
     before_action ->{ @remote_ip = request.headers['REMOTE_ADDR'] }
+
     def index
       render json: "#{@remote_ip} Version One!", status: 200
     end
@@ -158,9 +159,7 @@ Before we refactor our code to something DRYer, let's write an integration test 
 require 'test_helper'
 
 class ChangingApiVersionsTest < ActionDispatch::IntegrationTest
-  setup do
-    @ip = '123.123.12.12'
-  end
+  setup { @ip = '123.123.12.12' }
 
   test '/v1 returns version 1' do
     get '/v1/zombies', {}, { 'REMOTE_ADDR' => @ip }
@@ -179,11 +178,13 @@ end
 
 Running the previous test should pass.
 
-To reduce the unnecessary duplication, we'll extract the common code out to **ApplicationController** class.
+To reduce the unnecessary duplication, we'll extract the common code out to **ApplicationController**.
 
 ```ruby
 # app/controllers/application_controller.rb
 class ApplicationController < ActionController::Base
+  protect_from_forgery with: :exception
+
   before_action ->{ @remote_ip = request.headers['REMOTE_ADDR'] }
 end
 ```
@@ -205,7 +206,7 @@ and
 
 ```ruby
 module V2
-  class ZombiesController < BaseController # instead of ApplicationController
+  class ZombiesController < ApplicationController
     def index
       render json: "#{@remote_ip} using version 2", status: 200
     end
@@ -224,17 +225,15 @@ Suppose version 2 of our API needs some special logging feature for auditing rea
 We'll create a new abstract controller that's specific for version 2. Let's call it **V2::VersionController**:
 
 ```ruby
-# app/controllers/api/v2/version_controller.rb
-module API
-  module V2
-    class VersionController < BaseController
-      abstract!
+# app/controllers/v2/version_controller.rb
+module V2
+  class VersionController < BaseController
+    abstract!
 
-      before_action :audit_logging
+    before_action :audit_logging
 
-      def audit_logging
-        # log stuff
-      end
+    def audit_logging
+      # log stuff
     end
   end
 end
@@ -277,9 +276,7 @@ require 'test_helper'
 
 class ChangingApiVersionsTest < ActionDispatch::IntegrationTest
 
-  setup do
-    @ip = '123.123.12.12'
-  end
+  setup { @ip = '123.123.12.12' }
 
   test 'returns version one via Accept header' do
     get '/zombies', {}, { 'REMOTE_ADDR' => @ip, 'Accept' => 'application/vnd.apocalypse.v1+json' }
