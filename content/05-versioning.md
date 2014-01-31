@@ -26,37 +26,35 @@ To add support for versioned URIs in our Rails app, we first add a **namespace**
 
 ```ruby
 # config/routes.rb
-namespace :api, path: '/' do
-  namespace :v1 do
-    resources :zombies
-  end
+namespace :v1 do
+  resources :zombies
+end
 
-  namespace :v2 do
-    resources :zombies
-  end
+namespace :v2 do
+  resources :zombies
 end
 ```
 
 If we run `rake routes`, we'll see the URI patterns for both versions of our Zombies resources:
 
 ```
-Prefix Verb   URI Pattern                    Controller#Action
-    api_v1_zombies GET    /v1/zombies(.:format)          api/v1/zombies#index
-                   POST   /v1/zombies(.:format)          api/v1/zombies#create
- new_api_v1_zombie GET    /v1/zombies/new(.:format)      api/v1/zombies#new
-edit_api_v1_zombie GET    /v1/zombies/:id/edit(.:format) api/v1/zombies#edit
-     api_v1_zombie GET    /v1/zombies/:id(.:format)      api/v1/zombies#show
-                   PATCH  /v1/zombies/:id(.:format)      api/v1/zombies#update
-                   PUT    /v1/zombies/:id(.:format)      api/v1/zombies#update
-                   DELETE /v1/zombies/:id(.:format)      api/v1/zombies#destroy
-    api_v2_zombies GET    /v2/zombies(.:format)          api/v2/zombies#index
-                   POST   /v2/zombies(.:format)          api/v2/zombies#create
- new_api_v2_zombie GET    /v2/zombies/new(.:format)      api/v2/zombies#new
-edit_api_v2_zombie GET    /v2/zombies/:id/edit(.:format) api/v2/zombies#edit
-     api_v2_zombie GET    /v2/zombies/:id(.:format)      api/v2/zombies#show
-                   PATCH  /v2/zombies/:id(.:format)      api/v2/zombies#update
-                   PUT    /v2/zombies/:id(.:format)      api/v2/zombies#update
-                   DELETE /v2/zombies/:id(.:format)      api/v2/zombies#destroy
+            Prefix Verb   URI Pattern                    Controller#Action
+    api_v1_zombies GET    /v1/zombies(.:format)          v1/zombies#index
+                   POST   /v1/zombies(.:format)          v1/zombies#create
+ new_api_v1_zombie GET    /v1/zombies/new(.:format)      v1/zombies#new
+edit_api_v1_zombie GET    /v1/zombies/:id/edit(.:format) v1/zombies#edit
+     api_v1_zombie GET    /v1/zombies/:id(.:format)      v1/zombies#show
+                   PATCH  /v1/zombies/:id(.:format)      v1/zombies#update
+                   PUT    /v1/zombies/:id(.:format)      v1/zombies#update
+                   DELETE /v1/zombies/:id(.:format)      v1/zombies#destroy
+    api_v2_zombies GET    /v2/zombies(.:format)          v2/zombies#index
+                   POST   /v2/zombies(.:format)          v2/zombies#create
+ new_api_v2_zombie GET    /v2/zombies/new(.:format)      v2/zombies#new
+edit_api_v2_zombie GET    /v2/zombies/:id/edit(.:format) v2/zombies#edit
+     api_v2_zombie GET    /v2/zombies/:id(.:format)      v2/zombies#show
+                   PATCH  /v2/zombies/:id(.:format)      v2/zombies#update
+                   PUT    /v2/zombies/:id(.:format)      v2/zombies#update
+                   DELETE /v2/zombies/:id(.:format)      v2/zombies#destroy
 ```
 
 Before we write any controller code, let's write some route tests. These tests will ensure that our routes are dispatching requests to the proper controller and action.
@@ -64,12 +62,12 @@ Before we write any controller code, let's write some route tests. These tests w
 Let's pick these two entries from `rake routes`:
 
 ```ruby
-Prefix Verb   URI Pattern                    Controller#Action
-    api_v1_zombies GET    /v1/zombies(.:format)          api/v1/zombies#index
-    api_v2_zombies GET    /v2/zombies(.:format)          api/v2/zombies#index
+            Prefix Verb   URI Pattern                    Controller#Action
+    api_v1_zombies GET    /v1/zombies(.:format)          v1/zombies#index
+    api_v2_zombies GET    /v2/zombies(.:format)          v2/zombies#index
 ```
 
-From these entries, we can see that a GET request to the **/v1/zombies** URI should be mapped to a `ZombiesController` in `api/v1/` and its `index` action; and a GET request to **/v2/zombies**, mapped to a `ZombiesController` in `api/v2` and its `index` action.
+From these entries, we can see that a GET request to the **/v1/zombies** URI should be mapped to a `ZombiesController` in `v1` and its `index` action; and a GET request to **/v2/zombies**, mapped to a `ZombiesController` in `v2` and its `index` action.
 
 We'll bring these two into our tests: 
 
@@ -79,8 +77,8 @@ require 'test_helper'
 
 class RoutesTest < ActionDispatch::IntegrationTest
   test 'routes version' do
-    assert_generates '/v1/zombies', { controller: 'api/v1/zombies', action: 'index' }
-    assert_generates '/v2/zombies', { controller: 'api/v2/zombies', action: 'index' }
+    assert_generates '/v1/zombies', { controller: 'v1/zombies', action: 'index' }
+    assert_generates '/v2/zombies', { controller: 'v2/zombies', action: 'index' }
   end
 end
 
@@ -93,23 +91,19 @@ Since we have not written our controller code yet, running this test should fail
 Resources defined inside our versioned namespaces are expected to have a matching controller under the same namespace. In this case, we'll need a `ZombiesController` under the *app/controllers/api/v1* directory:
 
 ```ruby
-# app/controllers/api/v1/zombies_controller.rb
-module API
-  module V1
-    class ZombiesController < ApplicationController
-    end
+# app/controllers/v1/zombies_controller.rb
+module V1
+  class ZombiesController < ApplicationController
   end
 end
 ```
 
-and another one under *app/controllers/api/v2*:
+and another one under *app/controllers/v2*:
 
 ```ruby
-# app/controllers/api/v2/zombies_controller.rb
-module API
-  module V2
-    class ZombiesController < ApplicationController
-    end
+# app/controllers/v2/zombies_controller.rb
+module V2
+  class ZombiesController < ApplicationController
   end
 end
 ```
@@ -120,7 +114,7 @@ We've successfully added URI versioning to our API, so that each request gets ro
 
 Let's look at a couple of ways we can avoid code duplication and keep our code organized.
 
-### API::BaseController
+### ApplicationController
 
 While additional major features might be placed under new namespaced versions, we should expect most of our application code to be re-used across all versions.
 
@@ -129,16 +123,12 @@ Suppose our API tracks the IP from each request using a `before_action` and we s
 This is our **ZombiesController** for v1:
 
 ```ruby
-# app/controllers/api/v1/zombies_controller.rb
-module API
-  module V1
-    class ZombiesController < ApplicationController
-
-      before_action ->{ @remote_ip = request.headers['REMOTE_ADDR'] }
-
-      def index
-        render json: "#{@remote_ip} Version One!", status: 200
-      end
+# app/controllers/v1/zombies_controller.rb
+module V1
+  class ZombiesController < ApplicationController
+    before_action ->{ @remote_ip = request.headers['REMOTE_ADDR'] }
+    def index
+      render json: "#{@remote_ip} Version One!", status: 200
     end
   end
 end
@@ -147,16 +137,13 @@ end
 And our controller for v2:
 
 ```ruby
-# app/controllers/api/v2/zombies_controller.rb
-module API
-  module V2
-    class ZombiesController < ApplicationController
+# app/controllers/v2/zombies_controller.rb
+module V2
+  class ZombiesController < ApplicationController
+    before_action ->{ @remote_ip = request.headers['REMOTE_ADDR'] }
 
-      before_action ->{ @remote_ip = request.headers['REMOTE_ADDR'] }
-
-      def index
-        render json: "#{@remote_ip} Version Two!", status: 200
-      end
+    def index
+      render json: "#{@remote_ip} Version Two!", status: 200
     end
   end
 end
@@ -192,55 +179,49 @@ end
 
 Running the previous test should pass.
 
-To reduce the unnecessary duplication, we'll extract the common code out to an **API::BaseController** class.
+To reduce the unnecessary duplication, we'll extract the common code out to **ApplicationController** class.
 
 ```ruby
-# app/controllers/api/base_controller.rb
-module API
-  class BaseController < ApplicationController
-    abstract!
-
-    before_action ->{ @remote_ip = request.headers['REMOTE_ADDR'] }
-  end
+# app/controllers/application_controller.rb
+class ApplicationController < ActionController::Base
+  before_action ->{ @remote_ip = request.headers['REMOTE_ADDR'] }
 end
 ```
 
-We add `abstract!` to the top of our **API::BaseController** controller, since this controller should never have actions of its own.
-
-Then, we'll use the **API::BaseController** class as the base class for our controllers across all different API versions:
+Both our `V1::ZombiesController` and `V2::ZombiesController` are a bit cleaner now:
 
 ```ruby
-# app/controllers/api/v1/zombies_controller.rb
-module API
-  module V1
-    class ZombiesController < BaseController # instead of ApplicationController
-      def index
-        render json: "#{@remote_ip} using version 1", status: 200
-      end
+# app/controllers/v1/zombies_controller.rb
+module V1
+  class ZombiesController < ApplicationController
+    def index
+      render json: "#{@remote_ip} using version 1", status: 200
     end
   end
 end
 ```
 
+and
+
 ```ruby
-module API
-  module V2
-    class ZombiesController < BaseController # instead of ApplicationController
-      def index
-        render json: "#{@remote_ip} using version 2", status: 200
-      end
+module V2
+  class ZombiesController < BaseController # instead of ApplicationController
+    def index
+      render json: "#{@remote_ip} using version 2", status: 200
     end
   end
 end
 ```
 
-We were able to remove the duplicate code and all our tests should still pass. We can now use **API::BaseController** for code common to all API versions.
+We were able to remove the duplicate code and all our tests should still pass.
 
-We can use a similar approach for code that needs to be shared within only a specific version.
+A similar approach can be used for code that needs to be shared within only a specific version.
 
 ### VersionController
 
-Suppose version 2 of our API needs some special logging feature for auditing reasons. We can't place this feature on **API::BaseController** because we don't want it to run on previous API versions. We'll create a new abstract controller that's specific for version 2. Let's call it **API::V2::VersionController**:
+Suppose version 2 of our API needs some special logging feature for auditing reasons. We can't place this feature on **ApplicationController** because we don't want it to run on all API versions - just version 2. 
+
+We'll create a new abstract controller that's specific for version 2. Let's call it **V2::VersionController**:
 
 ```ruby
 # app/controllers/api/v2/version_controller.rb
@@ -259,15 +240,13 @@ module API
 end
 ```
 
-Then, we'll inherit all our version 2 controllers from it:
+Since this controller should never have actions of its own, we add `abstract!` to the top of our class. Then, we'll inherit all our version 2 controllers from it:
 
 ```ruby
-module API
-  module V2
-    class ZombiesController < VersionController
-      def index
-        render json: "#{@remote_ip} Version Two!"
-      end
+module V2
+  class ZombiesController < VersionController
+    def index
+      render json: "#{@remote_ip} Version Two!"
     end
   end
 end
@@ -330,7 +309,8 @@ In our routes, we'll add a constraint that will be used to determine which API v
 require 'api_version' # this shows up later in the slides
 
 BananaPodcast::Application.routes.draw do
-  namespace :api, path: '/', defaults: { format: 'json' } do
+
+  scope defaults: { format: 'json' } do
     scope module: :v1, constraints: ApiVersion.new('v1') do
       resources :zombies
     end
@@ -339,7 +319,6 @@ BananaPodcast::Application.routes.draw do
       resources :zombies
     end
   end
-
 end
 ```
 
@@ -373,7 +352,7 @@ require 'test_helper'
 
 class RoutesTest < ActionDispatch::IntegrationTest
   test 'defaults to v2' do
-    assert_generates '/zombies', { controller: 'api/v2/zombies', action: 'index' }
+    assert_generates '/zombies', { controller: 'v2/zombies', action: 'index' }
   end
 end
 ```
