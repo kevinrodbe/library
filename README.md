@@ -30,6 +30,7 @@ Following the *Zombie Apocalypse Broadcast* theme, here's an idea for the app us
 
 ## TODOs
 
+* Mention 300 redirection status codes somewhere.
 * Add summary of status codes.
 
 
