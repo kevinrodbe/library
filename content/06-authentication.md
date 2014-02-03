@@ -28,7 +28,7 @@ Before we add support for Basic Auth to our API, let's write some integration te
 ```ruby
 require 'test_helper'
 
-class ListingPaymentsTest < ActionDispatch::IntegrationTest
+class ListingEpisodesTest < ActionDispatch::IntegrationTest
   setup do
     @user = User.create!(username: 'foo',
                          password: 'secret', password_confirmation: 'secret')
