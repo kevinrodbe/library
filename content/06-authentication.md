@@ -179,7 +179,7 @@ While HTTP Basic Auth is pretty straight forward to implement, it is not as secu
  => ["carlos", "secret"] 
 ```
 
-Using HTTPS can help with preventing sniffers, but there's no such thing as an app that's 100% safe. Even using Basic Auth with HTTPS, our app and our users are still in risk of being attacked. If users have their credentials stolen, then not only their API access will be compromised, but also the access to the web site since it's highly probably that we'll end up using the same username and passwords. Since users tend to reutilize username/password combinations across different services, their account on all those other services will also be compromised. **HAVOC!**
+Using HTTPS can help with preventing sniffers, but there's no such thing as an app that's 100% safe. Even using Basic Auth with HTTPS, our app and our users are still in risk of being attacked. If users have their credentials stolen, then not only their API access will be compromised, but also the access to the web site since it's highly probable that we'll end up using the same username and passwords. Since users tend to reutilize username/password combinations across different services, their account on all those other services will also be compromised. **HAVOC!**
 
 Let's look at another API authentication strategy that can help mitigate these risks.
 
