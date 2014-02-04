@@ -10,7 +10,7 @@
 
 #import <GoogleMaps/GoogleMaps.h>
 
-@interface CSMapVC () <GMSMapViewDelegate>
+@interface CSMapVC ()<GMSMapViewDelegate>
 
 @property(strong, nonatomic) GMSMapView *mapView;
 @property(copy, nonatomic) NSSet *markers;
@@ -29,21 +29,20 @@
 
   self.mapView = [GMSMapView mapWithFrame:self.view.bounds camera:camera];
   self.mapView.delegate = self;
-  
+
   [self.mapView setMinZoom:10 maxZoom:18];
-  
+
   self.mapView.mapType = kGMSTypeNormal;
-  
+
   self.mapView.myLocationEnabled = YES;
-  
+
   self.mapView.settings.compassButton = YES;
   self.mapView.settings.myLocationButton = YES;
-  
+
   [self.view addSubview:self.mapView];
 
   [self setupMarkers];
 }
-
 
 - (void)setupMarkers {
   GMSMarker *marker1 = [[GMSMarker alloc] init];
@@ -71,47 +70,64 @@
   marker3.icon = [UIImage imageNamed:@"pin"];
 
   self.markers = [NSSet setWithObjects:marker1, marker2, marker3, nil];
-  
+
   [self drawMarkers];
 }
 
-
 - (void)drawMarkers {
-  for(GMSMarker *marker in self.markers) {
-    if(marker.map == nil) {
+  for (GMSMarker *marker in self.markers) {
+    if (marker.map == nil) {
       marker.map = self.mapView;
     }
   }
 }
 
-
 - (BOOL)prefersStatusBarHidden {
   return YES;
 }
 
-
-- (UIView *)mapView:(GMSMapView *)mapView
-    markerInfoWindow:(GMSMarker *)marker
-{
+- (UIView *)mapView:(GMSMapView *)mapView markerInfoWindow:(GMSMarker *)marker {
   UIView *infoWindow = [[UIView alloc] init];
-  infoWindow.frame = CGRectMake(0,0,200,200);
+  infoWindow.frame = CGRectMake(0, 0, 200, 200);
   infoWindow.backgroundColor = [UIColor grayColor];
-  
+
   UILabel *titleLabel = [[UILabel alloc] init];
-  titleLabel.frame = CGRectMake(10,10,180,60);
+  titleLabel.frame = CGRectMake(10, 10, 180, 60);
   titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
   titleLabel.text = marker.title;
   [infoWindow addSubview:titleLabel];
-  
+
   UILabel *snippetLabel = [[UILabel alloc] init];
-  snippetLabel.frame = CGRectMake(10, CGRectGetMaxY(titleLabel.frame) + 10, 180, 120);
+  snippetLabel.frame =
+      CGRectMake(10, CGRectGetMaxY(titleLabel.frame) + 10, 180, 120);
   snippetLabel.numberOfLines = 0;
   snippetLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
   snippetLabel.text = marker.snippet;
   [infoWindow addSubview:snippetLabel];
-  
+
+  // specific to level2 - not present in later levels
+  UIButton *infoWindowButton = [UIButton buttonWithType:UIButtonTypeSystem];
+  infoWindowButton.frame = CGRectMake(10, CGRectGetMaxY(infoWindow.frame) - 50, 50, 40);
+  [infoWindowButton setTitle:@"button" forState:UIControlStateNormal];
+  [infoWindow addSubview:infoWindowButton];
+
   return infoWindow;
 }
 
+// specific to level2 - not present in later levels
+- (void)mapView:(GMSMapView *)mapView
+    didTapInfoWindowOfMarker:(GMSMarker *)marker {
+  NSString *message = [NSString
+                       stringWithFormat:
+                       @"You tapped the info window for the %@ marker",
+                       marker.title];
+  UIAlertView *windowTapped = [[UIAlertView alloc]
+          initWithTitle:@"Info Window Tapped!"
+                message:message
+               delegate:nil
+      cancelButtonTitle:@"Alright!"
+      otherButtonTitles:nil];
+  [windowTapped show];
+}
 
 @end
