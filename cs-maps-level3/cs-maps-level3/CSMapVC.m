@@ -167,20 +167,17 @@
     self.userCreatedMarker = nil;
   }
   
-  GMSGeocoder *geocoder = [GMSGeocoder geocoder];
-  [geocoder reverseGeocodeCoordinate:coordinate completionHandler:^(GMSReverseGeocodeResponse *response, NSError *error) {
-    CSMarker *marker = [[CSMarker alloc] init];
-    marker.position = coordinate;
-    marker.appearAnimation = kGMSMarkerAnimationPop;
-    marker.map = nil;
-    
-    marker.title = response.firstResult.addressLine1;
-    marker.snippet = response.firstResult.addressLine2;
-    
-    self.userCreatedMarker = marker;
-    
-    [self drawMarkers];
-  }];
+  CSMarker *marker = [[CSMarker alloc] init];
+  marker.position = coordinate;
+  marker.appearAnimation = kGMSMarkerAnimationPop;
+  marker.map = nil;
+  
+  marker.title = @"user created";
+  marker.snippet = @"snippet for user created";
+  
+  self.userCreatedMarker = marker;
+  
+  [self drawMarkers];
 }
 
 
