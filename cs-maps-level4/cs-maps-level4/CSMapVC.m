@@ -170,7 +170,7 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
   if (mapView.myLocation != nil) {
     NSURL *distanceURL = [NSURL URLWithString:
                           [NSString stringWithFormat:
-                           @"http://maps.googleapis.com/maps/api/""distancematrix/""json?origins=%f,%f&destinations=%f,%f&""mode=driving&sensor=false",
+                           @"http://maps.googleapis.com/maps/api/distancematrix/json?origins=%f,%f&destinations=%f,%f&""mode=driving&sensor=false",
                            self.mapView.myLocation.coordinate.latitude,
                            self.mapView.myLocation.coordinate.longitude,
                            marker.position.latitude,
@@ -186,7 +186,7 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
         
         CSMarker *m = [mutableMarkers member:marker];
         
-        if([mutableMarkers containsObject:marker]) {
+        if(m) {
           [mutableMarkers removeObject:m];
           m.userData = @{ @"distance" : json[@"rows"][0][@"elements"][0][@"distance"][@"text"] };
           [mutableMarkers addObject:m];
