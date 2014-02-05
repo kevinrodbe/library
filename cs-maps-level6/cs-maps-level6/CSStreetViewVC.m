@@ -33,12 +33,11 @@
 - (void)viewDidAppear:(BOOL)animated
 {
   [super viewDidAppear:animated];
-  NSLog(@"%@ is being presented in streetViewVC: %d",[self class],[self isBeingPresented]);
   
-  GMSPanoramaCamera *camera = [GMSPanoramaCamera cameraWithHeading:180 pitch:0 zoom:1 FOV:90];
   GMSPanoramaService *service = [[GMSPanoramaService alloc] init];
-  [service requestPanoramaNearCoordinate:self.coord callback:^(GMSPanorama *panorama, NSError *error) {
+  [service requestPanoramaNearCoordinate:self.coordinate callback:^(GMSPanorama *panorama, NSError *error) {
     if(panorama != nil) {
+      GMSPanoramaCamera *camera = [GMSPanoramaCamera cameraWithHeading:180 pitch:0 zoom:1 FOV:90];
       GMSPanoramaView *panoView = [[GMSPanoramaView alloc] init];
       panoView.camera = camera;
       panoView.panorama = panorama;
@@ -51,11 +50,9 @@
       [button addTarget:self action:@selector(closeStreetView:) forControlEvents:UIControlEventTouchUpInside];
       [self.view addSubview:button];
     } else {
-      NSLog(@"panorama is nil");
       [self closeStreetView:nil];
     }
   }];
-  
 }
 
 - (void)closeStreetView:(id)sender
