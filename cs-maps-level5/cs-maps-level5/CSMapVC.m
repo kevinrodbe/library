@@ -26,7 +26,7 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
 @property(strong, nonatomic) CSMarker *userCreatedMarker;
 @property(strong, nonatomic) UIButton *directionsButton;
 @property(copy, nonatomic) NSArray *steps;
-@property(strong, nonatomic) NSMutableArray *polylines;
+@property(strong, nonatomic) GMSPolyline *polyline;
 
 @end
 
@@ -180,7 +180,7 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
   if (mapView.myLocation != nil) {
     NSURL *distanceURL = [NSURL URLWithString:
                           [NSString stringWithFormat:
-                           @"http://maps.googleapis.com/maps/api/""distancematrix/""json?origins=%f,%f&destinations=%f,%f&""mode=driving&sensor=false",
+                           @"http://maps.googleapis.com/maps/api/distancematrix/json?origins=%f,%f&destinations=%f,%f&""mode=driving&sensor=false",
                            self.mapView.myLocation.coordinate.latitude,
                            self.mapView.myLocation.coordinate.longitude,
                            marker.position.latitude,
@@ -214,14 +214,8 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
     
     [distanceTask resume];
 
-    if(self.polylines == nil) {
-      self.polylines = [[NSMutableArray alloc] init];
-    }
-    for (GMSPolyline *polyline in self.polylines) {
-      NSLog(@"polyline: %@",polyline);
-      polyline.map = nil;
-    }
-    [self.polylines removeAllObjects];
+    self.polyline.map = nil;
+    self.polyline = nil;
 
     NSURL *directionsURL = [NSURL URLWithString:
                             [NSString stringWithFormat:
@@ -247,11 +241,10 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
            GMSPath *path =
            [GMSPath pathFromEncodedPath:
             json[@"routes"][0][@"overview_polyline"][@"points"]];
-           GMSPolyline *polyline = [GMSPolyline polylineWithPath:path];
-           polyline.strokeWidth = 7;
-           polyline.strokeColor = [UIColor greenColor];
-           polyline.map = mapView;
-           [self.polylines addObject:polyline];
+           self.polyline = [GMSPolyline polylineWithPath:path];
+           self.polyline.strokeWidth = 7;
+           self.polyline.strokeColor = [UIColor greenColor];
+           self.polyline.map = mapView;
         }];
       }
     }];
@@ -284,10 +277,8 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
     self.userCreatedMarker = nil;
   }
   
-  for (GMSPolyline *polyline in self.polylines) {
-    polyline.map = nil;
-  }
-  [self.polylines removeAllObjects];
+  self.polyline.map = nil;
+  self.polyline = nil;
 
   GMSGeocoder *geocoder = [GMSGeocoder geocoder];
   [geocoder reverseGeocodeCoordinate:coordinate completionHandler:^(GMSReverseGeocodeResponse *response, NSError *error) {
@@ -312,10 +303,8 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
     self.directionsButton.alpha = 0.0;
   }
   
-  for (GMSPolyline *polyline in self.polylines) {
-    polyline.map = nil;
-  }
-  [self.polylines removeAllObjects];
+  self.polyline.map = nil;
+  self.polyline = nil;
 }
 
 
@@ -326,10 +315,8 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
   }
   self.mapView.selectedMarker = nil;
   
-  for (GMSPolyline *polyline in self.polylines) {
-    polyline.map = nil;
-  }
-  [self.polylines removeAllObjects];
+  self.polyline.map = nil;
+  self.polyline = nil;
 }
 
 
