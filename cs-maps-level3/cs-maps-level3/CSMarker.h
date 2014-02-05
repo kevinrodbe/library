@@ -11,7 +11,6 @@
 
 @interface CSMarker : GMSMarker
 
-@property (nonatomic, assign) CLLocationCoordinate2D position;
 @property (nonatomic, copy) NSString *objectID;
 
 @end
