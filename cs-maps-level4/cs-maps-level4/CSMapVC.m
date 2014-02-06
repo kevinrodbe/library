@@ -264,8 +264,8 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
     marker.appearAnimation = kGMSMarkerAnimationPop;
     marker.map = nil;
     
-    marker.title = [response.results[0] thoroughfare];
-    marker.snippet = [response.results[0] locality];
+    marker.title = response.firstResult.thoroughfare;
+    marker.snippet = response.firstResult.locality;
     
     self.userCreatedMarker = marker;
     
