@@ -118,7 +118,7 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
       CGRectMake(10, CGRectGetMaxY(titleLabel.frame) + 10, 180, 60);
   snippetLabel.numberOfLines = 0;
   snippetLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
-  snippetLabel.text = marker.userData[@"distance"];
+  snippetLabel.text = marker.snippet;
   [infoWindow addSubview:snippetLabel];
 
   return infoWindow;
@@ -264,8 +264,8 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
     marker.appearAnimation = kGMSMarkerAnimationPop;
     marker.map = nil;
     
-    marker.title = response.firstResult.addressLine1;
-    marker.snippet = response.firstResult.addressLine2;
+    marker.title = [response.results[0] thoroughfare];
+    marker.snippet = [response.results[0] locality];
     
     self.userCreatedMarker = marker;
     
