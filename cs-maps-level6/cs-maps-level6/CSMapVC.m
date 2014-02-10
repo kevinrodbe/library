@@ -366,12 +366,10 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
 {
   CSStreetViewVC *streetViewVC = [[CSStreetViewVC alloc] init];
   streetViewVC.coordinate = self.activeMarkerCoordinate;
-  streetViewVC.modalPresentationStyle = UIModalPresentationFullScreen;
-  streetViewVC.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
   [self presentViewController:streetViewVC
                      animated:YES
                    completion:^{
-                     [sender setAlpha:0.0];
+                     self.streetViewButton.alpha = 0.0;
                      self.steps = nil;
                      self.mapView.selectedMarker = nil;
                    }];

@@ -238,8 +238,6 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
 - (void)directionsTapped:(id)sender {
   CSDirectionsVC *directionsVC = [[CSDirectionsVC alloc] init];
   directionsVC.steps = self.steps;
-  directionsVC.modalPresentationStyle = UIModalPresentationCurrentContext;
-  directionsVC.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
   [self presentViewController:directionsVC
                      animated:YES
                    completion:^{
