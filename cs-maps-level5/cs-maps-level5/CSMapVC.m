@@ -56,8 +56,8 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
 
   UIButton *loadNewMarkers = [UIButton buttonWithType:UIButtonTypeCustom];
   loadNewMarkers.frame = CGRectMake(25, 25, 150, 40);
-  [loadNewMarkers setBackgroundImage:[UIImage imageNamed:@"loadButton"] forState:UIControlStateNormal];
-  [loadNewMarkers setBackgroundImage:[UIImage imageNamed:@"loadButton"] forState:UIControlStateHighlighted];
+  [loadNewMarkers setBackgroundImage:[UIImage imageNamed:@"button"] forState:UIControlStateNormal];
+  [loadNewMarkers setBackgroundImage:[UIImage imageNamed:@"button"] forState:UIControlStateHighlighted];
   [loadNewMarkers setTitle:@"load" forState:UIControlStateNormal];
   [loadNewMarkers setTitleColor:[UIColor colorWithRed:0.152941176 green:0.439215686 blue:0.788235294 alpha:1.0] forState:UIControlStateNormal];
   [loadNewMarkers setTitleColor:[UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1.0] forState:UIControlStateHighlighted];
@@ -68,8 +68,11 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
 
   self.directionsButton = [UIButton buttonWithType:UIButtonTypeSystem];
   self.directionsButton.frame = CGRectMake(20, 400, 280, 30);
-  self.directionsButton.backgroundColor = [UIColor whiteColor];
+  [self.directionsButton setBackgroundImage:[UIImage imageNamed:@"button"] forState:UIControlStateNormal];
+  [self.directionsButton setBackgroundImage:[UIImage imageNamed:@"button"] forState:UIControlStateHighlighted];
   [self.directionsButton setTitle:@"directions" forState:UIControlStateNormal];
+  [self.directionsButton setTitleColor:[UIColor colorWithRed:0.152941176 green:0.439215686 blue:0.788235294 alpha:1.0] forState:UIControlStateNormal];
+  [self.directionsButton setTitleColor:[UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1.0] forState:UIControlStateHighlighted];
   [self.directionsButton addTarget:self
                             action:@selector(directionsTapped:)
                   forControlEvents:UIControlEventTouchUpInside];
