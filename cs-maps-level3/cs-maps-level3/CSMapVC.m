@@ -45,10 +45,13 @@
   
   [self.view addSubview:self.mapView];
 
-  // TODO: replace this with a button image when the asset is ready to go
-  UIButton *loadNewMarkers = [UIButton buttonWithType:UIButtonTypeSystem];
-  loadNewMarkers.frame = CGRectMake(25, 25, 45, 45);
+  UIButton *loadNewMarkers = [UIButton buttonWithType:UIButtonTypeCustom];
+  loadNewMarkers.frame = CGRectMake(25, 25, 150, 40);
+  [loadNewMarkers setBackgroundImage:[UIImage imageNamed:@"loadButton"] forState:UIControlStateNormal];
+  [loadNewMarkers setBackgroundImage:[UIImage imageNamed:@"loadButton"] forState:UIControlStateHighlighted];
   [loadNewMarkers setTitle:@"load" forState:UIControlStateNormal];
+  [loadNewMarkers setTitleColor:[UIColor colorWithRed:0.152941176 green:0.439215686 blue:0.788235294 alpha:1.0] forState:UIControlStateNormal];
+  [loadNewMarkers setTitleColor:[UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1.0] forState:UIControlStateHighlighted];
   [loadNewMarkers addTarget:self
                      action:@selector(downloadMarkerData:)
            forControlEvents:UIControlEventTouchUpInside];
