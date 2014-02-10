@@ -88,29 +88,23 @@
 
 - (UIView *)mapView:(GMSMapView *)mapView markerInfoWindow:(GMSMarker *)marker {
   UIView *infoWindow = [[UIView alloc] init];
-  infoWindow.frame = CGRectMake(0, 0, 200, 200);
-  infoWindow.backgroundColor = [UIColor grayColor];
-
+  infoWindow.frame = CGRectMake(0, 0, 200, 70);
+  
+  UIImageView *backgroundImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"infoWindow"]];
+  [infoWindow addSubview:backgroundImage];
+  
   UILabel *titleLabel = [[UILabel alloc] init];
-  titleLabel.frame = CGRectMake(10, 10, 180, 60);
-  titleLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleHeadline];
+  titleLabel.frame = CGRectMake(14, 11, 175, 16);
+  titleLabel.font = [UIFont fontWithDescriptor:[UIFontDescriptor fontDescriptorWithFontAttributes:@{NSFontAttributeName: @"Arial", NSForegroundColorAttributeName: [UIColor colorWithRed:0.0f green:0.0f blue:0.0f alpha:1.0]}] size:14];
   titleLabel.text = marker.title;
   [infoWindow addSubview:titleLabel];
-
+  
   UILabel *snippetLabel = [[UILabel alloc] init];
-  snippetLabel.frame =
-      CGRectMake(10, CGRectGetMaxY(titleLabel.frame) + 10, 180, 120);
-  snippetLabel.numberOfLines = 0;
-  snippetLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
+  snippetLabel.frame = CGRectMake(14, 42, 175, 16);
+  snippetLabel.font = [UIFont fontWithDescriptor:[UIFontDescriptor fontDescriptorWithFontAttributes:@{NSFontAttributeName: @"Arial", NSForegroundColorAttributeName: [UIColor colorWithRed:0.739f green:0.739f blue:0.739f alpha:1.0]}] size:11];
   snippetLabel.text = marker.snippet;
   [infoWindow addSubview:snippetLabel];
-
-  // specific to level2 - not present in later levels
-  UIButton *infoWindowButton = [UIButton buttonWithType:UIButtonTypeSystem];
-  infoWindowButton.frame = CGRectMake(10, CGRectGetMaxY(infoWindow.frame) - 50, 50, 40);
-  [infoWindowButton setTitle:@"button" forState:UIControlStateNormal];
-  [infoWindow addSubview:infoWindowButton];
-
+  
   return infoWindow;
 }
 
