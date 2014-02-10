@@ -43,9 +43,12 @@
       self.view = panoView;
 
       UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
-      button.backgroundColor = [UIColor blueColor];
+      [button setBackgroundImage:[UIImage imageNamed:@"button"] forState:UIControlStateNormal];
+      [button setBackgroundImage:[UIImage imageNamed:@"button"] forState:UIControlStateHighlighted];
       button.frame = CGRectMake(40, 40, 80, 40);
       [button setTitle:@"close" forState:UIControlStateNormal];
+      [button setTitleColor:[UIColor colorWithRed:0.152941176 green:0.439215686 blue:0.788235294 alpha:1.0] forState:UIControlStateNormal];
+      [button setTitleColor:[UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1.0] forState:UIControlStateHighlighted];
       [button addTarget:self
                     action:@selector(closeStreetView:)
           forControlEvents:UIControlEventTouchUpInside];
