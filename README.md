@@ -34,3 +34,6 @@ Following the *Zombie Apocalypse Broadcast* theme, here's an idea for the app us
 * Add summary of status codes.
 
 
+## Resources
+
+* Your API Versioning is Wrong <http://www.troyhunt.com/2014/02/your-api-versioning-is-wrong-which-is.html>
