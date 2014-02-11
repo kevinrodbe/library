@@ -10,7 +10,7 @@
 
 @interface CSDirectionsCell : UITableViewCell
 
-@property (strong, nonatomic) UILabel *directionsLabel;
+@property (strong, nonatomic) UIWebView *directionsWebView;
 @property (strong, nonatomic) UILabel *distanceLabel;
 
 @end

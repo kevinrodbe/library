@@ -16,12 +16,6 @@
 
 @end
 
-typedef NS_ENUM(NSInteger, CSParsedHtmlType) {
-  CSParsedHtmlTypeNormal,
-  CSParsedHtmlTypeBold,
-  CSParsedHtmlTypeEnding
-};
-
 @implementation CSDirectionsVC
 
 
@@ -34,8 +28,12 @@ typedef NS_ENUM(NSInteger, CSParsedHtmlType) {
   [self.view addSubview:self.tableView];
   
   UIButton *backButton = [UIButton buttonWithType:UIButtonTypeSystem];
-  backButton.frame = CGRectMake(20, CGRectGetMaxY(self.view.bounds) - 30, 280, 30);
+  backButton.frame = CGRectMake(110, CGRectGetMaxY(self.view.bounds) - 55, 100, 45);
+  [backButton setBackgroundImage:[UIImage imageNamed:@"button"] forState:UIControlStateNormal];
+  [backButton setBackgroundImage:[UIImage imageNamed:@"button"] forState:UIControlStateHighlighted];
   [backButton setTitle:@"back" forState:UIControlStateNormal];
+  [backButton setTitleColor:[UIColor colorWithRed:0.152941176 green:0.439215686 blue:0.788235294 alpha:1.0] forState:UIControlStateNormal];
+  [backButton setTitleColor:[UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1.0] forState:UIControlStateHighlighted];
   [backButton addTarget:self action:@selector(back:) forControlEvents:UIControlEventTouchUpInside];
   [self.view addSubview:backButton];
 }
@@ -61,7 +59,7 @@ typedef NS_ENUM(NSInteger, CSParsedHtmlType) {
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-  return 120;
+  return 100;
 }
 
 
@@ -78,12 +76,15 @@ typedef NS_ENUM(NSInteger, CSParsedHtmlType) {
   if(cell == nil) {
     cell = [[CSDirectionsCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell"];
   }
-
+  
+  cell.selectionStyle = UITableViewCellSelectionStyleNone;
+  
   NSDictionary *step = self.steps[indexPath.row];
   
-  NSArray *parsedHtml = [self parseHtmlInstructions:step[@"html_instructions"]];
+  NSString *htmlStringWithFormatting = [NSString stringWithFormat:@"%@ %@",@"<style type='text/css'>body { font-size: 15px; }</style>",step[@"html_instructions"]];
+  [cell.directionsWebView loadHTMLString:htmlStringWithFormatting baseURL:nil];
+  NSLog(@"scroll view content size: %@",NSStringFromCGSize(cell.directionsWebView.scrollView.contentSize));
   
-  cell.directionsLabel.text = [self htmlStringAfterParsing:parsedHtml];
   cell.distanceLabel.text = step[@"distance"][@"text"];
   
   return cell;
@@ -93,64 +94,8 @@ typedef NS_ENUM(NSInteger, CSParsedHtmlType) {
 - (void)back:(id)sender
 {
   [self dismissViewControllerAnimated:YES completion:^{
-
-  }];
-}
-
-
-- (NSArray *)parseHtmlInstructions:(NSString *)htmlInstructions
-{
-  NSMutableArray *finishedArray = [[NSMutableArray alloc] init];
-  NSMutableString *mutableString = [htmlInstructions mutableCopy];
-  
-  NSRange rangeToFirstB, rangeToEndB;
-  
-  while([mutableString rangeOfString:@"<div"].location != 0) {
-    if(mutableString.length == 0) {
-      break;
-    }
-    rangeToFirstB = [mutableString rangeOfString:@"<b>"];
-    NSDictionary *normal = @{@"type" : @(CSParsedHtmlTypeNormal), @"string" : [[mutableString substringWithRange:NSMakeRange(0, rangeToFirstB.location)] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet] ]};
-    [finishedArray addObject:normal];
-    [mutableString deleteCharactersInRange:NSMakeRange(0, rangeToFirstB.location)];
     
-    rangeToEndB = [mutableString rangeOfString:@"</b>"];
-    NSDictionary *bold = @{@"type" : @(CSParsedHtmlTypeBold), @"string" : [[mutableString substringWithRange:NSMakeRange(3, rangeToEndB.location-rangeToEndB.length+1)] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]};
-    [finishedArray addObject:bold];
-    [mutableString deleteCharactersInRange:NSMakeRange(0, rangeToEndB.location+rangeToEndB.length)];
-  }
-  
-  if(mutableString.length > 0) {
-    NSRange rangeToEndOpenTag = [mutableString rangeOfString:@"\">"];
-    NSDictionary *ending = @{@"type" : @(CSParsedHtmlTypeEnding), @"string" : [[mutableString substringWithRange:NSMakeRange(rangeToEndOpenTag.location+rangeToEndOpenTag.length, mutableString.length-rangeToEndOpenTag.location-rangeToEndOpenTag.length-6)] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]};
-    [finishedArray addObject:ending];
-  }
-  
-  return finishedArray;
-}
-
-
-- (NSString *)htmlStringAfterParsing:(NSArray *)parsedHtml
-{
-  NSMutableString *mutableString = [[NSMutableString alloc] init];
-  for(NSDictionary *piece in parsedHtml) {
-    switch ([piece[@"type"] integerValue]) {
-      case CSParsedHtmlTypeNormal:
-        [mutableString insertString:piece[@"string"] atIndex:mutableString.length];
-        [mutableString insertString:@" " atIndex:mutableString.length];
-        break;
-      case CSParsedHtmlTypeBold:
-        [mutableString insertString:piece[@"string"] atIndex:mutableString.length];
-        [mutableString insertString:@" " atIndex:mutableString.length];
-        break;
-      case CSParsedHtmlTypeEnding:
-        [mutableString insertString:piece[@"string"] atIndex:mutableString.length];
-        break;
-      default:
-        break;
-    }
-  }
-  return [mutableString copy];
+  }];
 }
 
 

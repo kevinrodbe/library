@@ -14,13 +14,12 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-      self.directionsLabel = [[UILabel alloc] init];
-      self.directionsLabel.numberOfLines = 0;
-      self.directionsLabel.lineBreakMode = NSLineBreakByWordWrapping;
-      self.directionsLabel.font = [UIFont fontWithName:@"Helvetica" size:17.0f];
-      [self addSubview:self.directionsLabel];
+      self.directionsWebView = [[UIWebView alloc] init];
+      self.directionsWebView.scrollView.scrollEnabled = NO;
+      [self addSubview:self.directionsWebView];
       
       self.distanceLabel = [[UILabel alloc] init];
+      self.distanceLabel.font = [UIFont fontWithDescriptor:[UIFontDescriptor fontDescriptorWithFontAttributes:@{NSFontAttributeName: @"Arial", NSForegroundColorAttributeName: [UIColor colorWithWhite:0.5 alpha:1.0]}] size:15];
       self.distanceLabel.numberOfLines = 1;
       [self addSubview:self.distanceLabel];
     }
@@ -32,14 +31,15 @@
 {
   [super layoutSubviews];
   
-  CGRect directionsLabelFrame = self.directionsLabel.frame;
-  directionsLabelFrame.origin.x = 20;
-  directionsLabelFrame.origin.y = 20;
-  directionsLabelFrame.size.width = 280;
-  self.directionsLabel.frame = directionsLabelFrame;
-  [self.directionsLabel sizeToFit];
+  CGRect directionsWebViewFrame = self.directionsWebView.frame;
+  directionsWebViewFrame.origin.x = 20;
+  directionsWebViewFrame.origin.y = 20;
+  directionsWebViewFrame.size.width = 280;
+  directionsWebViewFrame.size.height = 50;
+  self.directionsWebView.frame = directionsWebViewFrame;
   
-  self.distanceLabel.frame = CGRectMake(20, CGRectGetMaxY(self.directionsLabel.frame) + 20, 280, 30);
+  self.distanceLabel.frame = CGRectMake(30, CGRectGetMaxY(self.directionsWebView.frame), 280, 30);
 }
+
 
 @end
