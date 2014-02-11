@@ -83,7 +83,6 @@
   
   NSString *htmlStringWithFormatting = [NSString stringWithFormat:@"%@ %@",@"<style type='text/css'>body { font-size: 15px; }</style>",step[@"html_instructions"]];
   [cell.directionsWebView loadHTMLString:htmlStringWithFormatting baseURL:nil];
-  NSLog(@"scroll view content size: %@",NSStringFromCGSize(cell.directionsWebView.scrollView.contentSize));
   
   cell.distanceLabel.text = step[@"distance"][@"text"];
   

@@ -6,8 +6,6 @@
 //  Copyright (c) 2014 Code School. All rights reserved.
 //
 
-// TODO: remove NSLog()
-
 #import "CSMapVC.h"
 
 #import <GoogleMaps/GoogleMaps.h>
