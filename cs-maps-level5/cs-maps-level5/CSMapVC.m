@@ -89,9 +89,9 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
   GMSPath *path = [self pathForCongressionalData];
   
   GMSPolygon *polygon = [GMSPolygon polygonWithPath:path];
-  polygon.strokeColor = [UIColor redColor];
-  polygon.strokeWidth = 6;
-  polygon.fillColor = [UIColor colorWithRed:1.0 green:0.2 blue:0.2 alpha:0.5];
+  polygon.strokeColor = [UIColor colorWithRed:0.945098039 green:0.37254902 blue:0.368627451 alpha:1.0];
+  polygon.strokeWidth = 2;
+  polygon.fillColor = [UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:0.2];
   polygon.map = self.mapView;
 }
 
@@ -247,8 +247,8 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
            [GMSPath pathFromEncodedPath:
             json[@"routes"][0][@"overview_polyline"][@"points"]];
            self.polyline = [GMSPolyline polylineWithPath:path];
-           self.polyline.strokeWidth = 7;
-           self.polyline.strokeColor = [UIColor greenColor];
+           self.polyline.strokeWidth = 4;
+           self.polyline.strokeColor = [UIColor colorWithRed:0.08627451 green:0.584313725 blue:0.929411765 alpha:1.0];
            self.polyline.map = mapView;
         }];
       }

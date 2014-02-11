@@ -102,14 +102,6 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
                                                   diskCapacity:10 * 1024 * 1024
                                                       diskPath:@"MarkerData"];
   self.markerSession = [NSURLSession sessionWithConfiguration:config];
-  
-  GMSPath *path = [self pathForCongressionalData];
-  
-  GMSPolygon *polygon = [GMSPolygon polygonWithPath:path];
-  polygon.strokeColor = [UIColor redColor];
-  polygon.strokeWidth = 6;
-  polygon.fillColor = [UIColor colorWithRed:1.0 green:0.2 blue:0.2 alpha:0.5];
-  polygon.map = self.mapView;
 }
 
 
@@ -268,8 +260,8 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
           [GMSPath pathFromEncodedPath:
            json[@"routes"][0][@"overview_polyline"][@"points"]];
           self.polyline = [GMSPolyline polylineWithPath:path];
-          self.polyline.strokeWidth = 7;
-          self.polyline.strokeColor = [UIColor greenColor];
+          self.polyline.strokeWidth = 4;
+          self.polyline.strokeColor = [UIColor colorWithRed:0.08627451 green:0.584313725 blue:0.929411765 alpha:1.0];
           self.polyline.map = mapView;
         }];
       }
@@ -351,22 +343,6 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
 
   self.polyline.map = nil;
   self.polyline = nil;
-}
-
-
-- (GMSPath *)pathForCongressionalData
-{
-  NSStringEncoding *enc = NULL;
-  NSError *error;
-  NSString *areaString = [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"orange" ofType:@"txt"] usedEncoding:enc error:&error];
-  NSArray *splitAreaString = [areaString componentsSeparatedByString:@" "];
-  
-  GMSMutablePath *mutablePath = [[GMSMutablePath alloc] init];
-  for(NSString *latLngString in splitAreaString) {
-    NSArray *splitCoordinate = [latLngString componentsSeparatedByString:@","];
-    [mutablePath addLatitude:[splitCoordinate[1] doubleValue] longitude:[splitCoordinate[0] doubleValue]];
-  }
-  return [mutablePath copy];
 }
 
 
