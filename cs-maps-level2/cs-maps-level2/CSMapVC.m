@@ -67,7 +67,7 @@
   marker3.title = @"Lake of the Woods";
   marker3.snippet = @"Spooky name for a lake, don't you think?";
   marker3.appearAnimation = kGMSMarkerAnimationPop;
-  marker3.icon = [UIImage imageNamed:@"pin"];
+  marker3.icon = [UIImage imageNamed:@"map-marker"];
 
   self.markers = [NSSet setWithObjects:marker1, marker2, marker3, nil];
 
