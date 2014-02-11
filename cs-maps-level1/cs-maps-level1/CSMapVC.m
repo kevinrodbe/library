@@ -10,6 +10,8 @@
 
 #import <GoogleMaps/GoogleMaps.h>
 
+static const BOOL navBarVersion = NO;
+
 @interface CSMapVC ()
 
 @property(strong, nonatomic) GMSMapView *mapView;
@@ -39,6 +41,14 @@
   self.mapView.settings.myLocationButton = YES;
 
   [self.view addSubview:self.mapView];
+}
+
+- (void)viewWillLayoutSubviews
+{
+  [super viewWillLayoutSubviews];
+  if(navBarVersion) {
+    self.mapView.padding = UIEdgeInsetsMake(self.topLayoutGuide.length+5, 0, self.bottomLayoutGuide.length+5, 0);
+  }
 }
 
 - (BOOL)prefersStatusBarHidden {
