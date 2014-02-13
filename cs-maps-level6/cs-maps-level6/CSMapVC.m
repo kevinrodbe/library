@@ -60,7 +60,7 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
   loadNewMarkers.frame = CGRectMake(25, 25, 150, 40);
   [loadNewMarkers setBackgroundImage:[UIImage imageNamed:@"button"] forState:UIControlStateNormal];
   [loadNewMarkers setBackgroundImage:[UIImage imageNamed:@"button"] forState:UIControlStateHighlighted];
-  [loadNewMarkers setTitle:@"load markers" forState:UIControlStateNormal];
+  [loadNewMarkers setTitle:@"load" forState:UIControlStateNormal];
   [loadNewMarkers setTitleColor:[UIColor colorWithRed:0.152941176 green:0.439215686 blue:0.788235294 alpha:1.0] forState:UIControlStateNormal];
   [loadNewMarkers setTitleColor:[UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1.0] forState:UIControlStateHighlighted];
   [loadNewMarkers addTarget:self
@@ -68,7 +68,7 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
            forControlEvents:UIControlEventTouchUpInside];
   [self.view addSubview:loadNewMarkers];
   
-  self.directionsButton = [UIButton buttonWithType:UIButtonTypeSystem];
+  self.directionsButton = [UIButton buttonWithType:UIButtonTypeCustom];
   self.directionsButton.frame = CGRectMake(20, 400, 280, 30);
   [self.directionsButton setBackgroundImage:[UIImage imageNamed:@"button"] forState:UIControlStateNormal];
   [self.directionsButton setBackgroundImage:[UIImage imageNamed:@"button"] forState:UIControlStateHighlighted];
@@ -81,7 +81,7 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
   [self.view addSubview:self.directionsButton];
   self.directionsButton.alpha = 0.0;
   
-  self.streetViewButton = [UIButton buttonWithType:UIButtonTypeSystem];
+  self.streetViewButton = [UIButton buttonWithType:UIButtonTypeCustom];
   self.streetViewButton.frame = CGRectMake(20, 430, 280, 30);
   [self.streetViewButton setBackgroundImage:[UIImage imageNamed:@"button"] forState:UIControlStateNormal];
   [self.streetViewButton setBackgroundImage:[UIImage imageNamed:@"button"] forState:UIControlStateHighlighted];

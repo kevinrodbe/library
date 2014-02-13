@@ -27,7 +27,7 @@
   self.tableView.delegate = self;
   [self.view addSubview:self.tableView];
   
-  UIButton *backButton = [UIButton buttonWithType:UIButtonTypeSystem];
+  UIButton *backButton = [UIButton buttonWithType:UIButtonTypeCustom];
   backButton.frame = CGRectMake(110, CGRectGetMaxY(self.view.bounds) - 55, 100, 45);
   [backButton setBackgroundImage:[UIImage imageNamed:@"button"] forState:UIControlStateNormal];
   [backButton setBackgroundImage:[UIImage imageNamed:@"button"] forState:UIControlStateHighlighted];
