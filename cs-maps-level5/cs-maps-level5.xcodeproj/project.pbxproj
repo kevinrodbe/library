@@ -178,7 +178,6 @@
 		AB772C9118848D4500490D48 /* cs-maps-level5 */ = {
 			isa = PBXGroup;
 			children = (
-				AB68308F189603D10036CD52 /* orange.txt */,
 				AB772C9A18848D4500490D48 /* CSAppDelegate.h */,
 				AB772C9B18848D4500490D48 /* CSAppDelegate.m */,
 				AB772CD618848DD400490D48 /* CSMapVC.h */,
@@ -198,6 +197,7 @@
 		AB772C9218848D4500490D48 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				AB68308F189603D10036CD52 /* orange.txt */,
 				AB5DC7CA1896A6E500A4869C /* orlando.gpx */,
 				AB772C9318848D4500490D48 /* cs-maps-level5-Info.plist */,
 				AB772C9418848D4500490D48 /* InfoPlist.strings */,
