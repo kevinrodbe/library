@@ -47,8 +47,8 @@
 
   UIButton *loadNewMarkers = [UIButton buttonWithType:UIButtonTypeCustom];
   loadNewMarkers.frame = CGRectMake(25, 25, 150, 40);
-  [loadNewMarkers setBackgroundImage:[UIImage imageNamed:@"loadButton"] forState:UIControlStateNormal];
-  [loadNewMarkers setBackgroundImage:[UIImage imageNamed:@"loadButton"] forState:UIControlStateHighlighted];
+  [loadNewMarkers setBackgroundImage:[UIImage imageNamed:@"button"] forState:UIControlStateNormal];
+  [loadNewMarkers setBackgroundImage:[UIImage imageNamed:@"button"] forState:UIControlStateHighlighted];
   [loadNewMarkers setTitle:@"load" forState:UIControlStateNormal];
   [loadNewMarkers setTitleColor:[UIColor colorWithRed:0.152941176 green:0.439215686 blue:0.788235294 alpha:1.0] forState:UIControlStateNormal];
   [loadNewMarkers setTitleColor:[UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1.0] forState:UIControlStateHighlighted];

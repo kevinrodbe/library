@@ -64,7 +64,7 @@ const NSString *DIRECTIONS_API_URL = @"http://maps.googleapis.com/maps/api/direc
            forControlEvents:UIControlEventTouchUpInside];
   [self.view addSubview:loadNewMarkers];
 
-  self.directionsButton = [UIButton buttonWithType:UIButtonTypeSystem];
+  self.directionsButton = [UIButton buttonWithType:UIButtonTypeCustom];
   self.directionsButton.frame = CGRectMake(20, 400, 280, 30);
   [self.directionsButton setBackgroundImage:[UIImage imageNamed:@"button"] forState:UIControlStateNormal];
   [self.directionsButton setBackgroundImage:[UIImage imageNamed:@"button"] forState:UIControlStateHighlighted];
