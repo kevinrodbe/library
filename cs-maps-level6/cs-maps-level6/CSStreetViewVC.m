@@ -54,6 +54,7 @@
           forControlEvents:UIControlEventTouchUpInside];
       [self.view addSubview:button];
     } else {
+      [[[UIAlertView alloc] initWithTitle:@"No Street View data found" message:@"We couldn't find a street view at this place.  Try again with a marker near a road" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
       [self closeStreetView:nil];
     }
   }];
