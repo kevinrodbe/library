@@ -28,6 +28,7 @@ But you don't like underscores?
 ![boo hoo](http://img4.wikia.nocookie.net/__cb20140910042820/glee/images/2/2e/Boo-hoo.gif)
 
 ## How to merge an existing content repository into the Library
+Based on [this blog post](http://jasonkarns.com/blog/merge-two-git-repositories-into-one/).
 
 1. Clone this repository
 2. `cd library/`
