@@ -1,0 +1,314 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		071D260E161B1981005F4095 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 071D260D161B1981005F4095 /* UIKit.framework */; };
+		071D2610161B1981005F4095 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 071D260F161B1981005F4095 /* Foundation.framework */; };
+		071D2612161B1981005F4095 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 071D2611161B1981005F4095 /* CoreGraphics.framework */; };
+		071D2618161B1981005F4095 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 071D2616161B1981005F4095 /* InfoPlist.strings */; };
+		071D261A161B1981005F4095 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 071D2619161B1981005F4095 /* main.m */; };
+		071D261E161B1981005F4095 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 071D261D161B1981005F4095 /* AppDelegate.m */; };
+		071D2620161B1981005F4095 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 071D261F161B1981005F4095 /* Default.png */; };
+		071D2622161B1981005F4095 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 071D2621161B1981005F4095 /* Default@2x.png */; };
+		071D2624161B1981005F4095 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 071D2623161B1981005F4095 /* Default-568h@2x.png */; };
+		071D2629161B1981005F4095 /* first.png in Resources */ = {isa = PBXBuildFile; fileRef = 071D2628161B1981005F4095 /* first.png */; };
+		071D262B161B1981005F4095 /* first@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 071D262A161B1981005F4095 /* first@2x.png */; };
+		071D2630161B1981005F4095 /* second.png in Resources */ = {isa = PBXBuildFile; fileRef = 071D262F161B1981005F4095 /* second.png */; };
+		071D2632161B1981005F4095 /* second@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 071D2631161B1981005F4095 /* second@2x.png */; };
+		071D2640161B19C2005F4095 /* FeedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 071D263F161B19C2005F4095 /* FeedViewController.m */; };
+		071D2646161B1CAD005F4095 /* FavoritesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 071D2645161B1CAD005F4095 /* FavoritesViewController.m */; };
+		071D2649161B1CE1005F4095 /* ProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 071D2648161B1CE1005F4095 /* ProfileViewController.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		071D2609161B1981005F4095 /* InstaPhotoLevel3Challenges.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InstaPhotoLevel3Challenges.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		071D260D161B1981005F4095 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		071D260F161B1981005F4095 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		071D2611161B1981005F4095 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		071D2615161B1981005F4095 /* InstaPhotoLevel3Challenges-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "InstaPhotoLevel3Challenges-Info.plist"; sourceTree = "<group>"; };
+		071D2617161B1981005F4095 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		071D2619161B1981005F4095 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		071D261B161B1981005F4095 /* InstaPhotoLevel3Challenges-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "InstaPhotoLevel3Challenges-Prefix.pch"; sourceTree = "<group>"; };
+		071D261C161B1981005F4095 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		071D261D161B1981005F4095 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		071D261F161B1981005F4095 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+		071D2621161B1981005F4095 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
+		071D2623161B1981005F4095 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		071D2628161B1981005F4095 /* first.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = first.png; sourceTree = "<group>"; };
+		071D262A161B1981005F4095 /* first@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "first@2x.png"; sourceTree = "<group>"; };
+		071D262F161B1981005F4095 /* second.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = second.png; sourceTree = "<group>"; };
+		071D2631161B1981005F4095 /* second@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "second@2x.png"; sourceTree = "<group>"; };
+		071D263E161B19C2005F4095 /* FeedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeedViewController.h; sourceTree = "<group>"; };
+		071D263F161B19C2005F4095 /* FeedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FeedViewController.m; sourceTree = "<group>"; };
+		071D2644161B1CAD005F4095 /* FavoritesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FavoritesViewController.h; sourceTree = "<group>"; };
+		071D2645161B1CAD005F4095 /* FavoritesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FavoritesViewController.m; sourceTree = "<group>"; };
+		071D2647161B1CE1005F4095 /* ProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileViewController.h; sourceTree = "<group>"; };
+		071D2648161B1CE1005F4095 /* ProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileViewController.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		071D2606161B1981005F4095 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				071D260E161B1981005F4095 /* UIKit.framework in Frameworks */,
+				071D2610161B1981005F4095 /* Foundation.framework in Frameworks */,
+				071D2612161B1981005F4095 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		071D25FE161B1981005F4095 = {
+			isa = PBXGroup;
+			children = (
+				071D2613161B1981005F4095 /* InstaPhotoLevel3Challenges */,
+				071D260C161B1981005F4095 /* Frameworks */,
+				071D260A161B1981005F4095 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		071D260A161B1981005F4095 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				071D2609161B1981005F4095 /* InstaPhotoLevel3Challenges.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		071D260C161B1981005F4095 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				071D260D161B1981005F4095 /* UIKit.framework */,
+				071D260F161B1981005F4095 /* Foundation.framework */,
+				071D2611161B1981005F4095 /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		071D2613161B1981005F4095 /* InstaPhotoLevel3Challenges */ = {
+			isa = PBXGroup;
+			children = (
+				071D261C161B1981005F4095 /* AppDelegate.h */,
+				071D261D161B1981005F4095 /* AppDelegate.m */,
+				071D2628161B1981005F4095 /* first.png */,
+				071D262A161B1981005F4095 /* first@2x.png */,
+				071D262F161B1981005F4095 /* second.png */,
+				071D2631161B1981005F4095 /* second@2x.png */,
+				071D2614161B1981005F4095 /* Supporting Files */,
+				071D263E161B19C2005F4095 /* FeedViewController.h */,
+				071D263F161B19C2005F4095 /* FeedViewController.m */,
+				071D2644161B1CAD005F4095 /* FavoritesViewController.h */,
+				071D2645161B1CAD005F4095 /* FavoritesViewController.m */,
+				071D2647161B1CE1005F4095 /* ProfileViewController.h */,
+				071D2648161B1CE1005F4095 /* ProfileViewController.m */,
+			);
+			path = InstaPhotoLevel3Challenges;
+			sourceTree = "<group>";
+		};
+		071D2614161B1981005F4095 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				071D2615161B1981005F4095 /* InstaPhotoLevel3Challenges-Info.plist */,
+				071D2616161B1981005F4095 /* InfoPlist.strings */,
+				071D2619161B1981005F4095 /* main.m */,
+				071D261B161B1981005F4095 /* InstaPhotoLevel3Challenges-Prefix.pch */,
+				071D261F161B1981005F4095 /* Default.png */,
+				071D2621161B1981005F4095 /* Default@2x.png */,
+				071D2623161B1981005F4095 /* Default-568h@2x.png */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		071D2608161B1981005F4095 /* InstaPhotoLevel3Challenges */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 071D263B161B1981005F4095 /* Build configuration list for PBXNativeTarget "InstaPhotoLevel3Challenges" */;
+			buildPhases = (
+				071D2605161B1981005F4095 /* Sources */,
+				071D2606161B1981005F4095 /* Frameworks */,
+				071D2607161B1981005F4095 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = InstaPhotoLevel3Challenges;
+			productName = InstaPhotoLevel3Challenges;
+			productReference = 071D2609161B1981005F4095 /* InstaPhotoLevel3Challenges.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		071D2600161B1981005F4095 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0450;
+				ORGANIZATIONNAME = "Eric Allam";
+			};
+			buildConfigurationList = 071D2603161B1981005F4095 /* Build configuration list for PBXProject "InstaPhotoLevel3Challenges" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 071D25FE161B1981005F4095;
+			productRefGroup = 071D260A161B1981005F4095 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				071D2608161B1981005F4095 /* InstaPhotoLevel3Challenges */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		071D2607161B1981005F4095 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				071D2618161B1981005F4095 /* InfoPlist.strings in Resources */,
+				071D2620161B1981005F4095 /* Default.png in Resources */,
+				071D2622161B1981005F4095 /* Default@2x.png in Resources */,
+				071D2624161B1981005F4095 /* Default-568h@2x.png in Resources */,
+				071D2629161B1981005F4095 /* first.png in Resources */,
+				071D262B161B1981005F4095 /* first@2x.png in Resources */,
+				071D2630161B1981005F4095 /* second.png in Resources */,
+				071D2632161B1981005F4095 /* second@2x.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		071D2605161B1981005F4095 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				071D261A161B1981005F4095 /* main.m in Sources */,
+				071D261E161B1981005F4095 /* AppDelegate.m in Sources */,
+				071D2640161B19C2005F4095 /* FeedViewController.m in Sources */,
+				071D2646161B1CAD005F4095 /* FavoritesViewController.m in Sources */,
+				071D2649161B1CE1005F4095 /* ProfileViewController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		071D2616161B1981005F4095 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				071D2617161B1981005F4095 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		071D2639161B1981005F4095 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		071D263A161B1981005F4095 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		071D263C161B1981005F4095 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "InstaPhotoLevel3Challenges/InstaPhotoLevel3Challenges-Prefix.pch";
+				INFOPLIST_FILE = "InstaPhotoLevel3Challenges/InstaPhotoLevel3Challenges-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		071D263D161B1981005F4095 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "InstaPhotoLevel3Challenges/InstaPhotoLevel3Challenges-Prefix.pch";
+				INFOPLIST_FILE = "InstaPhotoLevel3Challenges/InstaPhotoLevel3Challenges-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		071D2603161B1981005F4095 /* Build configuration list for PBXProject "InstaPhotoLevel3Challenges" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				071D2639161B1981005F4095 /* Debug */,
+				071D263A161B1981005F4095 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		071D263B161B1981005F4095 /* Build configuration list for PBXNativeTarget "InstaPhotoLevel3Challenges" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				071D263C161B1981005F4095 /* Debug */,
+				071D263D161B1981005F4095 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 071D2600161B1981005F4095 /* Project object */;
+}
