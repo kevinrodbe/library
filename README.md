@@ -31,7 +31,7 @@ But you don't like underscores?
 
 1. Clone this repository
 2. `cd library/`
-3. `git remote add repo_to_merge https://github.com/codeschool/repo_to_merge.git`
+3. `git remote add -f repo_to_merge https://github.com/codeschool/repo_to_merge.git`
 4. `git merge -s ours --no-commit repo_to_merge/master`
 5. `git read-tree --prefix=repo_to_merge/ -u repo_to_merge/master`
 6. `git commit -am "Merge repo_to_merge content"`
